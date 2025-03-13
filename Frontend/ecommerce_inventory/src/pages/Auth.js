@@ -156,10 +156,46 @@ const Auth = () => {
                 Niplan
               </Typography>
               <Tabs value={tab} onChange={handleChange} centered>
-                <Tab label="Sign Up" />
                 <Tab label="Sign In" />
+
+                <Tab label="Sign Up" />
               </Tabs>
               {tab === 0 && (
+                <Box component="form" sx={{ mt: 2 }} onSubmit={doLogin}>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Email/Username"
+                    name="username"
+                    autoComplete="username"
+                    autoFocus
+                  />
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                  />
+                  {loading ? (
+                    <LinearProgress sx={{ width: "100%" }} />
+                  ) : (
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      sx={{ mt: 3, mb: 2 }}
+                    >
+                      Sign In
+                    </Button>
+                  )}
+                </Box>
+              )}
+              {tab === 1 && (
                 <Box component="form" sx={{ mt: 2 }} onSubmit={doSignup}>
                   <TextField
                     margin="normal"
@@ -199,41 +235,6 @@ const Auth = () => {
                       sx={{ mt: 3, mb: 2 }}
                     >
                       Sign Up
-                    </Button>
-                  )}
-                </Box>
-              )}
-              {tab === 1 && (
-                <Box component="form" sx={{ mt: 2 }} onSubmit={doLogin}>
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    label="Email/Username"
-                    name="username"
-                    autoComplete="username"
-                    autoFocus
-                  />
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    label="Password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                  />
-                  {loading ? (
-                    <LinearProgress sx={{ width: "100%" }} />
-                  ) : (
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      sx={{ mt: 3, mb: 2 }}
-                    >
-                      Sign In
                     </Button>
                   )}
                 </Box>
