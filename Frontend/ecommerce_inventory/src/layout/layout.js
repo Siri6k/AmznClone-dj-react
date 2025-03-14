@@ -67,16 +67,22 @@ import logo from "../assets/logo.svg";
 import { GlobalStyles } from "./GlobalStyle";
 import TextField from "@mui/material/TextField";
 import { Outlet, useNavigate } from "react-router-dom"; // Import Outlet
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { expandItem } from "../redux/reducer/sidebardata";
 
-const Layout = ({ sidebarList, pageTitle }) => {
+const Layout = ({ pageTitle }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useState(true); // State for desktop sidebar
   const [themeMode, setThemeMode] = useState("light");
   const [openChildMenu, setOpenChildMenu] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [themeMenu, setThemeMenu] = useState(null);
-  const [sidebarItems, setSidebarItems] = useState(sidebarList);
+  //  const [sidebarItems, setSidebarItems] = useState(sidebarList);
+  const sidebarItems = useSelector((state) => state.sidebardata.items);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "basic";
@@ -162,15 +168,16 @@ const Layout = ({ sidebarList, pageTitle }) => {
 
   const drawerWidth = 280;
   const handleSidebarMenuClick = (sidebarItem, index) => {
-    if (sidebarItem.children && sidebarItem.children.length > 0) {
-      if (sidebarItem.expanded) {
-        sidebarItem.expanded = true;
-      }
-      sidebarItem.expanded = !sidebarItem.expanded;
-      sidebarItems[index] = sidebarItem;
-      setSidebarItems([...sidebarItems]);
+    if (sidebarItem.submenus && sidebarItem.submenus.length > 0) {
+      //if (sidebarItem.expanded) {
+      //  sidebarItem.expanded = true;
+      //}
+      //sidebarItem.expanded = !sidebarItem.expanded;
+      //sidebarItems[index] = sidebarItem;
+      //setSidebarItems([...sidebarItems]);
+      dispatch(expandItem({ id: sidebarItem.id }));
     } else {
-      navigate(sidebarItem.link);
+      navigate(sidebarItem.module_url);
     }
   };
 
@@ -236,8 +243,8 @@ const Layout = ({ sidebarList, pageTitle }) => {
         {sidebarItems.map((sidebarItem, index) => (
           <>
             <ListItem
-              key={index}
-              onClick={() => handleSidebarMenuClick(sidebarItem, index)}
+              key={sidebarItem.id}
+              onClick={() => handleSidebarMenuClick(sidebarItem)}
               sx={{
                 "&.Mui-selected": {
                   backgroundColor: theme.palette.action.selected,
@@ -248,23 +255,28 @@ const Layout = ({ sidebarList, pageTitle }) => {
                 },
               }}
             >
-              <ListItemIcon>{getIcon(sidebarItem.icon)}</ListItemIcon>
-              <ListItemText primary={sidebarItem.name} />
-              {"children" in sidebarItem && sidebarItem.children.length > 0 ? (
+              <ListItemIcon>{getIcon(sidebarItem.module_icon)}</ListItemIcon>
+              <ListItemText primary={sidebarItem.module_name} />
+              {"submenus" in sidebarItem && sidebarItem.submenus.length > 0 ? (
                 <>{sidebarItem?.expanded ? <ExpandLess /> : <ExpandMore />}</>
               ) : (
                 ""
               )}
             </ListItem>
-            {"children" in sidebarItem && sidebarItem.children.length > 0 ? (
+            {"submenus" in sidebarItem && sidebarItem.submenus.length > 0 ? (
               <Collapse in={sidebarItem?.expanded} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                  {sidebarItem.children.map((child) => (
-                    <ListItem button sx={{ pl: 4 }} key={child.name}>
+                  {sidebarItem.submenus.map((child) => (
+                    <ListItem
+                      button
+                      sx={{ pl: 4 }}
+                      key={child.id}
+                      onClick={() => handleSidebarMenuClick(child)}
+                    >
                       <ListItemIcon>
                         <AlternateEmailIcon />
                       </ListItemIcon>
-                      <ListItemText primary={child.name} />
+                      <ListItemText primary={child.module_name} />
                     </ListItem>
                   ))}
                 </List>
