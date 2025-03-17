@@ -49,7 +49,7 @@ function App() {
     },
     {
       path: "/",
-      element: <Layout />,
+      element: <ProtectedRoute element={<Layout />} />,
       children: [
         { path: "home", element: <ProtectedRoute element={<Home />} /> },
       ], // Corrected: 'element' for route definition

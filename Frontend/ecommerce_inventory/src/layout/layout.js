@@ -46,6 +46,18 @@ import {
   AlternateEmail as AlternateEmailIcon,
   AutoAwesomeTwoTone,
   Circle,
+  AddCircleOutlineOutlined,
+  Dashboard,
+  DashboardOutlined,
+  ShoppingCartOutlined,
+  StorefrontOutlined,
+  GroupOutlined,
+  InventoryOutlined,
+  CategoryOutlined,
+  ShoppingBasketOutlined,
+  ReceiptOutlined,
+  WarehouseOutlined,
+  GroupAddOutlined,
 } from "@mui/icons-material";
 import { ThemeProvider as Emotion10ThemeProvider } from "@emotion/react";
 import "./style.scss";
@@ -183,32 +195,32 @@ const Layout = ({ pageTitle }) => {
 
   const getIcon = (icon) => {
     switch (icon) {
-      case "home":
-        return <Home />;
-      case "code":
-        return <CodeIcon />;
-      case "public":
-        return <PublicIcon />;
-      case "business":
-        return <BusinessIcon />;
-      case "customers":
-        return <AccountCircle />;
-      case "settings":
+      case "Add":
+        return <AddCircleOutlineOutlined />;
+      case "Dashboard":
+        return <DashboardOutlined />;
+      case "Store":
+        return <ShoppingCartOutlined />;
+      case "Retail":
+        return <StorefrontOutlined />;
+      case "AccountCircle":
+        return <GroupOutlined />;
+      case "Settings":
         return <SettingsIcon />;
       case "logout":
         return <Logout />;
-      case "school":
-        return <BusinessIcon />;
-      case "students":
-        return <AccountCircle />;
-      case "teachers":
-        return <AccountCircle />;
-      case "courses":
-        return <AccountCircle />;
-      case "exams":
-        return <AccountCircle />;
-      case "results":
-        return <AccountCircle />;
+      case "Inventory":
+        return <InventoryOutlined />;
+      case "Category":
+        return <CategoryOutlined />;
+      case "Redeem":
+        return <ShoppingBasketOutlined />;
+      case "Warehouse":
+        return <WarehouseOutlined />;
+      case "GroupAdd":
+        return <GroupOutlined />;
+      case "Receipt":
+        return <ReceiptOutlined />;
       case "attendance":
         return <AccountCircle />;
       case "ecommerce":
@@ -273,9 +285,7 @@ const Layout = ({ pageTitle }) => {
                       key={child.id}
                       onClick={() => handleSidebarMenuClick(child)}
                     >
-                      <ListItemIcon>
-                        <AlternateEmailIcon />
-                      </ListItemIcon>
+                      <ListItemIcon>{getIcon(child.module_icon)}</ListItemIcon>
                       <ListItemText primary={child.module_name} />
                     </ListItem>
                   ))}
