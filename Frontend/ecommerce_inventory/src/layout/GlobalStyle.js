@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { Global, css } from '@emotion/react';
-import { useTheme } from '@mui/material/styles';
+import { Global, css } from "@emotion/react";
+import { useTheme } from "@mui/material/styles";
 
 // Define the Global Styles
 export const GlobalStyles = () => {
@@ -31,12 +31,20 @@ export const GlobalStyles = () => {
 
         /* Scrollbar thumb with gradient */
         *::-webkit-scrollbar-thumb {
-          background: linear-gradient(180deg, ${theme.palette.primary.light}, ${theme.palette.primary.dark});
+          background: linear-gradient(
+            180deg,
+            ${theme.palette.primary.light},
+            ${theme.palette.primary.dark}
+          );
           border-radius: 10px;
           border: 2px solid ${theme.palette.background.paper};
         }
         *:hover::-webkit-scrollbar-thumb {
-          background: linear-gradient(180deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark});
+          background: linear-gradient(
+            180deg,
+            ${theme.palette.primary.main},
+            ${theme.palette.primary.dark}
+          );
         }
 
         /* Remove scrollbar buttons */
@@ -56,25 +64,28 @@ export const GlobalStyles = () => {
 
         /* Firefox scrollbar color */
         * {
-          scrollbar-color: ${theme.palette.primary.main} ${theme.palette.background.paper};
+          scrollbar-color: ${theme.palette.primary.main}
+            ${theme.palette.background.paper};
         }
-        .profile-icon{
-          background-color:${theme.palette.primary.main}!important;
-          margin-right:7px!important;
+        .profile-icon {
+          background-color: ${theme.palette.primary.main}!important;
+          margin-right: 7px !important;
         }
-        .theme-icon{
-          margin-right:7px!important;  
-          background-color:${theme.palette.primary.light}!important;
+        .theme-icon {
+          margin-right: 7px !important;
+          background-color: ${theme.palette.primary.light}!important;
         }
         body {
           /* Define scrollbar styles for Chrome */
           scrollbar-width: thin;
-          scrollbar-color: ${theme.palette.primary.main} ${theme.palette.background.default};
-  
+          scrollbar-color: ${theme.palette.primary.main}
+            ${theme.palette.background.default};
+
           /* Define scrollbar styles for Firefox */
           scrollbar-width: thin;
-          scrollbar-color: ${theme.palette.primary.main} ${theme.palette.background.default};
-  
+          scrollbar-color: ${theme.palette.primary.main}
+            ${theme.palette.background.default};
+
           /* Hide scrollbar arrows */
           &::-webkit-scrollbar {
             width: 10px;
@@ -89,12 +100,20 @@ export const GlobalStyles = () => {
           &::-webkit-scrollbar-button {
             display: none; /* Hide scrollbar arrows */
           }
-  
+
           /* Hide scrollbar arrows in Firefox */
           scrollbar-width: thin;
-          scrollbar-color: ${theme.palette.primary.main} ${theme.palette.background.default};
+          scrollbar-color: ${theme.palette.primary.main}
+            ${theme.palette.background.default};
         }
-        
+
+        .fileInput {
+          border: 1px solid ${theme.palette.primary.main};
+          padding: 10px;
+        }
+        .fileInput label {
+          margin-right: 10px;
+        }
       `}
     />
   );

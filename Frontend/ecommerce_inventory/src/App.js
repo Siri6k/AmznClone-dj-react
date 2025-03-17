@@ -14,6 +14,9 @@ import { Provider } from "react-redux";
 import { fetchSidebar } from "./redux/reducer/sidebardata";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import DynamicForm from "./pages/DynamicForm";
+
+import "./style/style.css";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -51,7 +54,11 @@ function App() {
       path: "/",
       element: <ProtectedRoute element={<Layout />} />,
       children: [
-        { path: "home", element: <ProtectedRoute element={<Home />} /> },
+        { path: "/", element: <ProtectedRoute element={<Home />} /> },
+        {
+          path: "/form/:formName",
+          element: <ProtectedRoute element={<DynamicForm />} />,
+        },
       ], // Corrected: 'element' for route definition
     },
   ]);
@@ -61,6 +68,7 @@ function App() {
       <RouterProvider router={router} />
       <ToastContainer
         position="bottom-right"
+        theme="colored"
         autoClose={3000}
         hideProgressBar={false}
       />

@@ -9,6 +9,9 @@ function useApi() {
     setLoading(true);
 
     let response = null;
+    header["Authorization"] = localStorage.getItem("token")
+      ? `Bearer ${localStorage.getItem("token")}`
+      : "";
 
     try {
       response = await axios.request({

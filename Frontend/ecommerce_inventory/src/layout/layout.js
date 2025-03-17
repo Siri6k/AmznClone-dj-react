@@ -58,6 +58,9 @@ import {
   ReceiptOutlined,
   WarehouseOutlined,
   GroupAddOutlined,
+  ShoppingBagOutlined,
+  ShoppingCart,
+  ShoppingBasketRounded,
 } from "@mui/icons-material";
 import { ThemeProvider as Emotion10ThemeProvider } from "@emotion/react";
 import "./style.scss";
@@ -214,15 +217,13 @@ const Layout = ({ pageTitle }) => {
       case "Category":
         return <CategoryOutlined />;
       case "Redeem":
-        return <ShoppingBasketOutlined />;
+        return <ShoppingBasketRounded />;
       case "Warehouse":
         return <WarehouseOutlined />;
       case "GroupAdd":
         return <GroupOutlined />;
       case "Receipt":
         return <ReceiptOutlined />;
-      case "attendance":
-        return <AccountCircle />;
       case "ecommerce":
         return <BusinessIcon />;
       default:
@@ -252,7 +253,7 @@ const Layout = ({ pageTitle }) => {
       <List
         sx={{ "& .MuiListItem-root": { transition: "background-color 0.3s" } }}
       >
-        {sidebarItems.map((sidebarItem, index) => (
+        {sidebarItems.map((sidebarItem) => (
           <>
             <ListItem
               key={sidebarItem.id}
@@ -282,7 +283,7 @@ const Layout = ({ pageTitle }) => {
                     <ListItem
                       button
                       sx={{ pl: 4 }}
-                      key={child.id}
+                      key={child.module_name}
                       onClick={() => handleSidebarMenuClick(child)}
                     >
                       <ListItemIcon>{getIcon(child.module_icon)}</ListItemIcon>
