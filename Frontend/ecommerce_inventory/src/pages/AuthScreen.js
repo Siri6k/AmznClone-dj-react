@@ -77,7 +77,7 @@ const LoginForm = () => {
     if (response?.data?.access) {
       localStorage.setItem("token", response.data.access);
       toast.success("Login successfully");
-      navigate("/home");
+      navigate("/");
     } else {
       toast.error("Invalid Credentials");
     }
@@ -140,7 +140,7 @@ const SignupForm = () => {
     if (response?.data?.access) {
       localStorage.setItem("token", response.data.access);
       toast.success("Signup successfully");
-      navigate("/home");
+      navigate("/");
     } else {
       toast.error("Signup failed");
     }

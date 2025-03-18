@@ -18,6 +18,7 @@ import {
 import { current } from "@reduxjs/toolkit";
 import { ArrowBackIos, ArrowForwardIos, Save } from "@mui/icons-material";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 import StepSelectComponents from "../components/StepSelectComponents";
 import StepSwitchComponents from "../components/StepSwitchComponents";
@@ -87,11 +88,49 @@ const DynamicForm = () => {
     setCurrentStep(index);
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      const response = await callApi({
+        url: `http://localhost:8000/api/getForm/${formName}/`,
+        method: "post",
+        body: data,
+      });
+      toast.success(response.data.message);
+      setCurrentStep(0);
+      methods.reset();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const StepComponent = steps[currentStep].component;
+  const nextStep = () => {
+    const currentStepFields = getCurrentStepFields();
+    const errors = validateCurrentStepFields(currentStepFields);
+    if (errors.length > 0) {
+      errors.forEach((error) => {
+        methods.setError(error.name, {
+          type: "manual",
+          message: `${error.label} is Required`,
+        });
+      });
+    } else {
+      currentStepFields.forEach((field) => {
+        methods.clearErrors(field.name);
+      });
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const getCurrentStepFields = () => {
+    const currentStepType = steps[currentStep]?.fieldType;
+    return formConfig.data[currentStepType] || [];
+  };
+
+  const validateCurrentStepFields = (fields) => {
+    return fields.filter(
+      (fields) => fields.required && !methods.getValues()[fields.name]
+    );
+  };
 
   return (
     <Container>
@@ -114,10 +153,21 @@ const DynamicForm = () => {
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           {formConfig ? (
-            <StepComponent
-              formConfig={formConfig}
-              fieldType={steps[currentStep].fieldType}
-            />
+            <>
+              {steps.map((step, index) => (
+                <Box
+                  component={"div"}
+                  sx={{ display: index === currentStep ? "block" : "none" }}
+                >
+                  {step.component && (
+                    <step.component
+                      formConfig={formConfig}
+                      fieldType={step.fieldType}
+                    />
+                  )}
+                </Box>
+              ))}
+            </>
           ) : (
             <LinearProgress />
           )}
@@ -126,6 +176,7 @@ const DynamicForm = () => {
             {currentStep > 0 && (
               <Button
                 variant="contained"
+                type="button"
                 color="primary"
                 onClick={() => goToStep(currentStep - 1)}
               >
@@ -133,24 +184,43 @@ const DynamicForm = () => {
                 Back
               </Button>
             )}
-            {currentStep < steps.length - 1 ? (
+            {currentStep < steps.length - 1 && (
               <Button
                 variant="contained"
+                type="button"
                 color="primary"
-                onClick={() => goToStep(currentStep + 1)}
+                onClick={() => nextStep()}
               >
                 Next
                 <ArrowForwardIos sx={{ fontSize: "18px", marginLeft: "5px" }} />
               </Button>
-            ) : (
-              <Button variant="contained" color="primary" type="submit">
+            )}
+            {
+              <Button
+                sx={{
+                  display:
+                    currentStep === steps.length - 1 ? "inline-flex" : "none",
+                }}
+                variant="contained"
+                color="primary"
+                type="submit"
+              >
                 <Save sx={{ fontSize: "18px", marginRight: "5px" }} />
                 Submit
               </Button>
-            )}
+            }
           </Box>
         </form>
       </FormProvider>
+      {loading && (
+        <LinearProgress
+          style={{
+            width: "100%",
+            marginTop: "10px",
+            marginBottom: "10px",
+          }}
+        />
+      )}
     </Container>
   );
 };

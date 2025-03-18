@@ -11,7 +11,10 @@ import {
 import { useFormContext } from "react-hook-form";
 
 const StepTextComponents = ({ formConfig, fieldType }) => {
-  const { register } = useFormContext();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
   const textFields = formConfig.data.text;
   return (
     <Box>
@@ -22,6 +25,7 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
             label={field.label}
             margin="normal"
             key={field.name}
+            error={!!errors[field.name]}
             defaultValue={field.default}
             placeholder={field.placeholder}
             {...register(field.name, { required: field.required })}
