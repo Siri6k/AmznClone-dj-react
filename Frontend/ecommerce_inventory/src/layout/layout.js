@@ -84,7 +84,7 @@ import TextField from "@mui/material/TextField";
 import { Outlet, useNavigate } from "react-router-dom"; // Import Outlet
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { expandItem } from "../redux/reducer/sidebardata";
+import { activateItem, expandItem } from "../redux/reducer/sidebardata";
 
 const Layout = ({ pageTitle }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -184,14 +184,9 @@ const Layout = ({ pageTitle }) => {
   const drawerWidth = 280;
   const handleSidebarMenuClick = (sidebarItem, index) => {
     if (sidebarItem.submenus && sidebarItem.submenus.length > 0) {
-      //if (sidebarItem.expanded) {
-      //  sidebarItem.expanded = true;
-      //}
-      //sidebarItem.expanded = !sidebarItem.expanded;
-      //sidebarItems[index] = sidebarItem;
-      //setSidebarItems([...sidebarItems]);
       dispatch(expandItem({ id: sidebarItem.id }));
     } else {
+      dispatch(activateItem({ item: sidebarItem }));
       navigate(sidebarItem.module_url);
     }
   };
@@ -267,17 +262,28 @@ const Layout = ({ pageTitle }) => {
                   borderRadius: "10px",
                 },
               }}
+              className={sidebarItem?.active ? "active-sidebar" : ""}
             >
               <ListItemIcon>{getIcon(sidebarItem.module_icon)}</ListItemIcon>
               <ListItemText primary={sidebarItem.module_name} />
               {"submenus" in sidebarItem && sidebarItem.submenus.length > 0 ? (
-                <>{sidebarItem?.expanded ? <ExpandLess /> : <ExpandMore />}</>
+                <>
+                  {sidebarItem?.expanded || sidebarItem?.active ? (
+                    <ExpandLess />
+                  ) : (
+                    <ExpandMore />
+                  )}
+                </>
               ) : (
                 ""
               )}
             </ListItem>
             {"submenus" in sidebarItem && sidebarItem.submenus.length > 0 ? (
-              <Collapse in={sidebarItem?.expanded} timeout="auto" unmountOnExit>
+              <Collapse
+                in={sidebarItem?.expanded || sidebarItem?.active}
+                timeout="auto"
+                unmountOnExit
+              >
                 <List component="div" disablePadding>
                   {sidebarItem.submenus.map((child) => (
                     <ListItem
@@ -285,6 +291,7 @@ const Layout = ({ pageTitle }) => {
                       sx={{ pl: 4 }}
                       key={child.module_name}
                       onClick={() => handleSidebarMenuClick(child)}
+                      className={child?.active ? "active-sidebar" : ""}
                     >
                       <ListItemIcon>{getIcon(child.module_icon)}</ListItemIcon>
                       <ListItemText primary={child.module_name} />
