@@ -5,7 +5,13 @@ function useApi() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const callApi = async ({ url, method = "GET", body = {}, header = {} }) => {
+  const callApi = async ({
+    url,
+    method = "GET",
+    body = {},
+    header = {},
+    params = {},
+  }) => {
     setLoading(true);
 
     let response = null;
@@ -15,6 +21,7 @@ function useApi() {
 
     try {
       response = await axios.request({
+        params: params,
         url: url,
         method: method,
         data: body,

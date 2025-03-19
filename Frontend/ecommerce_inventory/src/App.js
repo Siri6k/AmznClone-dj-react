@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import DynamicForm from "./pages/DynamicForm";
 
 import "./style/style.css";
+import ManageCategories from "./pages/category/Managecategories";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -58,6 +59,10 @@ function App() {
         {
           path: "/form/:formName",
           element: <ProtectedRoute element={<DynamicForm />} />,
+        },
+        {
+          path: "/manage/category",
+          element: <ProtectedRoute element={<ManageCategories />} />,
         },
       ], // Corrected: 'element' for route definition
     },

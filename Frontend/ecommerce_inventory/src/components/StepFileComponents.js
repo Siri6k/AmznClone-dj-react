@@ -1,15 +1,5 @@
-import {
-  Alert,
-  Box,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
-  Switch,
-  TextField,
-} from "@mui/material";
 import { useFormContext } from "react-hook-form";
+import { Box, Alert } from "@mui/material";
 
 const StepFileComponents = ({ formConfig, fieldType }) => {
   const {
@@ -21,7 +11,7 @@ const StepFileComponents = ({ formConfig, fieldType }) => {
     <Box>
       {fileFields.map((field, index) => (
         <>
-          <Box key={field.name} component={"div"} className="fileInput">
+          <Box component={"div"} className="fileInput" key={index}>
             <label>{field.label}</label>
             <input
               type="file"
@@ -38,5 +28,4 @@ const StepFileComponents = ({ formConfig, fieldType }) => {
     </Box>
   );
 };
-
 export default StepFileComponents;
