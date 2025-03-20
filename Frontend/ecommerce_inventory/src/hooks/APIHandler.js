@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import config from "../utils/config";
 
 function useApi() {
   const [error, setError] = useState("");
@@ -12,6 +13,7 @@ function useApi() {
     header = {},
     params = {},
   }) => {
+    const gUrl = config.API_URL + url;
     setLoading(true);
 
     let response = null;
@@ -22,7 +24,7 @@ function useApi() {
     try {
       response = await axios.request({
         params: params,
-        url: url,
+        url: gUrl,
         method: method,
         data: body,
         headers: header,

@@ -81,10 +81,14 @@ import {
 import logo from "../assets/logo.svg";
 import { GlobalStyles } from "./GlobalStyle";
 import TextField from "@mui/material/TextField";
-import { Outlet, useNavigate } from "react-router-dom"; // Import Outlet
+import { Outlet, useLocation, useNavigate } from "react-router-dom"; // Import Outlet
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { activateItem, expandItem } from "../redux/reducer/sidebardata";
+import {
+  activateItem,
+  expandItem,
+  triggerPageChange,
+} from "../redux/reducer/sidebardata";
 
 const Layout = ({ pageTitle }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -98,6 +102,11 @@ const Layout = ({ pageTitle }) => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  useEffect(() => {
+    dispatch(triggerPageChange(location));
+  }, [location]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "basic";

@@ -1,5 +1,12 @@
 import { jwtDecode } from "jwt-decode";
 
+import StepSelectComponents from "../components/StepSelectComponents";
+import StepSwitchComponents from "../components/StepSwitchComponents";
+import StepTextareaComponents from "../components/StepTextareaComponents";
+import StepJsonComponents from "../components/StepJsonComponents";
+import StepFileComponents from "../components/StepFileComponents";
+import StepTextComponents from "../components/StepTextComponents";
+
 export const isAuthenticated = () => {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -38,4 +45,39 @@ export const isValidUrl = (url) => {
   } catch (err) {
     return false;
   }
+};
+
+export const getFormTypes = () => {
+  return [
+    {
+      component: StepSelectComponents,
+      label: "Basic Details",
+      fieldType: "select",
+    },
+    {
+      component: StepSwitchComponents,
+      label: "Checklist",
+      fieldType: "checkbox",
+    },
+    {
+      component: StepTextComponents,
+      label: "General Information",
+      fieldType: "text",
+    },
+    {
+      component: StepTextareaComponents,
+      label: "Detailed information",
+      fieldType: "textarea",
+    },
+    {
+      component: StepJsonComponents,
+      label: "Additionnal Details",
+      fieldType: "json",
+    },
+    {
+      component: StepFileComponents,
+      label: "Documents & Files",
+      fieldType: "file",
+    },
+  ];
 };

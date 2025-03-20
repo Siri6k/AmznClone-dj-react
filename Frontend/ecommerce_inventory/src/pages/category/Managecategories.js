@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import useApi from "../../hooks/APIHandler";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Breadcrumbs,
@@ -62,7 +62,7 @@ const ManageCategories = () => {
           : "-" + ordering[0].field;
     }
     const result = await callApi({
-      url: "http://localhost:8000/api/products/categories/",
+      url: "products/categories/",
       method: "GET",
       params: {
         page: paginationModel.page + 1,
@@ -80,6 +80,7 @@ const ManageCategories = () => {
   };
 
   const onAddClick = (params) => {
+    navigate(`/form/category`); // Ajoute un paramètre unique
     console.log(params);
   };
   const onEditClick = (params) => {

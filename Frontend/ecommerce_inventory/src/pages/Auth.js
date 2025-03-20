@@ -88,7 +88,7 @@ const Auth = () => {
     e.preventDefault();
     // Call the login API
     let response = await callApi({
-      url: "http://localhost:8000/api/auth/login/",
+      url: "auth/login/",
       method: "POST",
       body: {
         username: e.target.username.value,
@@ -109,7 +109,7 @@ const Auth = () => {
     e.preventDefault();
     // Call the login API
     let response = await callApi({
-      url: "http://localhost:8000/api/auth/signup/",
+      url: "auth/signup/",
       method: "POST",
       body: {
         username: e.target.username.value,

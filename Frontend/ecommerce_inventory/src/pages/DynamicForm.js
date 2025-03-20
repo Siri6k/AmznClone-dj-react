@@ -19,52 +19,16 @@ import { current } from "@reduxjs/toolkit";
 import { ArrowBackIos, ArrowForwardIos, Save } from "@mui/icons-material";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-
-import StepSelectComponents from "../components/StepSelectComponents";
-import StepSwitchComponents from "../components/StepSwitchComponents";
-import StepTextareaComponents from "../components/StepTextareaComponents";
-import StepJsonComponents from "../components/StepJsonComponents";
-import StepFileComponents from "../components/StepFileComponents";
-import StepTextComponents from "../components/StepTextComponents";
+import { getFormTypes } from "../utils/Helper";
 
 const DynamicForm = () => {
+  const stepItems = getFormTypes();
   const { formName } = useParams();
   const { loading, error, callApi } = useApi();
   const [formConfig, setFormConfig] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const methods = useForm();
-  const [steps, setSteps] = useState([
-    {
-      component: StepSelectComponents,
-      label: "Basic Details",
-      fieldType: "select",
-    },
-    {
-      component: StepSwitchComponents,
-      label: "Checklist",
-      fieldType: "checkbox",
-    },
-    {
-      component: StepTextComponents,
-      label: "General Information",
-      fieldType: "text",
-    },
-    {
-      component: StepTextareaComponents,
-      label: "Detailed information",
-      fieldType: "textarea",
-    },
-    {
-      component: StepJsonComponents,
-      label: "Additionnal Details",
-      fieldType: "json",
-    },
-    {
-      component: StepFileComponents,
-      label: "Documents & Files",
-      fieldType: "file",
-    },
-  ]);
+  const [steps, setSteps] = useState(stepItems);
 
   useEffect(() => {
     fetchForm();
@@ -72,16 +36,17 @@ const DynamicForm = () => {
 
   const fetchForm = async () => {
     const response = await callApi({
-      url: `http://localhost:8000/api/getForm/${formName}`,
+      url: `getForm/${formName}`,
     });
     // Filter steps that have datas
-    let stepFilter = steps.filter(
+    let stepFilter = stepItems.filter(
       (step) =>
         response.data.data[step.fieldType] &&
         response.data.data[step.fieldType].length > 0
     );
     setSteps(stepFilter);
     setFormConfig(response.data);
+    setCurrentStep(0);
   };
 
   const goToStep = (index) => {
@@ -91,7 +56,7 @@ const DynamicForm = () => {
   const onSubmit = async (data) => {
     try {
       const response = await callApi({
-        url: `http://localhost:8000/api/getForm/${formName}/`,
+        url: `getForm/${formName}/`,
         method: "post",
         body: data,
       });

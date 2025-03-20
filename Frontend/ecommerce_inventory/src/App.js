@@ -22,6 +22,7 @@ import ManageCategories from "./pages/category/Managecategories";
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
   const dispatch = useDispatch();
+
   const sidebarItems = [
     { name: "Home", link: "/home", icon: "home" },
     { name: "Products", link: "/products", icon: "products" },
@@ -56,13 +57,14 @@ function App() {
       element: <ProtectedRoute element={<Layout />} />,
       children: [
         { path: "/", element: <ProtectedRoute element={<Home />} /> },
-        {
-          path: "/form/:formName",
-          element: <ProtectedRoute element={<DynamicForm />} />,
-        },
+
         {
           path: "/manage/category",
           element: <ProtectedRoute element={<ManageCategories />} />,
+        },
+        {
+          path: "/form/:formName",
+          element: <ProtectedRoute element={<DynamicForm />} />,
         },
       ], // Corrected: 'element' for route definition
     },
