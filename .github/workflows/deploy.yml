@@ -46,5 +46,5 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest
             docker stop ecommerce-backend || true
             docker rm ecommerce-backend || true
-            docker run -d --name ecommerce-backend -p 80:8000 ${{ secrets.DOCKER_USERNAME }}
+            docker run -d --name ecommerce-backend -p 80:8000 ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest
           EOF
