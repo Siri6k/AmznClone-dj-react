@@ -25,8 +25,9 @@ WORKDIR /code
 #Copy Django project to the container
 COPY ./BAckend/EcommerceInventory/ /code/BAckend/EcommerceInventory/
 
-#Install the required packages
-RUN pip install -r ./BAckend/EcommerceInventory/requirements.txt
+# Install the required packages
+RUN pip install --upgrade pip
+RUN pip install -r /code/BAckend/EcommerceInventory/requirements.txt
 
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build /code/BAckend/EcommerceInventory/static/
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/static /code/BAckend/EcommerceInventory/static/
