@@ -22,12 +22,19 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
 
-#Copy Django project to the container
+# Install system dependencies (if needed)
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the Django project (submodule) to the container
 COPY ./BAckend/EcommerceInventory/ /code/BAckend/EcommerceInventory/
 
+# Upgrade pip and setuptools
+RUN pip install --upgrade pip setuptools
+
 # Install the required packages
-RUN pip install --upgrade pip
-RUN pip install -r /code/BAckend/EcommerceInventory/requirements.txt
+RUN pip install --verbose -r /code/BAckend/EcommerceInventory/requirements.txt
 
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build /code/BAckend/EcommerceInventory/static/
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/static /code/BAckend/EcommerceInventory/static/
