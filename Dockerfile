@@ -13,7 +13,7 @@ RUN yarn install
 #Building the frontend
 RUN yarn run build
 
-#Stage 2: Build Backend
+#Stage 2: Build BAckend
 FROM python:3.12.5
 
 #Set Environnement variables
@@ -23,25 +23,25 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /code
 
 #Copy Django project to the container
-COPY ./Backend/EcommerceInventory/ /code/Backend/EcommerceInventory/
+COPY ./BAckend/EcommerceInventory/ /code/BAckend/EcommerceInventory/
 
 #Install the required packages
-RUN pip install -r ./Backend/EcommerceInventory/requirements.txt
+RUN pip install -r ./BAckend/EcommerceInventory/requirements.txt
 
-COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build /code/Backend/EcommerceInventory/static/
-COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/static /code/Backend/EcommerceInventory/static/
-COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/index.html /code/Backend/EcommerceInventory/EcommerceInventory/templates/index.html
+COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build /code/BAckend/EcommerceInventory/static/
+COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/static /code/BAckend/EcommerceInventory/static/
+COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/index.html /code/BAckend/EcommerceInventory/EcommerceInventory/templates/index.html
 
 #Run Migration command
-RUN python ./Backend/EcommerceInventory/manage.py migrate
+RUN python ./BAckend/EcommerceInventory/manage.py migrate
 
 #Run Django CollectStatic
-RUN python ./Backend/EcommerceInventory/manage.py collectstatic --no-input
+RUN python ./BAckend/EcommerceInventory/manage.py collectstatic --no-input
 
 #Expose the port
 EXPOSE 80
 
-WORKDIR /code/Backend/EcommerceInventory
+WORKDIR /code/BAckend/EcommerceInventory
 
 #Run the Django Server
 CMD ["gunicorn", "EcommerceInventory.wsgi.application","--bind","0.0.0.0:80"]
