@@ -52,4 +52,4 @@ EXPOSE 80
 WORKDIR /code/BAckend/EcommerceInventory
 
 #Run the Django Server
-CMD ["gunicorn", "EcommerceInventory.wsgi:application","--bind","0.0.0.0:80"]
+CMD ["gunicorn", "EcommerceInventory.wsgi:application","--bind","0.0.0.0:8000"]
