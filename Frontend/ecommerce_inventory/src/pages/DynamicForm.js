@@ -39,14 +39,18 @@ const DynamicForm = () => {
       url: `getForm/${formName}`,
     });
     // Filter steps that have datas
-    let stepFilter = stepItems.filter(
-      (step) =>
-        response.data.data[step.fieldType] &&
-        response.data.data[step.fieldType].length > 0
-    );
-    setSteps(stepFilter);
-    setFormConfig(response.data);
-    setCurrentStep(0);
+    if (response?.data) {
+      let stepFilter = stepItems.filter(
+        (step) =>
+          response.data.data[step.fieldType] &&
+          response.data.data[step.fieldType].length > 0
+      );
+      setSteps(stepFilter);
+      setFormConfig(response.data);
+      setCurrentStep(0);
+    } else {
+      toast.error("Error in Fetching Form Data");
+    }
   };
 
   const goToStep = (index) => {
