@@ -35,21 +35,34 @@ const DynamicForm = () => {
   }, [formName]);
 
   const fetchForm = async () => {
-    const response = await callApi({
-      url: `getForm/${formName}`,
-    });
-    // Filter steps that have datas
-    if (response?.data) {
-      let stepFilter = stepItems.filter(
+    try {
+      if (!formName) {
+        toast.error("Form name is missing");
+        return;
+      }
+
+      const response = await callApi({
+        url: `getForm/${formName}`,
+      });
+
+      if (!response?.data?.data) {
+        throw new Error("Invalid response structure");
+      }
+
+      // Filter steps that have datas
+      const stepFilter = stepItems.filter(
         (step) =>
           response.data.data[step.fieldType] &&
           response.data.data[step.fieldType].length > 0
       );
+
+      // Batch state updates if needed
       setSteps(stepFilter);
       setFormConfig(response.data);
       setCurrentStep(0);
-    } else {
-      toast.error("Error in Fetching Form Data");
+    } catch (error) {
+      console.error("Failed to fetch form:", error);
+      toast.error(error.message || "Error in Fetching Form Data");
     }
   };
 
