@@ -42,12 +42,12 @@ const DynamicForm = () => {
       }
 
       const response = await callApi({
-        url: `getForm/${formName}`,
+        url: `getForm/${formName}/`,
       });
 
-      if (!response?.data?.data) {
+      /* if (!response?.data?.data) {
         throw new Error("Invalid response structure");
-      }
+      }*/
 
       // Filter steps that have datas
       const stepFilter = stepItems.filter(
