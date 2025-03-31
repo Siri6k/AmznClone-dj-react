@@ -27,7 +27,7 @@ jobs:
         working-directory: ./BAckend/EcommerceInventory
         run: |
           cat <<EOF > .env
-          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
           DEBUG=False
           DATABASE_HOST=${{ secrets.DATABASE_HOST }}
           DATABASE_NAME=${{ secrets.DATABASE_NAME }}
@@ -50,12 +50,13 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
-        run: |
-          docker buildx build \
-            --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
-            -t ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest \
-            --load . 
-          docker push ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest
+          build-args: |
+            SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
 
       - name: Setup SSH
         run: |
@@ -74,7 +75,7 @@ jobs:
             docker run -d \
              --name ecommerce-backend \
              -p 80:8000 \
-             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
+             -e SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} \
              -e DB_HOST=${{ secrets.DATABASE_HOST }} \
              -e DB_NAME=${{ secrets.DATABASE_NAME }} \
              -e DB_USER=${{ secrets.DATABASE_USER }} \
