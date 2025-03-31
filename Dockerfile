@@ -1,4 +1,3 @@
-ARG SECRET_KEY
 #Stage 1: Build Frontend
 FROM node:20 as build-stage
 
@@ -42,10 +41,13 @@ COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build /code/BAckend/
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/static /code/BAckend/EcommerceInventory/static/
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/index.html /code/BAckend/EcommerceInventory/EcommerceInventory/templates/index.html
 
+# Configure secret key
+ARG SECRET_KEY
 ENV SECRET_KEY=$SECRET_KEY
 
+
 #Run Migration command
-RUN python ./BAckend/EcommerceInventory/manage.py migrate
+RUN python ./backend/manage.py migrate --no-input 
 
 #Run Django CollectStatic
 RUN python ./BAckend/EcommerceInventory/manage.py collectstatic --no-input
