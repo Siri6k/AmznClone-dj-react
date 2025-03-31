@@ -50,7 +50,7 @@ const StepSelectComponents = ({ formConfig, fieldType }) => {
               null
             }
             onChange={(event, newValue) => {
-              setValue(field.name, newValue?.newValue.id || "");
+              setValue(field.name, newValue ? newValue.id : "");
             }}
             renderInput={(params) => (
               <TextField
