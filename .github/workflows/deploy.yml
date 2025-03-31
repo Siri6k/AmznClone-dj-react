@@ -51,9 +51,10 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build \
+          docker buildx build \
             --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
-            -t ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest .
+            -t ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest \
+            --load . 
           docker push ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest
 
       - name: Setup SSH
