@@ -1,5 +1,7 @@
+ARG SECRET_KEY
 #Stage 1: Build Frontend
 FROM node:20 as build-stage
+
 
 WORKDIR /code
 
@@ -39,6 +41,8 @@ RUN pip install --verbose -r /code/BAckend/EcommerceInventory/requirements.txt
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build /code/BAckend/EcommerceInventory/static/
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/static /code/BAckend/EcommerceInventory/static/
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/index.html /code/BAckend/EcommerceInventory/EcommerceInventory/templates/index.html
+
+ENV SECRET_KEY=$SECRET_KEY
 
 #Run Migration command
 RUN python ./BAckend/EcommerceInventory/manage.py migrate
