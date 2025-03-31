@@ -52,7 +52,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build \
-            --build-arg SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} \
+            --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
             -t ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest
 
