@@ -76,9 +76,9 @@ jobs:
              --name ecommerce-backend \
              -p 80:8000 \
              -e SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} \
-             -e DB_HOST=${{ secrets.DATABASE_HOST }} \
-             -e DB_NAME=${{ secrets.DATABASE_NAME }} \
-             -e DB_USER=${{ secrets.DATABASE_USER }} \
-             -e DB_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \ 
+             -e DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
+             -e DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
+             -e DATABASE_USER=${{ secrets.DATABASE_USER }} \
+             -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \ 
              ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest
           EOF
