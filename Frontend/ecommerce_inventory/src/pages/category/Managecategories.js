@@ -80,15 +80,24 @@ const ManageCategories = () => {
     }
   };
 
-  const onAddClick = (params) => {
-    navigate(`/form/category`); // Ajoute un paramètre unique
+  const navUrl = (url) => {
+    navigate(url);
+    //navigate(0);
+
+    console.log(url);
+  };
+
+  const onDeleteClick = (params) => {
     console.log(params);
   };
   const onEditClick = (params) => {
     console.log(params);
+    navUrl(`/form/category/${params.row.id}`);
   };
-  const onDeleteClick = (params) => {
+
+  const onAddClick = (params) => {
     console.log(params);
+    navUrl("/form/category");
   };
 
   const generateColumns = (data) => {

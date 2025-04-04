@@ -1,6 +1,6 @@
 // Desc: Dynamic form component that will be used to render forms dynamically
 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useApi from "../hooks/APIHandler";
 import { useEffect, useState } from "react";
 
@@ -15,7 +15,7 @@ import {
   Stepper,
   Typography,
 } from "@mui/material";
-import { current } from "@reduxjs/toolkit";
+
 import { ArrowBackIos, ArrowForwardIos, Save } from "@mui/icons-material";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -23,12 +23,14 @@ import { getFormTypes } from "../utils/Helper";
 
 const DynamicForm = () => {
   const stepItems = getFormTypes();
-  const { formName } = useParams();
+  const { formName, id } = useParams();
   const { loading, error, callApi } = useApi();
   const [formConfig, setFormConfig] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const methods = useForm();
   const [steps, setSteps] = useState(stepItems);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchForm();
@@ -36,13 +38,10 @@ const DynamicForm = () => {
 
   const fetchForm = async () => {
     try {
-      if (!formName) {
-        toast.error("Form name is missing");
-        return;
-      }
+      const PID = id ? `${id}/` : "";
 
       const response = await callApi({
-        url: `getForm/${formName}/`,
+        url: `getForm/${formName}/${PID}`,
       });
 
       if (!response?.data?.data) {
@@ -72,14 +71,32 @@ const DynamicForm = () => {
 
   const onSubmit = async (data) => {
     try {
+      const isError = false;
+      const currentStepFields = getCurrentStepFields();
+      const errors = validateCurrentStepFields(currentStepFields);
+      if (errors.length > 0) {
+        errors.forEach((error) => {
+          methods.setError(error.name, {
+            type: "manual",
+            message: `${error.label} is Required`,
+          });
+          isError = true;
+        });
+      }
+
+      if (isError) {
+        return;
+      }
+      const PID = id ? `${id}/` : "";
       const response = await callApi({
-        url: `getForm/${formName}/`,
+        url: `getForm/${formName}/${PID}`,
         method: "post",
         body: data,
       });
       toast.success(response.data.message);
       setCurrentStep(0);
       methods.reset();
+      navigate("/manage/category");
     } catch (err) {
       console.log(err);
     }
@@ -117,10 +134,10 @@ const DynamicForm = () => {
   return (
     <Container>
       <Typography variant="h6" gutterBottom>
-        Add {formName.toUpperCase()}
+        {id ? "EDIT" : "ADD"} {formName.toUpperCase()}
       </Typography>
       <Divider sx={{ marginBottom: "15px", marginTop: "15px" }} />
-      <Stepper activeStep={currentStep} alternativeLabel>
+      <Stepper activeStep={currentStep} sx={{overflow:"auto"}} alternativeLabel>
         {steps.map((step, index) => (
           <Step key={index} onClick={() => goToStep(index)}>
             <StepLabel>{step.label}</StepLabel>

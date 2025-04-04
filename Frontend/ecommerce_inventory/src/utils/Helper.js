@@ -42,12 +42,12 @@ export const isValidUrl = (url) => {
   try {
     if (Array.isArray(url)) {
       let image = url.filter(
-        (item) => item.match(/\.(jpeg|jpg|gif|png)$/) != null
+        (item) => item.match(/\.(jpeg|jpg|gif|png)$/i) != null
       );
       new URL(image[0]);
     } else if (checkIsJson(url) && JSON.parse(url).length > 0) {
       let image = JSON.parse(url).filter(
-        (item) => item.match(/\.(jpeg|jpg|gif|png)$/) != null
+        (item) => item.match(/\.(jpeg|jpg|gif|png)$/i) != null
       );
       new URL(image[0]);
     } else {
@@ -62,12 +62,12 @@ export const isValidUrl = (url) => {
 export const getImageUrl = (url) => {
   if (Array.isArray(url)) {
     let image = url.filter(
-      (item) => item.match(/\.(jpeg|jpg|gif|png)$/) != null
+      (item) => item.match(/\.(jpeg|jpg|gif|png)$/i) != null
     );
     return image[0];
   } else if (checkIsJson(url) && JSON.parse(url).length > 0) {
     let image = JSON.parse(url).filter(
-      (item) => item.match(/\.(jpeg|jpg|gif|png)$/) != null
+      (item) => item.match(/\.(jpeg|jpg|gif|png)$/i) != null
     );
     return image[0];
   } else {
@@ -117,4 +117,31 @@ export const getFormTypes = () => {
       fieldType: "file",
     },
   ];
+};
+
+export const getFileNameFromUrl = (url) => {
+  const parseUrl = new URL(url);
+  const pathname = parseUrl.pathname;
+  const filename = pathname.substring(pathname.lastIndexOf("/") + 1);
+  return filename;
+};
+
+export const getFileMimeTypeFromFileName = (filename) => {
+  const extension = filename.split(".").pop().toLowerCase();
+  const mimeTypes = {
+    txt: "text/plain",
+    html: "text/html",
+    htm: "text/html",
+    css: "text/css",
+    js: "application/javascript",
+    jpg: "image/jpg",
+    png: "image/png",
+    jpeg: "image/jpeg",
+    mp3: "audio/mpeg",
+  };
+  if (extension in mimeTypes) {
+    return mimeTypes[extension];
+  } else {
+    return "other/other";
+  }
 };

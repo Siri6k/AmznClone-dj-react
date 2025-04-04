@@ -47,6 +47,7 @@ const StepSelectComponents = ({ formConfig, fieldType }) => {
             getOptionLabel={(option) => option.value}
             defaultValue={
               field.options.find((option) => option.id === watch(field.name)) ||
+              field.options.find((option) => option.id === field.default) ||
               null
             }
             onChange={(event, newValue) => {
