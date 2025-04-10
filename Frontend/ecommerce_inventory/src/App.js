@@ -20,6 +20,7 @@ import DynamicForm from "./pages/DynamicForm";
 
 import "./style/style.css";
 import ManageCategories from "./pages/category/Managecategories";
+import ManageProducts from "./pages/product/ManageProducts";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -50,6 +51,10 @@ function App() {
         {
           path: "/manage/category",
           element: <ManageCategories />,
+        },
+        {
+          path: "/manage/product",
+          element: <ManageProducts />,
         },
       ],
     },

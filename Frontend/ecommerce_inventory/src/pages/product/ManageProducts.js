@@ -1,9 +1,14 @@
-import { useState, useEffect, use } from "react";
+// File: ManageProducts.js
+import React, { useState, useEffect, use } from "react";
 import useApi from "../../hooks/APIHandler";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
   Breadcrumbs,
+  Button,
+  Dialog,
+  DialogContent,
+  Divider,
   IconButton,
   LinearProgress,
   TextField,
@@ -13,18 +18,19 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 
 import {
   Add,
+  Circle,
+  Dashboard,
   Delete,
   Edit,
   ExpandLessRounded,
   ExpandMoreRounded,
+  ViewCompact,
 } from "@mui/icons-material";
 
-import ExpandableRow from "./ExpandableRow";
 import RenderImage from "../../components/RenderImge";
-import { set } from "react-hook-form";
 import TimeAgo from "../../components/TimeAgo";
 
-const ManageCategories = () => {
+const ManageProducts = () => {
   const [data, setData] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -41,9 +47,25 @@ const ManageCategories = () => {
   ]);
 
   const [columns, setColumns] = useState([]);
+  const [jsonData, setJsonData] = useState([]);
+  const [modelTitle, setModelTitle] = useState("");
+
+  const [open, setOpen] = useState(false);
+
+  const [htmlData, setHTMLData] = useState("");
+
+  const [openHtml, setOpenHtml] = useState(false);
+
+  const handleclose = () => {
+    setOpen(false);
+  };
+
+  const handleclose2 = () => {
+    setOpenHtml(false);
+  };
 
   const { error, loading, callApi } = useApi();
-  const [url, setUrl] = useState("/manage/category");
+  const [url, setUrl] = useState("/manage/product");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,7 +78,7 @@ const ManageCategories = () => {
     };
   }, [searchQuery]);
 
-  const getCategories = async () => {
+  const getProducts = async () => {
     let order = "-id";
     if (ordering.length > 0) {
       order =
@@ -65,7 +87,7 @@ const ManageCategories = () => {
           : "-" + ordering[0].field;
     }
     const result = await callApi({
-      url: "products/categories/",
+      url: "products/",
       method: "GET",
       params: {
         page: paginationModel.page + 1,
@@ -91,11 +113,21 @@ const ManageCategories = () => {
   };
 
   const onEditClick = (params) => {
-    setUrl(`/form/category/${params.row.id}`);
+    setUrl(`/form/product/${params.row.id}`);
   };
 
   const onAddClick = (params) => {
-    setUrl("/form/category");
+    setUrl("/form/product");
+  };
+
+  const showJSONData = (item, title) => {
+    setModelTitle(title);
+    setOpen(true);
+    setJsonData(item);
+  };
+  const showHTMLDescription = (data) => {
+    setHTMLData(data);
+    setOpenHtml(true);
   };
 
   const generateColumns = (data) => {
@@ -104,7 +136,7 @@ const ManageCategories = () => {
         {
           field: "action",
           headerName: "Action",
-          width: 180,
+          width: 220,
           sortable: false,
           renderCell: (params) => {
             return (
@@ -122,55 +154,9 @@ const ManageCategories = () => {
             );
           },
         },
-        {
-          field: "expand",
-          headerName: "Expand",
-          width: 100,
-          sortable: false,
-          renderCell: (params) => {
-            return (
-              <IconButton
-                onClick={() => {
-                  const updatedRows = data.map((row) => {
-                    if (row.id === params.row.id) {
-                      if (row?.open) {
-                        row.open = false;
-                      } else {
-                        row.open = true;
-                      }
-                    }
-                    return row;
-                  });
-                  setData([...updatedRows]);
-                }}
-              >
-                {params.row?.open ? (
-                  <ExpandLessRounded />
-                ) : (
-                  <ExpandMoreRounded />
-                )}
-              </IconButton>
-            );
-          },
-        },
       ];
       for (const key in data[0]) {
-        if (key === "children") {
-          columns.push({
-            field: key,
-            headerName:
-              key.charAt(0).toUpperCase() + key.slice(1).replaceAll("_", " "),
-            width: 150,
-            sortable: false,
-            renderCell: (params) => {
-              return (
-                <Typography variant="body2" pt={3} pb={3}>
-                  {params.row.children?.length}
-                </Typography>
-              );
-            },
-          });
-        } else if (key === "image") {
+        if (key === "image") {
           columns.push({
             field: key,
             headerName:
@@ -192,8 +178,66 @@ const ManageCategories = () => {
           });
         }
       }
-
+      columns.push({
+        field: "questions",
+        headerName: "Questions",
+        width: 150,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+            <Button startIcon={<ViewCompact />} variant="contained">
+              View
+            </Button>
+          );
+        },
+      });
+      columns.push({
+        field: "reviews",
+        headerName: "Reviews",
+        width: 150,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+            <Button startIcon={<ViewCompact />} variant="contained">
+              View
+            </Button>
+          );
+        },
+      });
       columns = columns.map((column) => {
+        if (
+          column.field === "specifications" ||
+          column.field === "highlights" ||
+          column.field === "seo_keywords" ||
+          column.field === "addition_details"
+        ) {
+          return {
+            field: column.field,
+            headerName:
+              column.field.charAt(0).toUpperCase() +
+              column.field.slice(1).replaceAll("_", " "),
+            width: 150,
+            sortable: false,
+            renderCell: (params) => {
+              return (
+                <Button
+                  onClick={() =>
+                    showJSONData(
+                      params.row[column.field],
+                      column.field.charAt(0).toUpperCase() +
+                        column.field.slice(1).replaceAll("_", " ")
+                    )
+                  }
+                  startIcon={<ViewCompact />}
+                  variant="contained"
+                >
+                  View
+                </Button>
+              );
+            },
+          };
+        }
+
         if (column.field === "created_at" || column.field === "updated_at") {
           return {
             field: column.field,
@@ -208,15 +252,36 @@ const ManageCategories = () => {
           };
         }
 
+        if (column.field === "html_description") {
+          return {
+            field: "html_description",
+            headerName: "HTML Description",
+            width: 150,
+            sortable: false,
+            renderCell: (params) => {
+              return (
+                <Button
+                  onClick={() =>
+                    showHTMLDescription(params.row.html_description)
+                  }
+                  startIcon={<ViewCompact />}
+                  variant="contained"
+                >
+                  View
+                </Button>
+              );
+            },
+          };
+        }
+
         return column;
       });
-
       setColumns(columns);
     }
   };
 
   useEffect(() => {
-    getCategories();
+    getProducts();
   }, [paginationModel, debounceSearch, ordering]);
 
   const handleSorting = (newModel) => {
@@ -229,11 +294,8 @@ const ManageCategories = () => {
         <Typography variant="body2" onClick={() => navigate("/home")}>
           Home
         </Typography>
-        <Typography
-          variant="body2"
-          onClick={() => navigate("/manage/category")}
-        >
-          Manage Category
+        <Typography variant="body2" onClick={() => navigate("/manage/product")}>
+          Manage Products
         </Typography>
       </Breadcrumbs>
       <TextField
@@ -269,20 +331,42 @@ const ManageCategories = () => {
         slots={{
           loadingOverlay: LinearProgress,
           toolbar: GridToolbar,
-          row: (props) => {
-            return (
-              <ExpandableRow
-                props={props}
-                row={props.row}
-                onEditClick={onEditClick}
-                onDeleteClick={onDeleteClick}
-              />
-            );
-          },
         }}
       />
+      <Dialog
+        open={open}
+        onClose={handleclose}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogContent>
+          <Typography variant="h5">{modelTitle} Details</Typography>
+          <Divider sx={{ margin: "10px 0" }} />
+          {jsonData.map((item, index) => (
+            <React.Fragment key={index}>
+              <Typography variant="body1">
+                <Circle sx={{ fontSize: "10px", marginRight: "10px" }} />
+                {item.key} : {item.value}
+              </Typography>
+              <Divider sx={{ margin: "5px 0" }} />
+            </React.Fragment>
+          ))}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={openHtml}
+        onClose={handleclose2}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogContent>
+          <Typography variant="h5">HTML Description</Typography>
+          <Divider sx={{ margin: "10px 0" }} />
+          <div dangerouslySetInnerHTML={{ __html: htmlData }}></div>
+          <Divider sx={{ margin: "5px 0" }} />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };
 
-export default ManageCategories;
+export default ManageProducts;
