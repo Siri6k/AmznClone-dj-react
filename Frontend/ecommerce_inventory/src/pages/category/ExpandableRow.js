@@ -4,7 +4,7 @@ import { Box } from "@mui/system";
 import { DataGrid, GridRow, GridToolbar } from "@mui/x-data-grid";
 import RenderImage from "../../components/RenderImge";
 
-const ExpandableRow = ({ row, props, onEditClick, onDeleteClick }) => {
+const ExpandableRow = ({ props, row, onEditClick, onDeleteClick }) => {
   let columns = [];
   if (row.children && row.children.length > 0) {
     columns = Object.keys(row.children[0])

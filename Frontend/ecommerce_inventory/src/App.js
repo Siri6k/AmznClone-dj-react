@@ -41,15 +41,15 @@ function App() {
       path: "/",
       element: <ProtectedRoute element={<Layout />} />,
       children: [
-        { path: "/", element: <ProtectedRoute element={<Home />} /> },
-        { path: "/home", element: <ProtectedRoute element={<Home />} /> },
+        { path: "/", element: <Home /> },
+        { path: "/home", element: <Home /> },
         {
           path: "/form/:formName/:id?",
-          element: <ProtectedRoute element={<DynamicForm />} />,
+          element: <DynamicForm />,
         },
         {
           path: "/manage/category",
-          element: <ProtectedRoute element={<ManageCategories />} />,
+          element: <ManageCategories />,
         },
       ],
     },

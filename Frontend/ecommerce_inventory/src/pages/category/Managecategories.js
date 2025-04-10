@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import useApi from "../../hooks/APIHandler";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Breadcrumbs,
@@ -19,9 +19,9 @@ import {
   ExpandMoreRounded,
 } from "@mui/icons-material";
 
-import { isValidUrl } from "../../utils/Helper";
 import ExpandableRow from "./ExpandableRow";
 import RenderImage from "../../components/RenderImge";
+import { set } from "react-hook-form";
 
 const ManageCategories = () => {
   const [data, setData] = useState([]);
@@ -42,6 +42,7 @@ const ManageCategories = () => {
   const [columns, setColumns] = useState([]);
 
   const { error, loading, callApi } = useApi();
+  const [url, setUrl] = useState("/manage/category");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,24 +81,20 @@ const ManageCategories = () => {
     }
   };
 
-  const navUrl = (url) => {
-    navigate(url);
-    //navigate(0);
-
-    console.log(url);
-  };
+  useEffect(() => {
+    navigate(url, { replace: true });
+  }, [url]);
 
   const onDeleteClick = (params) => {
     console.log(params);
   };
+
   const onEditClick = (params) => {
-    console.log(params);
-    navUrl(`/form/category/${params.row.id}`);
+    setUrl(`/form/category/${params.row.id}`);
   };
 
   const onAddClick = (params) => {
-    console.log(params);
-    navUrl("/form/category");
+    setUrl("/form/category");
   };
 
   const generateColumns = (data) => {
@@ -255,8 +252,8 @@ const ManageCategories = () => {
           row: (props) => {
             return (
               <ExpandableRow
-                row={props.row}
                 props={props}
+                row={props.row}
                 onEditClick={onEditClick}
                 onDeleteClick={onDeleteClick}
               />

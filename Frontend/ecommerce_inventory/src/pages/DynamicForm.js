@@ -24,7 +24,7 @@ import { getFormTypes } from "../utils/Helper";
 const DynamicForm = () => {
   const stepItems = getFormTypes();
   const { formName, id } = useParams();
-  const { loading, error, callApi } = useApi();
+  const { callApi, loading } = useApi();
   const [formConfig, setFormConfig] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const methods = useForm();
@@ -137,7 +137,11 @@ const DynamicForm = () => {
         {id ? "EDIT" : "ADD"} {formName.toUpperCase()}
       </Typography>
       <Divider sx={{ marginBottom: "15px", marginTop: "15px" }} />
-      <Stepper activeStep={currentStep} sx={{overflow:"auto"}} alternativeLabel>
+      <Stepper
+        activeStep={currentStep}
+        sx={{ overflow: "auto" }}
+        alternativeLabel
+      >
         {steps.map((step, index) => (
           <Step key={index} onClick={() => goToStep(index)}>
             <StepLabel>{step.label}</StepLabel>
