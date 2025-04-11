@@ -35,8 +35,7 @@ COPY ./BAckend/EcommerceInventory/ /code/BAckend/EcommerceInventory/
 RUN pip install --upgrade pip setuptools
 
 # Install the required packages
-RUN pip install --verbose -r /code/BAckend/EcommerceInventory/requirements.txt
-
+RUN pip install -r /code/BAckend/EcommerceInventory/requirements.txt 
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build /code/BAckend/EcommerceInventory/static/
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/static /code/BAckend/EcommerceInventory/static/
 COPY --from=build-stage ./code/Frontend/ecommerce_inventory/build/index.html /code/BAckend/EcommerceInventory/EcommerceInventory/templates/index.html
@@ -58,4 +57,4 @@ EXPOSE 80
 WORKDIR /code/BAckend/EcommerceInventory
 
 #Run the Django Server
-CMD ["gunicorn", "EcommerceInventory.wsgi:application","--bind","0.0.0.0:8000"]
+CMD ["gunicorn", "EcommerceInventory.wsgi:application", "--config", "gunicorn.conf.py"]
