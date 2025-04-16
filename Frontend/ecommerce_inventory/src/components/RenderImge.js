@@ -1,9 +1,10 @@
 import { Typography } from "@mui/material";
 import { getImageUrl, isValidUrl } from "../utils/Helper";
+import Image from "./Image";
 
 const RenderImage = ({ data, name }) => {
   return data && data !== "" && isValidUrl(data) ? (
-    <img
+    <Image
       src={getImageUrl(data)}
       alt={name}
       style={{ width: 70, height: 70, padding: "5px" }}

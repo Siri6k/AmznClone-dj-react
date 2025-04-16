@@ -33,9 +33,7 @@ const FileInputComponent = ({ field }) => {
   const [filePreviews, setFilePreviews] = useState([]);
   const [fileUploaded, setFileUploaded] = useState(false);
   const [oldFiles, setOldFiles] = useState(
-    checkIsJson(field.default) && Array.isArray(JSON.parse(field.default))
-      ? JSON.parse(field.default)
-      : []
+    Array.isArray(field.default) ? field.default : []
   );
   const [oldFilePreviews, setOldFilePreviews] = useState([]);
   const [newFilesUrl, setNewFilesUrl] = useState([]);
@@ -114,7 +112,7 @@ const FileInputComponent = ({ field }) => {
   const buildFileUrls = () => {
     const finalUrl = [...oldFiles, ...newFilesUrl];
     if (finalUrl.length > 0) {
-      setValue(field.name, JSON.stringify(finalUrl));
+      setValue(field.name, finalUrl);
     } else {
       resetField(field.name);
     }

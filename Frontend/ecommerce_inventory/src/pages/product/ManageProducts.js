@@ -1,5 +1,5 @@
 // File: ManageProducts.js
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect, use, useRef } from "react";
 import useApi from "../../hooks/APIHandler";
 import { useNavigate } from "react-router-dom";
 import {
@@ -9,6 +9,7 @@ import {
   Dialog,
   DialogContent,
   Divider,
+  Grid,
   IconButton,
   LinearProgress,
   TextField,
@@ -19,16 +20,19 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import {
   Add,
   Circle,
+  Close,
   Dashboard,
   Delete,
   Edit,
   ExpandLessRounded,
   ExpandMoreRounded,
+  PanoramaRounded,
   ViewCompact,
 } from "@mui/icons-material";
 
 import RenderImage from "../../components/RenderImge";
 import TimeAgo from "../../components/TimeAgo";
+import Image from "../../components/Image";
 
 const ManageProducts = () => {
   const [data, setData] = useState([]);
@@ -65,7 +69,12 @@ const ManageProducts = () => {
   };
 
   const { error, loading, callApi } = useApi();
-  const [url, setUrl] = useState("/manage/product");
+  const [url, setUrl] = useState("");
+
+  const [showImages, setShowImages] = useState(false);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const divImage = useRef();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -105,7 +114,9 @@ const ManageProducts = () => {
   };
 
   useEffect(() => {
-    navigate(url, { replace: true });
+    if (url) {
+      navigate(url);
+    }
   }, [url]);
 
   const onDeleteClick = (params) => {
@@ -165,7 +176,17 @@ const ManageProducts = () => {
             sortable: false,
             renderCell: (params) => {
               return (
-                <RenderImage data={params.row.image} name={params.row.name} />
+                <Box display={"flex"}>
+                  <RenderImage data={params.row.image} name={params.row.name} />
+                  <IconButton
+                    onClick={() => {
+                      setSelectedImages(params.row.image);
+                      setShowImages(true);
+                    }}
+                  >
+                    <PanoramaRounded />
+                  </IconButton>
+                </Box>
               );
             },
           });
@@ -281,6 +302,12 @@ const ManageProducts = () => {
   };
 
   useEffect(() => {
+    if (showImages) {
+      divImage.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [selectedImages]);
+
+  useEffect(() => {
     getProducts();
   }, [paginationModel, debounceSearch, ordering]);
 
@@ -298,41 +325,78 @@ const ManageProducts = () => {
           Manage Products
         </Typography>
       </Breadcrumbs>
-      <TextField
-        label="search"
-        variant="outlined"
-        margin="normal"
-        fullWidth
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-      <DataGrid
-        rows={data}
-        columns={columns}
-        rowHeight={75}
-        sortingOrder={["asc", "desc"]}
-        sortModel={ordering}
-        onSortModelChange={handleSorting}
-        paginationMode="server"
-        initialState={{
-          ...data.initialState,
-          pagination: { paginationModel: paginationModel },
-        }}
-        pageSizeOptions={[5, 10, 20]}
-        pagination
-        rowCount={totalItems}
-        loading={loading}
-        rowSelection={false}
-        onPaginationModelChange={(pagedetails) => {
-          setPaginationModel({
-            page: pagedetails.page,
-            pageSize: pagedetails.pageSize,
-          });
-        }}
-        slots={{
-          loadingOverlay: LinearProgress,
-          toolbar: GridToolbar,
-        }}
-      />
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={showImages ? 8 : 12} lg={showImages ? 9 : 12}>
+          <TextField
+            label="search"
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <DataGrid
+            rows={data}
+            columns={columns}
+            autoHeight={true}
+            rowHeight={75}
+            sortingOrder={["asc", "desc"]}
+            sortModel={ordering}
+            onSortModelChange={handleSorting}
+            paginationMode="server"
+            initialState={{
+              ...data.initialState,
+              pagination: { paginationModel: paginationModel },
+            }}
+            pageSizeOptions={[5, 10, 20]}
+            pagination
+            rowCount={totalItems}
+            loading={loading}
+            rowSelection={false}
+            onPaginationModelChange={(pagedetails) => {
+              setPaginationModel({
+                page: pagedetails.page,
+                pageSize: pagedetails.pageSize,
+              });
+            }}
+            slots={{
+              loadingOverlay: LinearProgress,
+              toolbar: GridToolbar,
+            }}
+          />
+        </Grid>
+
+        {!loading && showImages && (
+          <Grid
+            item
+            xs={12}
+            sm={4}
+            lg={3}
+            sx={{ height: "600px", overflowY: "auto" }}
+            ref={divImage}
+          >
+            <Box m={2} display={"flex"} justifyContent={"space-between"}>
+              <Typography variant="h6">Product Images</Typography>
+              <IconButton onClick={() => setShowImages(false)}>
+                <Close />
+              </IconButton>
+            </Box>
+            <Divider />
+            {selectedImages.length > 0 &&
+              selectedImages.map((image, index) => (
+                <Box
+                  key={index}
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  margin={2}
+                >
+                  <Image src={image} style={{ width: "100%" }} />
+                </Box>
+              ))}
+          </Grid>
+        )}
+      </Grid>
+
       <Dialog
         open={open}
         onClose={handleclose}

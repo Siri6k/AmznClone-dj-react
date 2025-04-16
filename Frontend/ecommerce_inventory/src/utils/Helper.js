@@ -44,7 +44,13 @@ export const isValidUrl = (url) => {
       let image = url.filter(
         (item) => item.match(/\.(jpeg|jpg|gif|png)$/i) != null
       );
-      new URL(image[0]);
+      if (image.length > 0) {
+        new URL(image[0]);
+      } else {
+        if (url.length > 0) {
+          new URL(url[0]);
+        }
+      }
     } else if (checkIsJson(url) && JSON.parse(url).length > 0) {
       let image = JSON.parse(url).filter(
         (item) => item.match(/\.(jpeg|jpg|gif|png)$/i) != null
@@ -64,7 +70,15 @@ export const getImageUrl = (url) => {
     let image = url.filter(
       (item) => item.match(/\.(jpeg|jpg|gif|png)$/i) != null
     );
-    return image[0];
+    if (image.length > 0) {
+      return image[0];
+    } else {
+      if (url.length > 0) {
+        return url[0];
+      } else {
+        return url;
+      }
+    }
   } else if (checkIsJson(url) && JSON.parse(url).length > 0) {
     let image = JSON.parse(url).filter(
       (item) => item.match(/\.(jpeg|jpg|gif|png)$/i) != null

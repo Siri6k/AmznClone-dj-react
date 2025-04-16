@@ -104,6 +104,14 @@ const Layout = ({ pageTitle }) => {
   const dispatch = useDispatch();
   const location = useLocation();
 
+  const [url, setUrl] = useState("");
+  useEffect(() => {
+    if (url) {
+      navigate(url);
+      navigate(0); // This will refresh the page
+    }
+  }, [url]);
+
   useEffect(() => {
     dispatch(triggerPageChange(location));
   }, [location]);
@@ -188,6 +196,7 @@ const Layout = ({ pageTitle }) => {
     // Handle logout action
     localStorage.removeItem("token");
     navigate("/auth");
+    setUrl("/auth");
   };
 
   const drawerWidth = 280;
@@ -196,7 +205,8 @@ const Layout = ({ pageTitle }) => {
       dispatch(expandItem({ id: sidebarItem.id }));
     } else {
       dispatch(activateItem({ item: sidebarItem }));
-      navigate(sidebarItem.module_url);
+      navigate(sidebarItem.module_url, { replace: true });
+      setUrl(sidebarItem.module_url);
     }
   };
 

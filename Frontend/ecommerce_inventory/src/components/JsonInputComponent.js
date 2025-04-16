@@ -1,6 +1,6 @@
 import { Box, Button, Divider, IconButton, TextField } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 const JsonInputComponent = ({ fields }) => {
@@ -10,6 +10,13 @@ const JsonInputComponent = ({ fields }) => {
   const handleKeyValueAdd = () => {
     setKeyValuePairs([...keyValuePairs, { key: "", value: "" }]);
   };
+
+  useEffect(() => {
+    if (fields.default) {
+      setKeyValuePairs([...keyValuePairs, ...fields.default]);
+    }
+  }, []);
+
   const handleKeyValueRemove = (index) => {
     const newKeyValuePairs = keyValuePairs.filter((_, i) => i !== index);
     setKeyValuePairs(newKeyValuePairs);

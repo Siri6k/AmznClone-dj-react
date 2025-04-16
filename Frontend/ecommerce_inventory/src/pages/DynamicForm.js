@@ -2,7 +2,7 @@
 
 import { useNavigate, useParams } from "react-router-dom";
 import useApi from "../hooks/APIHandler";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 import {
   Box,
@@ -96,7 +96,8 @@ const DynamicForm = () => {
       toast.success(response.data.message);
       setCurrentStep(0);
       methods.reset();
-      navigate("/manage/category");
+      navigate(`/manage/${formName}`);
+      navigate(0);
     } catch (err) {
       console.log(err);
     }

@@ -1,10 +1,17 @@
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit, PanoramaRounded } from "@mui/icons-material";
 import { Collapse, IconButton, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { DataGrid, GridRow, GridToolbar } from "@mui/x-data-grid";
 import RenderImage from "../../components/RenderImge";
 
-const ExpandableRow = ({ props, row, onEditClick, onDeleteClick }) => {
+const ExpandableRow = ({
+  props,
+  row,
+  onEditClick,
+  onDeleteClick,
+  setShowImages,
+  setSelectedImages,
+}) => {
   let columns = [];
   if (row.children && row.children.length > 0) {
     columns = Object.keys(row.children[0])
@@ -22,7 +29,19 @@ const ExpandableRow = ({ props, row, onEditClick, onDeleteClick }) => {
       width: 180,
       sortable: false,
       renderCell: (params) => {
-        return <RenderImage data={params.row.image} name={params.row.name} />;
+        return (
+          <Box display={"flex"}>
+            <RenderImage data={params.row.image} name={params.row.name} />
+            <IconButton
+              onClick={() => {
+                setShowImages && setShowImages(true);
+                setSelectedImages && setSelectedImages(params.row.image);
+              }}
+            >
+              <PanoramaRounded />
+            </IconButton>
+          </Box>
+        );
       },
     });
     columns = [
