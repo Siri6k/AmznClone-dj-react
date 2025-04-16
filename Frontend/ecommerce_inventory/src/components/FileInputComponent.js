@@ -205,7 +205,11 @@ const FileInputComponent = ({ field }) => {
         (loading ? (
           <LinearProgress sx={{ width: "100%" }} />
         ) : (
-          <Box mt={2} sx={{ display: "flex", justifyContent: "space-around" }}>
+          <Box
+            mt={2}
+            sx={{ display: "flex", justifyContent: "space-around" }}
+            mb={2}
+          >
             <Button onClick={uploadFiles} variant="contained" color="primary">
               Upload All Files
             </Button>
@@ -259,7 +263,11 @@ const FileInputComponent = ({ field }) => {
           </Box>
         ))}
       {!!errors[field.name] && (
-        <Alert variant="outlined" severity="error" sx={{ marginTop: "10px" }}>
+        <Alert
+          variant="outlined"
+          severity="error"
+          sx={{ marginTop: "10px", marginBottom: "10px" }}
+        >
           This Field is Required and Upload the Files if Already Selected
         </Alert>
       )}

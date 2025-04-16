@@ -10,6 +10,9 @@ import {
   TextField,
   Typography,
   Divider,
+  Button,
+  Rating,
+  Autocomplete,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 
@@ -17,21 +20,25 @@ import Grid from "@mui/material/Grid";
 
 import {
   Add,
+  AddCircle,
   Close,
   Delete,
   Edit,
+  EditNote,
   ExpandLessRounded,
   ExpandMoreRounded,
   PanoramaRounded,
+  SaveAltRounded,
 } from "@mui/icons-material";
 
-import ExpandableRow from "./ExpandableRow";
 import RenderImage from "../../components/RenderImge";
-import { set } from "react-hook-form";
 import TimeAgo from "../../components/TimeAgo";
 import Image from "../../components/Image";
+import { Controller, FormProvider, useForm } from "react-hook-form";
+import FileInputComponent from "../../components/FileInputComponent";
+import { set } from "date-fns";
 
-const ManageCategories = () => {
+const ManageQuestions = ({ product_id }) => {
   const [data, setData] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -40,8 +47,8 @@ const ManageCategories = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [debounceSearch, setDebounceSearch] = useState("");
-  const [showImages, setShowImages] = useState(false);
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [showAddQuestion, setShowAddQuestion] = useState(false);
+  const [editId, setEditId] = useState(null);
 
   const [ordering, setOrdering] = useState([
     {
@@ -52,10 +59,27 @@ const ManageCategories = () => {
 
   const [columns, setColumns] = useState([]);
 
+  const [userList, setUserList] = useState([]);
   const { error, loading, callApi } = useApi();
   const [url, setUrl] = useState("");
   const divImage = useRef();
   const navigate = useNavigate();
+  const methods = useForm();
+  const {
+    register,
+    watch,
+    setValue,
+    formState: { errors },
+    control,
+    reset,
+  } = methods;
+
+  const editQuestion = (row) => {
+    setValue("question", row.question);
+    setValue("answer", row.answer);
+    setEditId(row.id);
+    setShowAddQuestion(true);
+  };
 
   useEffect(() => {
     // Fetch data after 1 second
@@ -67,7 +91,29 @@ const ManageCategories = () => {
     };
   }, [searchQuery]);
 
-  const getCategories = async () => {
+  const onSubmitAddQuestion = async (data) => {
+    let result = null;
+    if (editId) {
+      result = await callApi({
+        url: `products/updateProductQuestion/${product_id}/${editId}/`,
+        method: "PATCH",
+        body: data,
+      });
+    } else {
+      result = await callApi({
+        url: `products/createProductQuestion/${product_id}/`,
+        method: "POST",
+        body: data,
+      });
+    }
+    if (result) {
+      reset();
+      getQuestions();
+      setShowAddQuestion(false);
+    }
+  };
+
+  const getQuestions = async () => {
     let order = "-id";
     if (ordering.length > 0) {
       order =
@@ -76,7 +122,7 @@ const ManageCategories = () => {
           : "-" + ordering[0].field;
     }
     const result = await callApi({
-      url: "products/categories/",
+      url: `products/productQuestions/${product_id}/`,
       method: "GET",
       params: {
         page: paginationModel.page + 1,
@@ -99,18 +145,15 @@ const ManageCategories = () => {
     }
   }, [url]);
 
-  const onDeleteClick = (params) => {
-    console.log(params);
-  };
-
-  const onEditClick = (params) => {
-    navigate(`/form/category/${params.row.id}`);
-    setUrl(`/form/category/${params.row.id}`);
-  };
-
-  const onAddClick = (params) => {
-    navigate("/form/category");
-    setUrl("/form/category");
+  const toggleStatus = async (id, status) => {
+    const result = await callApi({
+      url: `products/updateProductQuestion/${product_id}/${id}/`,
+      method: "PATCH",
+      body: { status: status },
+    });
+    if (result) {
+      getQuestions();
+    }
   };
 
   const generateColumns = (data) => {
@@ -119,92 +162,54 @@ const ManageCategories = () => {
         {
           field: "action",
           headerName: "Action",
-          width: 180,
-          sortable: false,
-          renderCell: (params) => {
-            return (
-              <>
-                <IconButton onClick={() => onAddClick(params)}>
-                  <Add color="light" />
-                </IconButton>
-                <IconButton onClick={() => onEditClick(params)}>
-                  <Edit color="primary" />
-                </IconButton>
-                <IconButton onClick={() => onDeleteClick(params)}>
-                  <Delete color="secondary" />
-                </IconButton>
-              </>
-            );
-          },
-        },
-        {
-          field: "expand",
-          headerName: "Expand",
           width: 100,
           sortable: false,
           renderCell: (params) => {
             return (
-              <IconButton
-                onClick={() => {
-                  const updatedRows = data.map((row) => {
-                    if (row.id === params.row.id) {
-                      if (row?.open) {
-                        row.open = false;
-                      } else {
-                        row.open = true;
-                      }
-                    }
-                    return row;
-                  });
-                  setData([...updatedRows]);
-                }}
-              >
-                {params.row?.open ? (
-                  <ExpandLessRounded />
-                ) : (
-                  <ExpandMoreRounded />
-                )}
-              </IconButton>
+              <Box display={"flex"} justifyContent={"center"} mt={3}>
+                <IconButton onClick={() => editQuestion(params.row)}>
+                  <Edit color="primary" />
+                </IconButton>
+              </Box>
             );
           },
         },
       ];
       for (const key in data[0]) {
-        if (key === "children") {
+        if (key === "question") {
           columns.push({
-            field: key,
-            headerName:
-              key.charAt(0).toUpperCase() + key.slice(1).replaceAll("_", " "),
-            width: 150,
-            sortable: false,
-            renderCell: (params) => {
-              return (
-                <Typography variant="body2" pt={3} pb={3}>
-                  {params.row.children?.length}
-                </Typography>
-              );
-            },
+            field: "question",
+            headerName: "Question",
+            width: 300,
           });
-        } else if (key === "image") {
+        } else if (key === "answer") {
+          columns.push({
+            field: "answer",
+            headerName: "Answer",
+            width: 300,
+          });
+        } else if (key === "status") {
           columns.push({
             field: key,
-            headerName:
-              key.charAt(0).toUpperCase() + key.slice(1).replaceAll("_", " "),
+            headerName: "Status",
             width: 150,
-            sortable: false,
             renderCell: (params) => {
-              return (
-                <Box display={"flex"}>
-                  <RenderImage data={params.row.image} name={params.row.name} />
-                  <IconButton
-                    onClick={() => {
-                      setSelectedImages(params.row.image);
-                      setShowImages(true);
-                    }}
-                  >
-                    <PanoramaRounded />
-                  </IconButton>
-                </Box>
+              return params.row.status === "ACTIVE" ? (
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={() => toggleStatus(params.row.id, "INACTIVE")}
+                >
+                  ACTIVE
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => toggleStatus(params.row.id, "ACTIVE")}
+                >
+                  INACTIVE
+                </Button>
               );
             },
           });
@@ -241,13 +246,31 @@ const ManageCategories = () => {
   };
 
   useEffect(() => {
-    if (showImages) {
+    if (showAddQuestion) {
       divImage.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [selectedImages]);
+  }, [showAddQuestion]);
+
+  const getUserList = async () => {
+    const result = await callApi({
+      url: "auth/users/",
+      method: "GET",
+    });
+    if (result) {
+      setUserList(
+        result.data.data.map((user) => ({
+          id: user.id,
+          value: user.email,
+        }))
+      );
+    }
+  };
+  useEffect(() => {
+    getUserList();
+  }, []);
 
   useEffect(() => {
-    getCategories();
+    getQuestions();
   }, [paginationModel, debounceSearch, ordering]);
 
   const handleSorting = (newModel) => {
@@ -256,17 +279,27 @@ const ManageCategories = () => {
 
   return (
     <Box component={"div"} sx={{ width: "100%" }}>
-      <Breadcrumbs>
-        <Typography variant="body2" onClick={() => setUrl("/home")}>
-          Home
-        </Typography>
-        <Typography variant="body2" onClick={() => setUrl("/manage/category")}>
-          Manage Category
-        </Typography>
-      </Breadcrumbs>
-
+      <Box display={"flex"} justifyContent={"space-between"}>
+        <Typography variant="h5">Product Questions</Typography>
+        <Button
+          startIcon={<AddCircle />}
+          variant="contained"
+          onClick={() => {
+            setShowAddQuestion(true);
+            setEditId(null);
+            reset();
+          }}
+        >
+          Add Question
+        </Button>
+      </Box>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={showImages ? 8 : 12} lg={showImages ? 9 : 12}>
+        <Grid
+          item
+          xs={12}
+          sm={showAddQuestion ? 7 : 12}
+          lg={showAddQuestion ? 9 : 12}
+        >
           <TextField
             label="search"
             variant="outlined"
@@ -301,50 +334,65 @@ const ManageCategories = () => {
             slots={{
               loadingOverlay: LinearProgress,
               toolbar: GridToolbar,
-              row: (props) => {
-                return (
-                  <ExpandableRow
-                    props={props}
-                    row={props.row}
-                    onEditClick={onEditClick}
-                    onDeleteClick={onDeleteClick}
-                    setShowImages={setShowImages}
-                    setSelectedImages={setSelectedImages}
-                  />
-                );
-              },
             }}
           />
         </Grid>
 
-        {showImages && (
+        {showAddQuestion && (
           <Grid
             item
             xs={12}
-            sm={4}
+            sm={5}
             lg={3}
             sx={{ height: "600px", overflowY: "auto" }}
             ref={divImage}
           >
             <Box m={2} display={"flex"} justifyContent={"space-between"}>
-              <Typography variant="h6">Category Images</Typography>
-              <IconButton onClick={() => setShowImages(false)}>
+              <Typography variant="h6">
+                {editId ? "Edit" : "Add"} Question & Answer
+              </Typography>
+              <IconButton onClick={() => setShowAddQuestion(false)}>
                 <Close />
               </IconButton>
             </Box>
-            <Divider />
-            {selectedImages.length > 0 &&
-              selectedImages.map((image, index) => (
-                <Box
-                  key={index}
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  margin={2}
+            <FormProvider {...methods}>
+              <form onSubmit={methods.handleSubmit(onSubmitAddQuestion)}>
+                <TextField
+                  label="Question"
+                  variant="outlined"
+                  margin="normal"
+                  sx={{ marginBottom: "15px" }}
+                  fullWidth
+                  {...register("question", {
+                    required: true,
+                  })}
+                  error={!!errors.question}
+                  helperText={!!error["question"] && "This Field is required"}
+                />
+                <TextField
+                  label="Answer"
+                  variant="outlined"
+                  margin="normal"
+                  sx={{ marginBottom: "15px" }}
+                  fullWidth
+                  {...register("answer", {
+                    required: true,
+                  })}
+                  error={!!errors.answer}
+                  helperText={!!error["answer"] && "This Field is required"}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  sx={{ marginBottom: "15px", marginTop: "15px" }}
+                  startIcon={<SaveAltRounded />}
+                  fullWidth
                 >
-                  <Image src={image} style={{ width: "100%" }} />
-                </Box>
-              ))}
+                  {editId ? "Update" : "Add"} Question & Answer
+                </Button>
+              </form>
+            </FormProvider>
           </Grid>
         )}
       </Grid>
@@ -352,4 +400,4 @@ const ManageCategories = () => {
   );
 };
 
-export default ManageCategories;
+export default ManageQuestions;

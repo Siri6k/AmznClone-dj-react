@@ -145,6 +145,9 @@ export const GlobalStyles = () => {
             background-position: 800px 0;
           }
         }
+        .MuiDialogContent-root {
+          background-color: ${theme.palette.background.default};
+        }
       `}
     />
   );

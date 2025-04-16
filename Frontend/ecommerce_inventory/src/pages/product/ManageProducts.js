@@ -33,6 +33,8 @@ import {
 import RenderImage from "../../components/RenderImge";
 import TimeAgo from "../../components/TimeAgo";
 import Image from "../../components/Image";
+import ManageReviews from "./ManageReviews";
+import ManageQuestions from "./ManageQuestions";
 
 const ManageProducts = () => {
   const [data, setData] = useState([]);
@@ -73,6 +75,11 @@ const ManageProducts = () => {
 
   const [showImages, setShowImages] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
+  //for showing reviews or questions pages
+  const [showReviews, setShowReviews] = useState(false);
+  const [showQuestions, setShowQuestions] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  //for scrolling to grid images
   const divImage = useRef();
 
   const navigate = useNavigate();
@@ -206,7 +213,15 @@ const ManageProducts = () => {
         sortable: false,
         renderCell: (params) => {
           return (
-            <Button startIcon={<ViewCompact />} variant="contained">
+            <Button
+              startIcon={<ViewCompact />}
+              variant="contained"
+              onClick={() => {
+                setShowQuestions(true);
+                setShowReviews(false);
+                setSelectedProductId(params.row.id);
+              }}
+            >
               View
             </Button>
           );
@@ -219,7 +234,15 @@ const ManageProducts = () => {
         sortable: false,
         renderCell: (params) => {
           return (
-            <Button startIcon={<ViewCompact />} variant="contained">
+            <Button
+              startIcon={<ViewCompact />}
+              variant="contained"
+              onClick={() => {
+                setShowReviews(true);
+                setShowQuestions(false);
+                setSelectedProductId(params.row.id);
+              }}
+            >
               View
             </Button>
           );
@@ -365,7 +388,7 @@ const ManageProducts = () => {
           />
         </Grid>
 
-        {!loading && showImages && (
+        {showImages && (
           <Grid
             item
             xs={12}
@@ -400,6 +423,7 @@ const ManageProducts = () => {
       <Dialog
         open={open}
         onClose={handleclose}
+        maxWidth={"lg"}
         aria-labelledby="form-dialog-title"
       >
         <DialogContent>
@@ -420,6 +444,7 @@ const ManageProducts = () => {
       <Dialog
         open={openHtml}
         onClose={handleclose2}
+        maxWidth={"lg"}
         aria-labelledby="form-dialog-title"
       >
         <DialogContent>
@@ -429,6 +454,34 @@ const ManageProducts = () => {
           <Divider sx={{ margin: "5px 0" }} />
         </DialogContent>
       </Dialog>
+      {showReviews && (
+        <Dialog
+          open={showReviews}
+          fullWidth={true}
+          maxWidth={"lg"}
+          onClose={() => setShowReviews(false)}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogContent>
+            <ManageReviews product_id={selectedProductId} />
+            <Divider sx={{ margin: "5px 0" }} />
+          </DialogContent>
+        </Dialog>
+      )}
+      {showQuestions && (
+        <Dialog
+          open={showQuestions}
+          fullWidth={true}
+          maxWidth={"lg"}
+          onClose={() => setShowQuestions(false)}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogContent>
+            <ManageQuestions product_id={selectedProductId} />
+            <Divider sx={{ margin: "5px 0" }} />
+          </DialogContent>
+        </Dialog>
+      )}
     </Box>
   );
 };
