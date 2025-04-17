@@ -71,7 +71,7 @@ const ManageProducts = () => {
   };
 
   const { error, loading, callApi } = useApi();
-  const [url, setUrl] = useState("");
+  //const [url, setUrl] = useState("");
 
   const [showImages, setShowImages] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
@@ -120,22 +120,16 @@ const ManageProducts = () => {
     }
   };
 
-  useEffect(() => {
-    if (url) {
-      navigate(url);
-    }
-  }, [url]);
-
   const onDeleteClick = (params) => {
     console.log(params);
   };
 
   const onEditClick = (params) => {
-    setUrl(`/form/product/${params.row.id}`);
+    navigate(`/form/product/${params.row.id}`);
   };
 
   const onAddClick = (params) => {
-    setUrl("/form/product");
+    navigate("/form/product");
   };
 
   const showJSONData = (item, title) => {

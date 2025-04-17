@@ -21,6 +21,8 @@ import DynamicForm from "./pages/DynamicForm";
 import "./style/style.css";
 import ManageCategories from "./pages/category/Managecategories";
 import ManageProducts from "./pages/product/ManageProducts";
+import Error404Page from "./pages/Error404Page";
+import ManageWarehouse from "./pages/warehouse/ManageWarehouse";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -40,21 +42,26 @@ function App() {
     },
     {
       path: "/",
-      element: <ProtectedRoute element={<Layout />} />,
+      element: <Layout sidebarList={items} />,
+      errorElement: <Layout sidebarList={items} childPage={<Error404Page />} />,
       children: [
-        { path: "/", element: <Home /> },
-        { path: "/home", element: <Home /> },
+        { path: "/", element: <ProtectedRoute element={<Home />} /> },
+        { path: "/home", element: <ProtectedRoute element={<Home />} /> },
         {
           path: "/form/:formName/:id?",
-          element: <DynamicForm />,
+          element: <ProtectedRoute element={<DynamicForm />} />,
         },
         {
           path: "/manage/category",
-          element: <ManageCategories />,
+          element: <ProtectedRoute element={<ManageCategories />} />,
         },
         {
           path: "/manage/product",
-          element: <ManageProducts />,
+          element: <ProtectedRoute element={<ManageProducts />} />,
+        },
+        {
+          path: "/manage/warehouse/",
+          element: <ProtectedRoute element={<ManageWarehouse />} />,
         },
       ],
     },

@@ -1,21 +1,23 @@
-import {
-  Box,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
-  Switch,
-  TextField,
-} from "@mui/material";
+import { useEffect, useState } from "react";
+import { Box, FormControl, TextField } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
 const StepTextComponents = ({ formConfig, fieldType }) => {
   const {
     register,
     formState: { errors },
+    reset,
   } = useFormContext();
-  const textFields = formConfig.data.text;
+  const [textFields, setTextFields] = useState(formConfig.data.text);
+  useEffect(() => {
+    setTextFields(formConfig.data.text);
+    const defaultValue = formConfig.data.text.reduce((acc, field) => {
+      acc[field.name] = field.default || ""; // Set default value if provided
+      return acc;
+    }, {});
+    reset(defaultValue); // Reset form with default values
+  }, [formConfig.data.text]);
+
   return (
     <Box>
       {textFields.map((field, index) => (

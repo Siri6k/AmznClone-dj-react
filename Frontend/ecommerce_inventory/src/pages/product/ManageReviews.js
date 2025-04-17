@@ -60,7 +60,7 @@ const ManageReviews = ({ product_id }) => {
 
   const [userList, setUserList] = useState([]);
   const { error, loading, callApi } = useApi();
-  const [url, setUrl] = useState("");
+  //const [url, setUrl] = useState("");
   const divImage = useRef();
   const navigate = useNavigate();
   const methods = useForm();
@@ -121,12 +121,6 @@ const ManageReviews = ({ product_id }) => {
       generateColumns(fetchData);
     }
   };
-
-  useEffect(() => {
-    if (url) {
-      navigate(url);
-    }
-  }, [url]);
 
   const toggleStatus = async (id, status) => {
     setShowAddReview(false);

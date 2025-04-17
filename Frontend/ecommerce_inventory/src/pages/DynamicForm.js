@@ -21,9 +21,15 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { getFormTypes } from "../utils/Helper";
 
-const DynamicForm = () => {
+const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
   const stepItems = getFormTypes();
-  const { formName, id } = useParams();
+  let { formName, id } = useParams();
+  if (formNameVar) {
+    formName = formNameVar;
+  }
+  if (idVar) {
+    id = idVar;
+  }
   const { callApi, loading } = useApi();
   const [formConfig, setFormConfig] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
@@ -33,8 +39,10 @@ const DynamicForm = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    methods.reset();
+    setSteps(stepItems);
     fetchForm();
-  }, [formName]);
+  }, [formName, formNameVar, idVar, id]);
 
   const fetchForm = async () => {
     try {
@@ -96,7 +104,11 @@ const DynamicForm = () => {
       toast.success(response.data.message);
       setCurrentStep(0);
       methods.reset();
-      navigate(`/manage/${formName}`);
+      if (onSaveEvent) {
+        onSaveEvent();
+      } else {
+        navigate(`/manage/${formName}`);
+      }
       navigate(0);
     } catch (err) {
       console.log(err);
@@ -134,9 +146,11 @@ const DynamicForm = () => {
 
   return (
     <Container>
-      <Typography variant="h6" gutterBottom>
-        {id ? "EDIT" : "ADD"} {formName.toUpperCase()}
-      </Typography>
+      {!formNameVar && (
+        <Typography variant="h6" gutterBottom>
+          {id ? "EDIT" : "ADD"} {formName.toUpperCase()}
+        </Typography>
+      )}
       <Divider sx={{ marginBottom: "15px", marginTop: "15px" }} />
       <Stepper
         activeStep={currentStep}

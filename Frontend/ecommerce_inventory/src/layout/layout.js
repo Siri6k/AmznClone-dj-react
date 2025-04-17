@@ -13,9 +13,6 @@ import {
   ListItemText,
   Collapse,
   Divider,
-  Card,
-  CardContent,
-  Fab,
   Box,
   Hidden,
   InputBase,
@@ -54,12 +51,8 @@ import {
   GroupOutlined,
   InventoryOutlined,
   CategoryOutlined,
-  ShoppingBasketOutlined,
   ReceiptOutlined,
   WarehouseOutlined,
-  GroupAddOutlined,
-  ShoppingBagOutlined,
-  ShoppingCart,
   ShoppingBasketRounded,
 } from "@mui/icons-material";
 import { ThemeProvider as Emotion10ThemeProvider } from "@emotion/react";
@@ -90,31 +83,27 @@ import {
   triggerPageChange,
 } from "../redux/reducer/sidebardata";
 
-const Layout = ({ pageTitle }) => {
+const Layout = ({ sidebarList, pageTitle, childPage }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useState(true); // State for desktop sidebar
   const [themeMode, setThemeMode] = useState("light");
   const [openChildMenu, setOpenChildMenu] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [themeMenu, setThemeMenu] = useState(null);
-  //  const [sidebarItems, setSidebarItems] = useState(sidebarList);
+  //const [sidebarItems, setSidebarItems] = useState(sidebarList);
   const sidebarItems = useSelector((state) => state.sidebardata.items);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const [url, setUrl] = useState("");
-  useEffect(() => {
-    if (url) {
-      navigate(url);
-      navigate(0); // This will refresh the page
-    }
-  }, [url]);
-
   useEffect(() => {
     dispatch(triggerPageChange(location));
   }, [location]);
+
+  useEffect(() => {
+    //setSidebarItems(sidebarList);
+  }, [sidebarList]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "basic";
@@ -196,7 +185,6 @@ const Layout = ({ pageTitle }) => {
     // Handle logout action
     localStorage.removeItem("token");
     navigate("/auth");
-    setUrl("/auth");
   };
 
   const drawerWidth = 280;
@@ -205,8 +193,7 @@ const Layout = ({ pageTitle }) => {
       dispatch(expandItem({ id: sidebarItem.id }));
     } else {
       dispatch(activateItem({ item: sidebarItem }));
-      navigate(sidebarItem.module_url, { replace: true });
-      setUrl(sidebarItem.module_url);
+      navigate(sidebarItem.module_url);
     }
   };
 
@@ -281,7 +268,11 @@ const Layout = ({ pageTitle }) => {
                   borderRadius: "10px",
                 },
               }}
-              className={sidebarItem?.active ? "active-sidebar" : ""}
+              className={
+                sidebarItem?.active && sidebarItem.submenus.length === 0
+                  ? "active-sidebar"
+                  : ""
+              }
             >
               <ListItemIcon>{getIcon(sidebarItem.module_icon)}</ListItemIcon>
               <ListItemText primary={sidebarItem.module_name} />
@@ -588,7 +579,7 @@ const Layout = ({ pageTitle }) => {
             {profileMenu}
             {themeMenuUI}
             <section className="main-content" style={{ padding: "20px" }}>
-              <Outlet />
+              {childPage ? childPage : <Outlet />}
             </section>
             <Box
               component="footer"

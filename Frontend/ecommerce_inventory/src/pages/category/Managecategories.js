@@ -53,7 +53,7 @@ const ManageCategories = () => {
   const [columns, setColumns] = useState([]);
 
   const { error, loading, callApi } = useApi();
-  const [url, setUrl] = useState("");
+  //const [url, setUrl] = useState("");
   const divImage = useRef();
   const navigate = useNavigate();
 
@@ -93,24 +93,18 @@ const ManageCategories = () => {
     }
   };
 
-  useEffect(() => {
-    if (url) {
-      navigate(url);
-    }
-  }, [url]);
-
   const onDeleteClick = (params) => {
     console.log(params);
   };
 
   const onEditClick = (params) => {
     navigate(`/form/category/${params.row.id}`);
-    setUrl(`/form/category/${params.row.id}`);
+    //setUrl(`/form/category/${params.row.id}`);
   };
 
   const onAddClick = (params) => {
     navigate("/form/category");
-    setUrl("/form/category");
+    //setUrl("/form/category");
   };
 
   const generateColumns = (data) => {
@@ -257,10 +251,13 @@ const ManageCategories = () => {
   return (
     <Box component={"div"} sx={{ width: "100%" }}>
       <Breadcrumbs>
-        <Typography variant="body2" onClick={() => setUrl("/home")}>
+        <Typography variant="body2" onClick={() => navigate("/home")}>
           Home
         </Typography>
-        <Typography variant="body2" onClick={() => setUrl("/manage/category")}>
+        <Typography
+          variant="body2"
+          onClick={() => navigate("/manage/category")}
+        >
           Manage Category
         </Typography>
       </Breadcrumbs>
