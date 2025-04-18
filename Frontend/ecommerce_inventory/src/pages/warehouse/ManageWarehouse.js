@@ -113,14 +113,6 @@ const ManageWarehouse = () => {
     }
   };
 
-  const onEditClick = (params) => {
-    navigate(`/form/warehouse/${params.row.id}`);
-  };
-
-  const onAddClick = (params) => {
-    navigate("/form/warehouse");
-  };
-
   const showJSONData = (item, title) => {
     setModelTitle(title);
     setOpen(true);
@@ -162,10 +154,24 @@ const ManageWarehouse = () => {
           renderCell: (params) => {
             return (
               <>
-                <IconButton onClick={() => onAddClick(params)}>
+                <IconButton
+                  onClick={() => {
+                    navigate(-1);
+
+                    onAddClick(params);
+                    navigate("/form/warehouse", {
+                      replace: true,
+                    });
+                  }}
+                >
                   <Add color="light" />
                 </IconButton>
-                <IconButton onClick={() => onEditClick(params)}>
+                <IconButton
+                  onClick={() => {
+                    onEditClick(params);
+                    navigate(0);
+                  }}
+                >
                   <Edit color="primary" />
                 </IconButton>
               </>
@@ -294,6 +300,14 @@ const ManageWarehouse = () => {
     setOrdering(newModel);
   };
 
+  const onEditClick = (params) => {
+    navigate(`/form/warehouse/${params.row.id}`);
+  };
+
+  const onAddClick = (params) => {
+    navigate("/form/warehouse");
+  };
+
   return (
     <Box component={"div"} sx={{ width: "100%" }}>
       <Box
@@ -309,7 +323,10 @@ const ManageWarehouse = () => {
           </Typography>
           <Typography
             variant="body2"
-            onClick={() => navigate("/manage/warehouse")}
+            onClick={() => {
+              navigate(-1);
+              navigate("/home");
+            }}
           >
             Manage Warehouse
           </Typography>

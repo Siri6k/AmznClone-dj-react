@@ -9,6 +9,7 @@ import {
   Button,
   Container,
   Divider,
+  IconButton,
   LinearProgress,
   Step,
   StepLabel,
@@ -16,7 +17,12 @@ import {
   Typography,
 } from "@mui/material";
 
-import { ArrowBackIos, ArrowForwardIos, Save } from "@mui/icons-material";
+import {
+  ArrowBackIos,
+  ArrowForwardIos,
+  Close,
+  Save,
+} from "@mui/icons-material";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { getFormTypes } from "../utils/Helper";
@@ -147,9 +153,31 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
   return (
     <Container>
       {!formNameVar && (
-        <Typography variant="h6" gutterBottom>
-          {id ? "EDIT" : "ADD"} {formName.toUpperCase()}
-        </Typography>
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "15px",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            {id ? "EDIT" : "ADD"} {formName.toUpperCase()}
+          </Typography>
+          <IconButton
+            onClick={() => {
+              navigate(-1);
+              navigate(`/form/${formName}`);
+            }}
+            color="primary"
+            className="hover-button"
+          >
+            <span className="hover-content" >
+              Close
+            </span>{" "}
+            <Close />
+          </IconButton>
+        </Box>
       )}
       <Divider sx={{ marginBottom: "15px", marginTop: "15px" }} />
       <Stepper

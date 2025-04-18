@@ -118,10 +118,22 @@ const ManageCategories = () => {
           renderCell: (params) => {
             return (
               <>
-                <IconButton onClick={() => onAddClick(params)}>
+                <IconButton
+                  onClick={() => {
+                    onAddClick(params);
+                    navigate("/form/category", {
+                      replace: true,
+                    });
+                  }}
+                >
                   <Add color="light" />
                 </IconButton>
-                <IconButton onClick={() => onEditClick(params)}>
+                <IconButton
+                  onClick={() => {
+                    onEditClick(params);             
+                    navigate(0);
+                  }}
+                >
                   <Edit color="primary" />
                 </IconButton>
                 <IconButton onClick={() => onDeleteClick(params)}>

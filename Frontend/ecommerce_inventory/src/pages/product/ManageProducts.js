@@ -153,10 +153,23 @@ const ManageProducts = () => {
           renderCell: (params) => {
             return (
               <>
-                <IconButton onClick={() => onAddClick(params)}>
+                <IconButton
+                  onClick={() => {
+                    navigate(-1);
+                    onAddClick(params);
+                    navigate("/form/product", {
+                      replace: true,
+                    });
+                  }}
+                >
                   <Add color="light" />
                 </IconButton>
-                <IconButton onClick={() => onEditClick(params)}>
+                <IconButton
+                  onClick={() => {
+                    onEditClick(params);
+                    navigate(0);
+                  }}
+                >
                   <Edit color="primary" />
                 </IconButton>
                 <IconButton onClick={() => onDeleteClick(params)}>
