@@ -51,31 +51,24 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
   }, [formName, formNameVar, idVar, id]);
 
   const fetchForm = async () => {
-    try {
-      const PID = id ? `${id}/` : "";
+    const PID = id ? `${id}/` : "";
 
-      const response = await callApi({
-        url: `getForm/${formName}/${PID}`,
-      });
-
-      if (!response?.data?.data) {
-        throw new Error("Invalid response structure");
-      }
-
+    const response = await callApi({
+      url: `getForm/${formName}/${PID}`,
+    });
+    if (response?.data) {
       // Filter steps that have datas
-      const stepFilter = stepItems.filter(
+      let stepFilter = stepItems.filter(
         (step) =>
           response.data.data[step.fieldType] &&
           response.data.data[step.fieldType].length > 0
       );
 
-      // Batch state updates if needed
       setSteps(stepFilter);
       setFormConfig(response.data);
       setCurrentStep(0);
-    } catch (error) {
-      console.error("Failed to fetch form:", error);
-      toast.error(error.message || "Error in Fetching Form Data");
+    } else {
+      toast.error("Error in Fetching Form Data");
     }
   };
 
@@ -172,10 +165,7 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
             color="primary"
             className="hover-button"
           >
-            <span className="hover-content" >
-              Close
-            </span>{" "}
-            <Close />
+            <span className="hover-content">Close</span> <Close />
           </IconButton>
         </Box>
       )}
@@ -198,7 +188,7 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
       {/* Section for form */}
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          {formConfig ? (
+          {formConfig && (
             <>
               {steps.map((step, index) => (
                 <Box
@@ -214,9 +204,8 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
                 </Box>
               ))}
             </>
-          ) : (
-            <LinearProgress />
           )}
+          {!formConfig && loading && <LinearProgress />}
 
           <Box mt={2} display={"flex"} justifyContent={"space-between"}>
             {currentStep > 0 && (

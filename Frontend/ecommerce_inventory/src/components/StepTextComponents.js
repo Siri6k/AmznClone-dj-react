@@ -26,6 +26,7 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
             fullWidth
             label={field.label}
             margin="normal"
+            required={field.required}
             key={field.name}
             error={!!errors[field.name]}
             defaultValue={field.default}

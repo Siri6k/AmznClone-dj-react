@@ -23,6 +23,7 @@ import ManageCategories from "./pages/category/Managecategories";
 import ManageProducts from "./pages/product/ManageProducts";
 import Error404Page from "./pages/Error404Page";
 import ManageWarehouse from "./pages/warehouse/ManageWarehouse";
+import ManageUsers from "./pages/users/ManageUsers";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -62,6 +63,10 @@ function App() {
         {
           path: "/manage/warehouse/",
           element: <ProtectedRoute element={<ManageWarehouse />} />,
+        },
+        {
+          path: "manage/users/",
+          element: <ProtectedRoute element={<ManageUsers />} />,
         },
       ],
     },
