@@ -3,7 +3,11 @@ import axios from "axios";
 import config from "../../utils/config";
 
 export const fetchSidebar = createAsyncThunk("data/fetchSidebar", async () => {
-  const response = await axios.get(`${config.API_URL}getMenus/`);
+  const response = await axios.get(`${config.API_URL}getMenus/`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
   let sidebarData = response.data.data;
   const setActiveAndExpanded = (item) => {
     if (
@@ -72,10 +76,18 @@ const sidebarSlice = createSlice({
             window.location.pathname.indexOf(submenu.module_url) !== -1
           ) {
             submenu.active = true;
-            //item.active = true;
+            item.active = true;
             item.expanded = true;
           }
         });
+        if (
+          item.module_url &&
+          window.location.pathname.indexOf(item.module_url) !== -1 &&
+          item.submenus.length === 0
+        ) {
+          item.active = true;
+          item.expanded = true;
+        }
       });
     },
   },

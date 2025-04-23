@@ -43,6 +43,7 @@ import Image from "../../components/Image";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import FileInputComponent from "../../components/FileInputComponent";
 import { formatText } from "../../utils/Helper";
+import ManageUserPermissions from "./ManageUserPermissions";
 
 const ManageUsers = () => {
   const [data, setData] = useState([]);
@@ -59,6 +60,8 @@ const ManageUsers = () => {
   const [filterFields, setFilterFields] = useState([]);
   const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
   const [aFilterFields, setAFilterFields] = useState([]);
+  const [openPermission, setOpenPermission] = useState(false);
+  const [openPermissionUserId, setOpenPermissionUserId] = useState(null);
 
   const [ordering, setOrdering] = useState([
     {
@@ -194,7 +197,12 @@ const ManageUsers = () => {
                 >
                   <Edit color="primary" />
                 </IconButton>
-                <IconButton onClick={() => {}}>
+                <IconButton
+                  onClick={() => {
+                    setOpenPermissionUserId(params.row.id);
+                    setOpenPermission(true);
+                  }}
+                >
                   <Security color="primary" />
                 </IconButton>
               </>
@@ -664,6 +672,19 @@ const ManageUsers = () => {
                 <Divider sx={{ margin: "5px 0" }} />
               </React.Fragment>
             ))}
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={openPermission}
+        onClose={() => {
+          setOpenPermissionUserId(null);
+          setOpenPermission(false);
+        }}
+        fullWidth={true}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogContent>
+          <ManageUserPermissions user_id={openPermissionUserId} />
         </DialogContent>
       </Dialog>
     </Box>

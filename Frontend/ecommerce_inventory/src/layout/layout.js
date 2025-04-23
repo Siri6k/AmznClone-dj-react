@@ -82,6 +82,7 @@ import {
   expandItem,
   triggerPageChange,
 } from "../redux/reducer/sidebardata";
+import { logout } from "../redux/reducer/isLoggedInReducer";
 
 const Layout = ({ sidebarList, pageTitle, childPage }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -184,6 +185,7 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
   const handleLogout = () => {
     // Handle logout action
     localStorage.removeItem("token");
+    dispatch(logout());
     navigate("/auth");
   };
 

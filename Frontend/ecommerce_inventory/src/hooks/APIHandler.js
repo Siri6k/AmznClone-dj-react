@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import config from "../utils/config";
+import { toast } from "react-toastify";
 
 function useApi() {
   const [error, setError] = useState("");
@@ -30,6 +31,9 @@ function useApi() {
         headers: header,
       });
     } catch (err) {
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      }
       setError(err);
     }
     setLoading(false);

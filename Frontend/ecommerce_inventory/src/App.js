@@ -24,9 +24,11 @@ import ManageProducts from "./pages/product/ManageProducts";
 import Error404Page from "./pages/Error404Page";
 import ManageWarehouse from "./pages/warehouse/ManageWarehouse";
 import ManageUsers from "./pages/users/ManageUsers";
+import ManageModuleUrls from "./pages/module/ManageModuleUrls";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
+  const { isLoggedIn } = useSelector((state) => state.isLoggedInReducer);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -34,6 +36,10 @@ function App() {
       dispatch(fetchSidebar());
     }
   }, [status, dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchSidebar());
+  }, [isLoggedIn]);
 
   // Define the routes using 'element' instead of 'component'
   const router = createBrowserRouter([
@@ -61,12 +67,16 @@ function App() {
           element: <ProtectedRoute element={<ManageProducts />} />,
         },
         {
-          path: "/manage/warehouse/",
+          path: "/manage/warehouse",
           element: <ProtectedRoute element={<ManageWarehouse />} />,
         },
         {
-          path: "manage/users/",
+          path: "manage/users",
           element: <ProtectedRoute element={<ManageUsers />} />,
+        },
+        {
+          path: "manage/moduleUrls",
+          element: <ProtectedRoute element={<ManageModuleUrls />} />,
         },
       ],
     },
