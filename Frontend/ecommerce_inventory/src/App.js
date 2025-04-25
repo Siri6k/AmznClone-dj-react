@@ -25,6 +25,7 @@ import Error404Page from "./pages/Error404Page";
 import ManageWarehouse from "./pages/warehouse/ManageWarehouse";
 import ManageUsers from "./pages/users/ManageUsers";
 import ManageModuleUrls from "./pages/module/ManageModuleUrls";
+import CreatePurchaseOrder from "./pages/purchaseOrder/CreatePurchaseOrder";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -77,6 +78,10 @@ function App() {
         {
           path: "manage/moduleUrls",
           element: <ProtectedRoute element={<ManageModuleUrls />} />,
+        },
+        {
+          path: "create/po",
+          element: <ProtectedRoute element={<CreatePurchaseOrder />} />,
         },
       ],
     },

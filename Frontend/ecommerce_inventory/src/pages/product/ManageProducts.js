@@ -36,7 +36,7 @@ import Image from "../../components/Image";
 import ManageReviews from "./ManageReviews";
 import ManageQuestions from "./ManageQuestions";
 
-const ManageProducts = () => {
+const ManageProducts = ({ onProductSelected }) => {
   const [data, setData] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -129,6 +129,10 @@ const ManageProducts = () => {
   };
 
   const onAddClick = (params) => {
+    if (onProductSelected) {
+      onProductSelected(params.row);
+      return;
+    }
     navigate("/form/product");
   };
 
@@ -155,11 +159,7 @@ const ManageProducts = () => {
               <>
                 <IconButton
                   onClick={() => {
-                    navigate(-1);
                     onAddClick(params);
-                    navigate("/form/product", {
-                      replace: true,
-                    });
                   }}
                 >
                   <Add color="light" />
@@ -347,14 +347,19 @@ const ManageProducts = () => {
 
   return (
     <Box component={"div"} sx={{ width: "100%" }}>
-      <Breadcrumbs>
-        <Typography variant="body2" onClick={() => navigate("/home")}>
-          Home
-        </Typography>
-        <Typography variant="body2" onClick={() => navigate("/manage/product")}>
-          Manage Products
-        </Typography>
-      </Breadcrumbs>
+      {!onProductSelected && (
+        <Breadcrumbs>
+          <Typography variant="body2" onClick={() => navigate("/home")}>
+            Home
+          </Typography>
+          <Typography
+            variant="body2"
+            onClick={() => navigate("/manage/product")}
+          >
+            Manage Products
+          </Typography>
+        </Breadcrumbs>
+      )}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={showImages ? 8 : 12} lg={showImages ? 9 : 12}>
           <TextField

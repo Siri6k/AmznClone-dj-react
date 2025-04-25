@@ -14,7 +14,7 @@ const JsonInputComponent = ({ fields }) => {
   };
 
   useEffect(() => {
-    if (Array.isArray(fields.default) && fields.default.length > 0) {
+    if (fields.default) {
       setKeyValuePairs([...keyValuePairs, ...fields.default]);
     } else {
       setKeyValuePairs([{ key: "", value: "" }]);

@@ -45,7 +45,7 @@ import FileInputComponent from "../../components/FileInputComponent";
 import { formatText } from "../../utils/Helper";
 import ManageUserPermissions from "./ManageUserPermissions";
 
-const ManageUsers = () => {
+const ManageUsers = ({ onSupplierSelect }) => {
   const [data, setData] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -59,7 +59,9 @@ const ManageUsers = () => {
   const [showAddReview, setShowAddReview] = useState(false);
   const [filterFields, setFilterFields] = useState([]);
   const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
-  const [aFilterFields, setAFilterFields] = useState([]);
+  const [aFilterFields, setAFilterFields] = useState(
+    onSupplierSelect ? { role: "Supplier" } : {}
+  );
   const [openPermission, setOpenPermission] = useState(false);
   const [openPermissionUserId, setOpenPermissionUserId] = useState(null);
 
@@ -184,11 +186,16 @@ const ManageUsers = () => {
         {
           field: "action",
           headerName: "Action",
-          width: 100,
+          width: onSupplierSelect ? 150 : 100,
           sortable: false,
           renderCell: (params) => {
             return (
               <>
+                {onSupplierSelect && (
+                  <IconButton onClick={() => onSupplierSelect(params.row)}>
+                    <Add color="primary" />
+                  </IconButton>
+                )}
                 <IconButton
                   onClick={() => {
                     onEditClick(params);
@@ -349,25 +356,31 @@ const ManageUsers = () => {
 
   return (
     <Box component={"div"} sx={{ width: "100%" }}>
-      <Box display={"flex"} justifyContent={"space-between"}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Typography variant="body2" onClick={() => navigate("/home")}>
-            Home
-          </Typography>
-          <Typography variant="body2" onClick={() => navigate("/manage/users")}>
-            Manage (Customer/Supplier/Admin/Staff)
-          </Typography>
-        </Breadcrumbs>
-        <Button
-          startIcon={<AddCircle />}
-          variant="contained"
-          onClick={() => {
-            navigate("/form/users");
-          }}
-        >
-          Add Users
-        </Button>
-      </Box>
+      {!onSupplierSelect && (
+        <Box display={"flex"} justifyContent={"space-between"}>
+          <Breadcrumbs aria-label="breadcrumb">
+            <Typography variant="body2" onClick={() => navigate("/home")}>
+              Home
+            </Typography>
+            <Typography
+              variant="body2"
+              onClick={() => navigate("/manage/users")}
+            >
+              Manage (Customer/Supplier/Admin/Staff)
+            </Typography>
+          </Breadcrumbs>
+
+          <Button
+            startIcon={<AddCircle />}
+            variant="contained"
+            onClick={() => {
+              navigate("/form/users");
+            }}
+          >
+            Add Users
+          </Button>
+        </Box>
+      )}
       <Grid container spacing={2}>
         <Grid
           item

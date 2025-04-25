@@ -28,19 +28,6 @@ const StepSelectComponents = ({ formConfig, fieldType }) => {
     <Box>
       {selectFields.map((field, index) => (
         <FormControl key={field.name} fullWidth margin="normal">
-          {/*<InputLabel>{field.label}</InputLabel>
-          <Select
-            {...register(field.name, { required: field.required })}
-            defaultValue={field.default}
-            label={field.label}
-            error={!!errors[field.name]}
-          >
-            {field.options.map((option, index) => (
-              <MenuItem key={option.id} value={option.id}>
-                {option.value}
-              </MenuItem>
-            ))}
-          </Select>*/}
           <Autocomplete
             {...register(field.name, { required: field.required })}
             options={field.options}
