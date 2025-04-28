@@ -541,7 +541,7 @@ const ManageUsers = ({ onSupplierSelect }) => {
             ref={divImage}
           >
             <Box m={2} display={"flex"} justifyContent={"space-between"}>
-              <Typography variant="h6">Review Images</Typography>
+              <Typography variant="h6">Profile Pictures</Typography>
               <IconButton onClick={() => setShowImages(false)}>
                 <Close />
               </IconButton>
@@ -559,105 +559,6 @@ const ManageUsers = ({ onSupplierSelect }) => {
                   <Image src={image} style={{ width: "100%" }} />
                 </Box>
               ))}
-          </Grid>
-        )}
-        {showAddReview && (
-          <Grid
-            item
-            xs={12}
-            sm={5}
-            lg={3}
-            sx={{ height: "600px", overflowY: "auto" }}
-            ref={divImage}
-          >
-            <Box m={2} display={"flex"} justifyContent={"space-between"}>
-              <Typography variant="h6">Add Users</Typography>
-              <IconButton onClick={() => navigate("form/users")}>
-                <Close />
-              </IconButton>
-            </Box>
-            <FormProvider {...methods}>
-              <form onSubmit={methods.handleSubmit(onSubmitAddReview)}>
-                <TextField
-                  label="Review"
-                  variant="outlined"
-                  margin="normal"
-                  sx={{ marginBottom: "15px" }}
-                  fullWidth
-                  {...register("reviews", {
-                    required: true,
-                  })}
-                  error={!!errors.reviews}
-                  helperText={!!error["reviews"] && "This Field is required"}
-                />
-                <Controller
-                  name="rating"
-                  control={control}
-                  defaultValue={0}
-                  sx={{ marginBottom: "15px" }}
-                  render={({ field }) => (
-                    <Rating
-                      {...field}
-                      name="rating"
-                      defaultValue={0}
-                      precision={0.5}
-                      size="large"
-                    />
-                  )}
-                />
-                {!!errors["rating"] && (
-                  <Typography
-                    variant="caption"
-                    color="error"
-                    sx={{ marginBottom: "15px" }}
-                  >
-                    This field is required
-                  </Typography>
-                )}
-                <Autocomplete
-                  {...register("review_user_id", { required: true })}
-                  options={userList}
-                  getOptionLabel={(option) => option.value}
-                  defaultValue={
-                    userList.find(
-                      (option) => option.id === watch("rewiew_user_id")
-                    ) || null
-                  }
-                  onChange={(event, newValue) => {
-                    setValue("review_user_id", newValue ? newValue.id : "");
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label={"Review User"}
-                      variant="outlined"
-                      sx={{ marginBottom: "15px" }}
-                      error={!!errors["review_user_id"]}
-                      helperText={
-                        !!errors["review_user_id"] && "This Field is Required"
-                      }
-                    />
-                  )}
-                />
-                <FileInputComponent
-                  field={{
-                    name: "review_images",
-                    required: true,
-                    label: "Review Images",
-                  }}
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  sx={{ marginBottom: "15px", marginTop: "15px" }}
-                  startIcon={<SaveAltRounded />}
-                  fullWidth
-                >
-                  Add Review
-                </Button>
-              </form>
-            </FormProvider>
           </Grid>
         )}
       </Grid>

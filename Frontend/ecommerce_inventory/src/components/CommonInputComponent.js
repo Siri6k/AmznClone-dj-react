@@ -7,8 +7,27 @@ import {
 } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import JsonInputComponent from "./JsonInputComponent";
+import { useEffect } from "react";
 
 const CommonInputComponent = ({ field, sx }) => {
+  useEffect(() => {
+    const selectedOption =
+      field?.options?.find((option) => option.id === watch(field.name)) ||
+      field?.options?.find((option) => option.id === field.default) ||
+      null;
+    if (selectedOption) {
+      setValue(field.name, selectedOption.id);
+    }
+    if (field.type === "text" && "isDateTime" in field) {
+      const date = new Date(field.default);
+      const tzOffset = new Date().getTimezoneOffset() * 6000;
+      const localTime = new Date(date.getTime() - tzOffset)
+        .toISOString()
+        .slice(0, 16);
+      setValue(field.name, localTime);
+    }
+  }, []);
+
   const {
     register,
     formState: { errors },

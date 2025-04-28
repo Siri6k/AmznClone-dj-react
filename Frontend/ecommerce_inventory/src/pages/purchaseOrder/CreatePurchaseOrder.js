@@ -42,9 +42,11 @@ import {
 } from "@mui/icons-material";
 import JsonInputComponent from "../../components/JsonInputComponent";
 import { toast } from "react-toastify";
+import { useNavigate, useParams } from "react-router-dom";
 
 const CreatePurchaseOrder = () => {
   const { error, loading, callApi } = useApi();
+  const { id } = useParams();
   const [poFields, setPoFields] = useState({});
   const [poItemFields, setPoItemFields] = useState({});
   const [suplierEmail, setSuplierEmail] = useState("");
@@ -55,19 +57,25 @@ const CreatePurchaseOrder = () => {
     useState(false);
   const [selectedPoItemIndex, setSelectedPoItemIndex] = useState(null);
 
-  const [poItems, setPoItems] = useState([]);
+  //const [poItems, setPoItems] = useState([]);
 
   const [fieldType, setFieldType] = useState(getFormType);
 
   const methods = useForm();
+  const navigate = useNavigate();
 
   const getFormFields = async () => {
+    const idVar = id ? id + "/" : "";
     const response = await callApi({
-      url: "orders/purchaseOrder/",
+      url: `orders/purchaseOrder/${idVar}`,
     });
     if (response && response.status === 200) {
       setPoFields(response.data.data.poFields);
       setPoItemFields(response.data.data.poItemFields);
+      setSuplierEmail(response.data.data?.poData?.supplier_email);
+      setSuplierId(response.data.data?.poData?.supplier_id);
+      methods.setValue("supplier_id", response.data.data?.poData?.supplier_id);
+      methods.setValue("items", response.data.data?.poItems);
     }
   };
 
@@ -76,22 +84,20 @@ const CreatePurchaseOrder = () => {
   }, []);
 
   const deleteItem = (index) => {
-    const newItems = [...poItems].filter((item, i) => i !== index);
-    let items = methods.watch("items");
+    let items = methods?.watch("items");
     items = items.filter((item, i) => i !== index);
     methods.setValue("items", items);
-    setPoItems(newItems);
   };
 
   const getPoItems = () => {
-    return poItems.map((item, index) => (
+    return methods?.watch("items")?.map((item, index) => (
       <TableRow>
         <TableCell>
           <IconButton onClick={() => deleteItem(index)}>
             <Delete color="error" />
           </IconButton>
         </TableCell>
-        <TableCell>{item.sku}</TableCell>
+        <TableCell>{item && "sku" in item ? item.sku : ""}</TableCell>
         {fieldType.map((field_type, index1) =>
           poItemFields?.[field_type].map((field, index2) => {
             let tempField = { ...field };
@@ -136,12 +142,12 @@ const CreatePurchaseOrder = () => {
   };
 
   const onProductSelected = (data) => {
-    if (poItems.some((item) => item.product_id === data.id)) {
+    if (methods?.watch("items")?.some((item) => item.product_id === data.id)) {
       toast.error("Product Already Added");
       return;
     }
-    setPoItems([
-      ...poItems,
+    methods?.setValue("items", [
+      ...methods?.watch("items"),
       {
         product_id: data.id,
         product_name: data.name,
@@ -164,8 +170,9 @@ const CreatePurchaseOrder = () => {
       toast.error("Please Select Atleast 1 Product");
       return;
     }
+    const idVar = id ? id + "/" : "";
     const response = await callApi({
-      url: "orders/purchaseOrder/",
+      url: `orders/purchaseOrder/${idVar}`,
       method: "POST",
       body: data,
     });
@@ -174,6 +181,9 @@ const CreatePurchaseOrder = () => {
       setSuplierId("");
       methods.reset();
       toast.success(response.data.message);
+      if (id) {
+        navigate("/manage/purchaseOrder");
+      }
     }
   };
 
@@ -197,7 +207,7 @@ const CreatePurchaseOrder = () => {
               Home
             </Typography>
             <Typography variant="body2" onClick={() => {}}>
-              Manage Module Urls
+              Create Puchase Order
             </Typography>
           </Breadcrumbs>
           <Typography variant="h6">Purchase Order Details</Typography>
@@ -214,7 +224,7 @@ const CreatePurchaseOrder = () => {
                     key={index1}
                     mt={3}
                   >
-                    {suplierEmail === "" ? (
+                    {suplierEmail === "" || !suplierEmail ? (
                       <Button
                         variant="contained"
                         color="primary"

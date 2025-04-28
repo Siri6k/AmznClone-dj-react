@@ -26,6 +26,7 @@ import ManageWarehouse from "./pages/warehouse/ManageWarehouse";
 import ManageUsers from "./pages/users/ManageUsers";
 import ManageModuleUrls from "./pages/module/ManageModuleUrls";
 import CreatePurchaseOrder from "./pages/purchaseOrder/CreatePurchaseOrder";
+import ManagePurchaseOrder from "./pages/purchaseOrder/ManagePuchaseOrder";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -82,6 +83,14 @@ function App() {
         {
           path: "create/po",
           element: <ProtectedRoute element={<CreatePurchaseOrder />} />,
+        },
+        {
+          path: "create/po/:id?",
+          element: <ProtectedRoute element={<CreatePurchaseOrder />} />,
+        },
+        {
+          path: "manage/purchaseOrder",
+          element: <ProtectedRoute element={<ManagePurchaseOrder />} />,
         },
       ],
     },
