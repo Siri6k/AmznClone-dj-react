@@ -49,7 +49,7 @@ ENV SECRET_KEY=$SECRET_KEY
 RUN python ./BAckend/EcommerceInventory/manage.py migrate
 
 #Run Django CollectStatic
-RUN python ./BAckend/EcommerceInventory/manage.py collectstatic --no-input
+RUN python ./BAckend/EcommerceInventory/manage.py collectstatic --noinput
 
 #Expose the port
 EXPOSE 80
