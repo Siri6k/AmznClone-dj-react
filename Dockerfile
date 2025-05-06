@@ -46,7 +46,8 @@ ENV SECRET_KEY=$SECRET_KEY
 
 
 #Run Migration command
-RUN python manage.py makemigrations && python manage.py migrate
+RUN python ./BAckend/EcommerceInventory/manage.py makemigrations 
+RUN python ./BAckend/EcommerceInventory/manage.py migrate
 
 #Run Django CollectStatic
 RUN python ./BAckend/EcommerceInventory/manage.py collectstatic --no-input
