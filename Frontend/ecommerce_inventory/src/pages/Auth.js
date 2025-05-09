@@ -102,8 +102,7 @@ const Auth = () => {
       localStorage.setItem("token", response.data.access);
       toast.success("Login successfully");
       dispatch(login());
-      navigate("/home");
-
+      navigate("/dashboard");
     } else {
       toast.error("Invalid Credentials");
     }
@@ -129,7 +128,7 @@ const Auth = () => {
       toast.success("Signup successfully");
       dispatch(login());
       dispatch(login());
-      navigate("/");
+      navigate("/dashboard");
     } else {
       toast.error("Signup failed");
     }

@@ -27,6 +27,8 @@ import ManageUsers from "./pages/users/ManageUsers";
 import ManageModuleUrls from "./pages/module/ManageModuleUrls";
 import CreatePurchaseOrder from "./pages/purchaseOrder/CreatePurchaseOrder";
 import ManagePurchaseOrder from "./pages/purchaseOrder/ManagePuchaseOrder";
+import HomePage from "./pages/StartPage";
+import { isAuthenticated } from "./utils/Helper";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -50,12 +52,15 @@ function App() {
       element: <Auth />, // Corrected: 'element' for route definition
     },
     {
+      path: "/home",
+      element: <HomePage />, // Corrected: 'element' for route definition
+    },
+    {
       path: "/",
       element: <Layout sidebarList={items} />,
       errorElement: <Layout sidebarList={items} childPage={<Error404Page />} />,
       children: [
-        { path: "/", element: <ProtectedRoute element={<Home />} /> },
-        { path: "/home", element: <ProtectedRoute element={<Home />} /> },
+        { path: "/dashboard", element: <ProtectedRoute element={<Home />} /> },
         {
           path: "/form/:formName/:id?",
           element: <ProtectedRoute element={<DynamicForm />} />,

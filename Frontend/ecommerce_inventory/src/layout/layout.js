@@ -83,6 +83,7 @@ import {
   triggerPageChange,
 } from "../redux/reducer/sidebardata";
 import { logout } from "../redux/reducer/isLoggedInReducer";
+import { isAuthenticated } from "../utils/Helper";
 
 const Layout = ({ sidebarList, pageTitle, childPage }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -104,6 +105,9 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
 
   useEffect(() => {
     //setSidebarItems(sidebarList);
+    if (!isAuthenticated()) {
+      navigate("/home");
+    }
   }, [sidebarList]);
 
   useEffect(() => {
@@ -186,7 +190,7 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
     // Handle logout action
     localStorage.removeItem("token");
     dispatch(logout());
-    navigate("/auth");
+    navigate("/home");
   };
 
   const drawerWidth = 280;
