@@ -16,9 +16,11 @@ import {
   useTheme,
   Card,
   CardMedia,
+  TextField,
   ThemeProvider,
   CardContent,
   CardActions,
+  Menu,
   CircularProgress,
   MenuItem,
   ListItemIcon,
@@ -46,7 +48,6 @@ import {
   Save,
   ShoppingCart,
   Search,
-  Menu,
   AutoAwesomeTwoTone,
   Settings as SettingsIcon,
   Circle,
@@ -56,17 +57,26 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import useApi from "../hooks/APIHandler";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import PromoCarousel from "../components/PromoCarrousel";
 
 const HomePage = ({ user_id }) => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [numPages, setNumPages] = useState(null);
   const { error, loading, callApi } = useApi();
   const [loaded, setLoaded] = useState(false);
+
+  const [search, setSearch] = useState("");
+
+  const handleSearch = (event) => {
+    setSearch(event.target.value);
+  };
+
   const handleLoad = () => {
     setLoaded(true);
   };
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,6 +85,7 @@ const HomePage = ({ user_id }) => {
 
   const getAllProduct = useCallback(async () => {
     if (!hasMore || loading) return;
+    if (numPages && page > numPages) return;
     let order = "-id";
     /*if (ordering && ordering.length > 0) {
       order =
@@ -96,6 +107,7 @@ const HomePage = ({ user_id }) => {
       const fetchData = result.data.data.data || [];
       setProducts((prev) => [...prev, ...fetchData]);
       setPage((prev) => prev + 1);
+      setNumPages(result.data.data.totalPages);
     }
   }, [page, hasMore, loading, callApi]);
 
@@ -117,9 +129,8 @@ const HomePage = ({ user_id }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useState(true); // State for desktop sidebar
   const [themeMode, setThemeMode] = useState("light");
-  const [openChildMenu, setOpenChildMenu] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [themeMenu, setThemeMenu] = useState(null);
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "basic";
@@ -178,11 +189,10 @@ const HomePage = ({ user_id }) => {
     localStorage.setItem("theme", themeI.name.toLowerCase());
   };
   const handleThemeMenuOpen = (event) => {
-    console.log(event.currentTarget);
-    setThemeMenu(event.currentTarget);
+    setAnchorEl(event.currentTarget);
   };
   const handleThemeMenuClose = () => {
-    setThemeMenu(null);
+    setAnchorEl(null);
   };
 
   const themeMenuItems = [
@@ -250,8 +260,9 @@ const HomePage = ({ user_id }) => {
 
   const themeMenuUI = (
     <Menu
-      anchorEl={themeMenu}
-      open={Boolean(themeMenu)}
+      id="theme-menu"
+      anchorEl={anchorEl}
+      open={open}
       onClose={handleThemeMenuClose}
       onClick={handleThemeMenuClose}
       PaperProps={{
@@ -296,7 +307,7 @@ const HomePage = ({ user_id }) => {
             component="main"
             sx={{
               flexGrow: 1,
-              //transition: "margin-left",
+              //transition: "margin-left 0.3s",
               //marginLeft: { xs: 0, sm: desktopOpen ? `${drawerWidth}px` : 0 },
               display: "flex",
               flexDirection: "column",
@@ -333,52 +344,69 @@ const HomePage = ({ user_id }) => {
                   >
                     Niplan Market
                   </Box>
-                  <Box
-                    component="span"
-                    sx={{
-                      display: {
-                        xs: "inline",
-                        lg: "none",
-                        sm: "none",
-                        md: "none",
-                      },
-                    }}
-                  >
-                    Niplan
-                  </Box>
+                  {!searchOpen && (
+                    <Box
+                      component="span"
+                      sx={{
+                        display: {
+                          xs: "inline",
+                          lg: "none",
+                          sm: "none",
+                          md: "none",
+                        },
+                      }}
+                    >
+                      Niplan
+                    </Box>
+                  )}
                 </Typography>
+                <Box sx={{ flexGrow: 1 }} />
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
+                {searchOpen && (
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    value={search}
+                    onChange={handleSearch}
+                    sx={{
+                      transition: "all 0.3s ease",
+                      width: searchOpen ? "300px" : "0px",
+                      opacity: searchOpen ? 1 : 0,
+                      mt: 1,
+                    }}
+                  />
+                )}
+
+                <IconButton
+                  size="large"
+                  color="inherit"
+                  onClick={() => setSearchOpen(!searchOpen)}
                 >
-                  <IconButton size="large" color="inherit">
-                    <Search />
-                  </IconButton>
-                  <IconButton size="large" color="inherit">
-                    <ShoppingCart />
-                  </IconButton>
-                  <Button
-                    variant="contained"
-                    sx={{ mr: 1 }}
-                    onClick={() => navigate("/auth")}
-                  >
-                    Login
-                  </Button>
-                  <IconButton
-                    className="theme-icon"
-                    color="inherit"
-                    aria-label="theme"
-                    onClick={handleThemeMenuOpen}
-                  >
-                    <AutoAwesomeTwoTone />
-                  </IconButton>
-                </Box>
+                  <Search />
+                </IconButton>
+                {/*<IconButton size="large" color="inherit">
+                  <ShoppingCart />
+                </IconButton>
+                */}
+                <Button
+                  variant="contained"
+                  sx={{ mr: 1 }}
+                  onClick={() => navigate("/auth")}
+                >
+                  Login
+                </Button>
+                <IconButton
+                  className="theme-icon"
+                  color="inherit"
+                  aria-label="theme"
+                  onClick={handleThemeMenuOpen}
+                >
+                  <AutoAwesomeTwoTone />
+                </IconButton>
               </Toolbar>
             </AppBar>
-            {themeMenu && themeMenuUI}
+            {themeMenuUI}
+            <PromoCarousel />
 
             {/* Main Content */}
             <Container

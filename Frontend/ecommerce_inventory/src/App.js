@@ -30,6 +30,9 @@ import ManagePurchaseOrder from "./pages/purchaseOrder/ManagePuchaseOrder";
 import HomePage from "./pages/StartPage";
 import { isAuthenticated } from "./utils/Helper";
 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
   const { isLoggedIn } = useSelector((state) => state.isLoggedInReducer);
