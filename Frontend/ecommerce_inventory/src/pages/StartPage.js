@@ -68,10 +68,31 @@ const HomePage = ({ user_id }) => {
   const [loaded, setLoaded] = useState(false);
 
   const [search, setSearch] = useState("");
+  const [debounceSearch, setDebounceSearch] = useState("");
+  const [ordering, setOrdering] = useState([
+    {
+      field: "id",
+      sort: "desc",
+    },
+  ]);
 
   const handleSearch = (event) => {
     setSearch(event.target.value);
   };
+
+  useEffect(() => {
+    // Fetch data after 1 second
+    const timer = setTimeout(() => {
+      if (numPages) {
+        setPage(1);
+        setProducts([]);
+      }
+      setDebounceSearch(search);
+    }, 1000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [search]);
 
   const handleLoad = () => {
     setLoaded(true);
@@ -81,25 +102,25 @@ const HomePage = ({ user_id }) => {
 
   useEffect(() => {
     getAllProduct();
-  }, []);
+  }, [debounceSearch, ordering]);
 
   const getAllProduct = useCallback(async () => {
     if (!hasMore || loading) return;
     if (numPages && page > numPages) return;
     let order = "-id";
-    /*if (ordering && ordering.length > 0) {
+    if (ordering && ordering.length > 0) {
       order =
         ordering[0].sort === "asc"
           ? ordering[0].field
           : "-" + ordering[0].field;
-    }*/
+    }
     const result = await callApi({
       url: `products/all/`,
       method: "GET",
       params: {
         page: page,
         pageSize: 12,
-        // search: debounceSearch,
+        search: debounceSearch,
         ordering: order,
       },
     });
@@ -112,6 +133,8 @@ const HomePage = ({ user_id }) => {
   }, [page, hasMore, loading, callApi]);
 
   const handleScroll = useCallback(() => {
+    setSearchOpen(false);
+    //close search input on scroll
     if (
       window.innerHeight + document.documentElement.scrollTop !==
       document.documentElement.offsetHeight
@@ -372,7 +395,8 @@ const HomePage = ({ user_id }) => {
                       transition: "all 0.3s ease",
                       width: searchOpen ? "300px" : "0px",
                       opacity: searchOpen ? 1 : 0,
-                      mt: 1,
+                      mt: 2,
+                      mb: 2,
                     }}
                   />
                 )}

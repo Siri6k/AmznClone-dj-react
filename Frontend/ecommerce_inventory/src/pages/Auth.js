@@ -151,14 +151,22 @@ const Auth = () => {
         >
           <Card sx={{ maxWidth: 400, width: "100%" }}>
             <CardContent>
-              <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+              <Box
+                sx={{ display: "flex", justifyContent: "center", mb: 2 }}
+                onClick={() => navigate("/home")}
+              >
                 <img
                   src={"https://picsum.photos/100"}
                   alt="Logo"
                   style={{ borderRadius: "50%" }}
                 />
               </Box>
-              <Typography variant="h5" align="center" gutterBottom>
+              <Typography
+                variant="h5"
+                align="center"
+                onClick={() => navigate("/home")}
+                gutterBottom
+              >
                 Niplan
               </Typography>
               <Tabs value={tab} onChange={handleChange} centered>
