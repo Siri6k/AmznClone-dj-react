@@ -83,7 +83,9 @@ import {
   triggerPageChange,
 } from "../redux/reducer/sidebardata";
 import { logout } from "../redux/reducer/isLoggedInReducer";
-import { isAuthenticated } from "../utils/Helper";
+import { getUser, isAuthenticated } from "../utils/Helper";
+
+import defaultImg from "../assets/profile_default.png";
 
 const Layout = ({ sidebarList, pageTitle, childPage }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -190,7 +192,7 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
     // Handle logout action
     localStorage.removeItem("token");
     dispatch(logout());
-    navigate("/home");
+    navigate("/auth");
   };
 
   const drawerWidth = 280;
@@ -341,7 +343,7 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
       transformOrigin={{ horizontal: "right", vertical: "top" }}
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      <MenuItem>
+      <MenuItem onClick={() => navigate("myprofile")}>
         <ListItemIcon>
           <AccountCircle fontSize="small" />
         </ListItemIcon>
@@ -467,6 +469,9 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
       ))}
     </Menu>
   );
+  const profilePic = Array.isArray(getUser().profile_pic)
+    ? getUser().profile_pic[0] // Si c'est un tableau, prends le premier élément
+    : defaultImg || "https://picsum.photos/100"; // Sinon, affiche l'image par défaut
 
   return (
     <Emotion10ThemeProvider theme={theme}>
@@ -557,21 +562,38 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
                   </IconButton>
                 )}
 
-                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                <Typography
+                  variant="h6"
+                  sx={{ flexGrow: 1 }}
+                  onClick={() => navigate("/dashboard")}
+                >
                   {pageTitle || "Dashboard"}
                 </Typography>
 
                 <Box sx={{ flexGrow: 1 }} />
-
-                <IconButton
-                  className="profile-icon"
-                  color="inherit"
-                  aria-label="profile"
-                  onClick={handleProfileMenuOpen}
-                >
-                  <AccountCircle />
-                </IconButton>
-
+                {getUser().profile_pic ? (
+                  <img
+                    src={profilePic}
+                    className="shimmer"
+                    onClick={handleProfileMenuOpen}
+                    style={{
+                      borderRadius: "50%",
+                      width: "40px", // ou la taille désirée
+                      height: "40px", // doit être égal à width pour un cercle parfait
+                      objectFit: "cover", // corrigé de "cover: 'fit'" qui n'est pas valide
+                      display: "block", // évite l'espace sous l'image
+                    }}
+                  />
+                ) : (
+                  <IconButton
+                    className="profile-icon"
+                    color="inherit"
+                    aria-label="profile"
+                    onClick={handleProfileMenuOpen}
+                  >
+                    <AccountCircle />
+                  </IconButton>
+                )}
                 <IconButton
                   className="theme-icon"
                   color="inherit"

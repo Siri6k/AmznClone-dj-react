@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, FormControl, TextField } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
@@ -6,6 +6,7 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
   const {
     register,
     formState: { errors },
+    watch,
     reset,
   } = useFormContext();
   const [textFields, setTextFields] = useState(formConfig.data.text);
@@ -21,19 +22,53 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
   return (
     <Box>
       {textFields.map((field, index) => (
-        <FormControl key={field.name} fullWidth margin="normal">
-          <TextField
-            fullWidth
-            label={field.label}
-            margin="normal"
-            required={field.required}
-            key={field.name}
-            error={!!errors[field.name]}
-            defaultValue={field.default}
-            placeholder={field.placeholder}
-            {...register(field.name, { required: field.required })}
-          />
-        </FormControl>
+        <React.Fragment key={field.name}>
+          <FormControl key={field.name} fullWidth margin="normal">
+            <TextField
+              fullWidth
+              label={field.label}
+              margin="normal"
+              required={field.required}
+              key={field.name}
+              error={!!errors[field.name]}
+              type={
+                field.label.toLowerCase().includes("password")
+                  ? "password"
+                  : "text"
+              }
+              defaultValue={
+                (!field.label.toLowerCase().includes("password") &&
+                  field.default) ||
+                ""
+              }
+              placeholder={field.placeholder}
+              {...register(field.name, { required: field.required })}
+            />
+          </FormControl>
+          {field.label.toLowerCase().includes("password") && (
+            <FormControl fullWidth margin="normal">
+              <TextField
+                fullWidth
+                label={`Confirm ${field.label}`}
+                margin="normal"
+                required={field.required}
+                type="password"
+                error={!!errors[`${field.name}Confirmation`]}
+                placeholder={`Confirm ${field.placeholder}`}
+                {...register(`${field.name}Confirmation`, {
+                  required: field.required,
+                  validate: (value) =>
+                    value === watch(field.name) || "Passwords don't match",
+                })}
+              />
+              {errors[`${field.name}Confirmation`] && (
+                <p style={{ color: "red" }}>
+                  {errors[`${field.name}Confirmation`].message}
+                </p>
+              )}
+            </FormControl>
+          )}
+        </React.Fragment>
       ))}
     </Box>
   );

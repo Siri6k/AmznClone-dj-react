@@ -32,6 +32,7 @@ import { isAuthenticated } from "./utils/Helper";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import UserForm from "./pages/users/UserProfilePage";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -99,6 +100,10 @@ function App() {
         {
           path: "manage/purchaseOrder",
           element: <ProtectedRoute element={<ManagePurchaseOrder />} />,
+        },
+        {
+          path: "myprofile",
+          element: <ProtectedRoute element={<UserForm />} />,
         },
       ],
     },

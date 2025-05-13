@@ -35,6 +35,7 @@ import useApi from "../hooks/APIHandler";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/reducer/isLoggedInReducer";
+import { FormProvider, useForm } from "react-hook-form";
 
 const Auth = () => {
   const [tab, setTab] = useState(0);
@@ -42,6 +43,11 @@ const Auth = () => {
   const navigate = useNavigate();
   const { callApi, error, loading } = useApi();
   const dispatch = useDispatch();
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "basic";
@@ -112,6 +118,11 @@ const Auth = () => {
   const doSignup = async (e) => {
     e.preventDefault();
     // Call the login API
+    if (e.target.password.value !== e.target.confirmpassword.value) {
+      toast.error("Password and Confirm Password do not match");
+      return;
+    }
+
     let response = await callApi({
       url: "auth/signup/",
       method: "POST",
@@ -119,8 +130,7 @@ const Auth = () => {
         username: e.target.username.value,
         password: e.target.password.value,
         email: e.target.email.value,
-        profile_pic:
-          "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+        profile_pic: ["https://picsum.photos/100"],
       },
     });
     if (response?.data?.access) {
@@ -219,6 +229,8 @@ const Auth = () => {
                     name="username"
                     autoComplete="username"
                     autoFocus
+                    error={!!errors.username}
+                    helperText={errors.username?.message}
                   />
                   <TextField
                     margin="normal"
@@ -228,6 +240,8 @@ const Auth = () => {
                     name="email"
                     type="email"
                     autoComplete="email"
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
                   />
                   <TextField
                     margin="normal"
@@ -237,6 +251,47 @@ const Auth = () => {
                     name="password"
                     type="password"
                     autoComplete="current-password"
+                    inputProps={{
+                      minLength: 8,
+                      maxLength: 20,
+                    }}
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    onChange={(e) => {
+                      if (e.target.value.length < 8) {
+                        errors.password = {
+                          type: "manual",
+                          message:
+                            "Password must be between 8 and 20 characters",
+                        };
+                      } else {
+                        delete errors.password;
+                      }
+                    }}
+                  />
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Confirm Password"
+                    name="confirmpassword"
+                    type="password"
+                    autoComplete="current-password"
+                    error={!!errors.confirmpassword}
+                    helperText={errors.confirmpassword?.message}
+                    onChange={(e) => {
+                      if (
+                        e.target.value.length < 8 ||
+                        e.target.value !== watch("password")
+                      ) {
+                        errors.confirmpassword = {
+                          type: "manual",
+                          message: "Passwords do not match",
+                        };
+                      } else {
+                        delete errors.confirmpassword;
+                      }
+                    }}
                   />
                   {loading ? (
                     <LinearProgress sx={{ width: "100%" }} />
