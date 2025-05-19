@@ -9,7 +9,10 @@ import {
   Button,
   Box,
   CssBaseline,
+  Checkbox,
   ThemeProvider,
+  Link,
+  FormControlLabel,
   createTheme,
   LinearProgress,
 } from "@mui/material";
@@ -37,14 +40,18 @@ import { useDispatch } from "react-redux";
 import { login } from "../redux/reducer/isLoggedInReducer";
 import { FormProvider, useForm } from "react-hook-form";
 
+import defaultImg from "../assets/profile_default.png";
+
 const Auth = () => {
   const [tab, setTab] = useState(0);
   const [themeMode, setThemeMode] = useState("basic");
   const navigate = useNavigate();
   const { callApi, error, loading } = useApi();
   const dispatch = useDispatch();
+
   const {
     register,
+    handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
@@ -115,22 +122,17 @@ const Auth = () => {
     console.log(response);
   };
 
-  const doSignup = async (e) => {
-    e.preventDefault();
-    // Call the login API
-    if (e.target.password.value !== e.target.confirmpassword.value) {
-      toast.error("Password and Confirm Password do not match");
-      return;
-    }
-
+  const doSignup = async (data) => {
     let response = await callApi({
       url: "auth/signup/",
       method: "POST",
       body: {
-        username: e.target.username.value,
-        password: e.target.password.value,
-        email: e.target.email.value,
-        profile_pic: ["https://picsum.photos/100"],
+        username: data.username,
+        password: data.password,
+        email: data.email,
+        profile_pic: [
+          "https://niplan-drc.s3.amazonaws.com/uploads/0c96e58f828bd11700054ecbdce3ff426deddbadda620c51_profile_default.png",
+        ],
       },
     });
     if (response?.data?.access) {
@@ -220,15 +222,19 @@ const Auth = () => {
                 </Box>
               )}
               {tab === 1 && (
-                <Box component="form" sx={{ mt: 2 }} onSubmit={doSignup}>
+                <Box
+                  component="form"
+                  sx={{ mt: 2 }}
+                  onSubmit={handleSubmit(doSignup)}
+                >
                   <TextField
                     margin="normal"
                     required
                     fullWidth
                     label="Username"
-                    name="username"
-                    autoComplete="username"
-                    autoFocus
+                    {...register("username", {
+                      required: "Username is required",
+                    })}
                     error={!!errors.username}
                     helperText={errors.username?.message}
                   />
@@ -237,9 +243,8 @@ const Auth = () => {
                     required
                     fullWidth
                     label="Email"
-                    name="email"
                     type="email"
-                    autoComplete="email"
+                    {...register("email", { required: "Email is required" })}
                     error={!!errors.email}
                     helperText={errors.email?.message}
                   />
@@ -248,51 +253,64 @@ const Auth = () => {
                     required
                     fullWidth
                     label="Password"
-                    name="password"
                     type="password"
-                    autoComplete="current-password"
-                    inputProps={{
-                      minLength: 8,
-                      maxLength: 20,
-                    }}
+                    {...register("password", {
+                      required: "Password is required",
+                      minLength: {
+                        value: 8,
+                        message: "Password must be at least 8 characters",
+                      },
+                      maxLength: {
+                        value: 20,
+                        message: "Password must be less than 20 characters",
+                      },
+                    })}
                     error={!!errors.password}
                     helperText={errors.password?.message}
-                    onChange={(e) => {
-                      if (e.target.value.length < 8) {
-                        errors.password = {
-                          type: "manual",
-                          message:
-                            "Password must be between 8 and 20 characters",
-                        };
-                      } else {
-                        delete errors.password;
-                      }
-                    }}
                   />
                   <TextField
                     margin="normal"
                     required
                     fullWidth
                     label="Confirm Password"
-                    name="confirmpassword"
                     type="password"
-                    autoComplete="current-password"
+                    {...register("confirmpassword", {
+                      required: "Confirm Password is required",
+                      validate: (value) =>
+                        value === watch("password") || "Passwords do not match",
+                    })}
                     error={!!errors.confirmpassword}
                     helperText={errors.confirmpassword?.message}
-                    onChange={(e) => {
-                      if (
-                        e.target.value.length < 8 ||
-                        e.target.value !== watch("password")
-                      ) {
-                        errors.confirmpassword = {
-                          type: "manual",
-                          message: "Passwords do not match",
-                        };
-                      } else {
-                        delete errors.confirmpassword;
-                      }
-                    }}
                   />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        {...register("terms", {
+                          required: "You must agree to the terms and policies",
+                        })}
+                        color="primary"
+                      />
+                    }
+                    label={
+                      <span>
+                        I agree to the{" "}
+                        <span
+                          style={{
+                            color: theme.palette.primary.main,
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => navigate("/policies")}
+                        >
+                          Terms and Policies
+                        </span>
+                      </span>
+                    }
+                  />
+
+                  {errors.terms && (
+                    <p style={{ color: "red" }}>{errors.terms.message}</p>
+                  )}
                   {loading ? (
                     <LinearProgress sx={{ width: "100%" }} />
                   ) : (

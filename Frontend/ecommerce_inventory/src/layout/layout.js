@@ -469,10 +469,15 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
       ))}
     </Menu>
   );
-  const profilePic = Array.isArray(getUser().profile_pic)
-    ? getUser().profile_pic[0] // Si c'est un tableau, prends le premier élément
-    : defaultImg || "https://picsum.photos/100"; // Sinon, affiche l'image par défaut
-
+  let profilePic = defaultImg;
+  if (isAuthenticated()) {
+    profilePic =
+      getUser()?.profile_pic &&
+      getUser()?.profile_pic !== "null" &&
+      Array.isArray(getUser()?.profile_pic)
+        ? getUser()?.profile_pic[0]
+        : defaultImg;
+  }
   return (
     <Emotion10ThemeProvider theme={theme}>
       <ThemeProvider theme={theme}>
@@ -571,7 +576,7 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
                 </Typography>
 
                 <Box sx={{ flexGrow: 1 }} />
-                {getUser().profile_pic ? (
+                {getUser()?.profile_pic ? (
                   <img
                     src={profilePic}
                     className="shimmer"

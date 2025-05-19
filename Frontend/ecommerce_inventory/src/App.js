@@ -28,11 +28,13 @@ import ManageModuleUrls from "./pages/module/ManageModuleUrls";
 import CreatePurchaseOrder from "./pages/purchaseOrder/CreatePurchaseOrder";
 import ManagePurchaseOrder from "./pages/purchaseOrder/ManagePuchaseOrder";
 import HomePage from "./pages/StartPage";
+import LegalDocuments from "./pages/docs/LegalDocuments";
 import { isAuthenticated } from "./utils/Helper";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import UserForm from "./pages/users/UserProfilePage";
+import ChartExamples from "./tools/ChartExample";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -55,9 +57,14 @@ function App() {
       path: "/auth",
       element: <Auth />, // Corrected: 'element' for route definition
     },
+
     {
       path: "/home",
       element: <HomePage />, // Corrected: 'element' for route definition
+    },
+    {
+      path: "/policies",
+      element: <LegalDocuments />, // Corrected: 'element' for route definition
     },
     {
       path: "/",
@@ -104,6 +111,10 @@ function App() {
         {
           path: "myprofile",
           element: <ProtectedRoute element={<UserForm />} />,
+        },
+        {
+          path: "settings",
+          element: <ProtectedRoute element={<ChartExamples />} />,
         },
       ],
     },

@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Box, FormControl, TextField } from "@mui/material";
+import {
+  Box,
+  Divider,
+  FormControl,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
 const StepTextComponents = ({ formConfig, fieldType }) => {
@@ -7,13 +13,17 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
     register,
     formState: { errors },
     watch,
+    setError,
+    clearErrors,
     reset,
   } = useFormContext();
   const [textFields, setTextFields] = useState(formConfig.data.text);
   useEffect(() => {
     setTextFields(formConfig.data.text);
     const defaultValue = formConfig.data.text.reduce((acc, field) => {
-      acc[field.name] = field.default || ""; // Set default value if provided
+      acc[field.name] = field.name.toLowerCase().includes("password")
+        ? ""
+        : field.default; // Set default value if provided
       return acc;
     }, {});
     reset(defaultValue); // Reset form with default values
@@ -23,51 +33,82 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
     <Box>
       {textFields.map((field, index) => (
         <React.Fragment key={field.name}>
+          {field.name.toLowerCase().includes("phone") && (
+            <>
+              <Typography variant="body2">Other informations</Typography>
+              <Divider sx={{ mt: 2 }} fullWidth />
+            </>
+          )}
           <FormControl key={field.name} fullWidth margin="normal">
-            <TextField
-              fullWidth
-              label={field.label}
-              margin="normal"
-              required={field.required}
-              key={field.name}
-              error={!!errors[field.name]}
-              type={
-                field.label.toLowerCase().includes("password")
-                  ? "password"
-                  : "text"
-              }
-              defaultValue={
-                (!field.label.toLowerCase().includes("password") &&
-                  field.default) ||
-                ""
-              }
-              placeholder={field.placeholder}
-              {...register(field.name, { required: field.required })}
-            />
-          </FormControl>
-          {field.label.toLowerCase().includes("password") && (
-            <FormControl fullWidth margin="normal">
+            {field.name.toLowerCase().includes("confirm-password") ? (
               <TextField
                 fullWidth
-                label={`Confirm ${field.label}`}
+                label={field.label}
                 margin="normal"
                 required={field.required}
+                key={field.name}
+                error={!!errors[field.name]}
                 type="password"
-                error={!!errors[`${field.name}Confirmation`]}
-                placeholder={`Confirm ${field.placeholder}`}
-                {...register(`${field.name}Confirmation`, {
+                defaultValue={field.default}
+                placeholder={field.placeholder}
+                {...register(field.name, {
                   required: field.required,
-                  validate: (value) =>
-                    value === watch(field.name) || "Passwords don't match",
+                  validate: (value) => {
+                    const password = watch("password");
+                    return password === value || "Passwords do not match";
+                  },
                 })}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value !== watch("password")) {
+                    setError(field.name, {
+                      type: "manual",
+                      message: "Passwords do not match",
+                    });
+                  } else {
+                    clearErrors(field.name);
+                  }
+                }}
+                helperText={
+                  errors[field.name] ? errors[field.name].message : ""
+                }
               />
-              {errors[`${field.name}Confirmation`] && (
-                <p style={{ color: "red" }}>
-                  {errors[`${field.name}Confirmation`].message}
-                </p>
-              )}
-            </FormControl>
-          )}
+            ) : (
+              <TextField
+                fullWidth
+                label={field.label}
+                margin="normal"
+                required={field.required}
+                key={field.name}
+                type={
+                  field.name.toLowerCase().includes("password")
+                    ? "password"
+                    : "text"
+                }
+                error={!!errors[field.name]}
+                defaultValue={field.default}
+                placeholder={field.placeholder}
+                helperText={
+                  errors[field.name] ? errors[field.name].message : ""
+                }
+                {...register(field.name, { required: field.required })}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (field.name.toLowerCase().includes("email")) {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(value)) {
+                      setError(field.name, {
+                        type: "manual",
+                        message: "Invalid email address",
+                      });
+                    } else {
+                      clearErrors(field.name);
+                    }
+                  }
+                }}
+              />
+            )}
+          </FormControl>
         </React.Fragment>
       ))}
     </Box>

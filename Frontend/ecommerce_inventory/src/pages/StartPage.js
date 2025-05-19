@@ -58,6 +58,7 @@ import useApi from "../hooks/APIHandler";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import PromoCarousel from "../components/PromoCarrousel";
+import { getUser } from "../utils/Helper";
 
 const HomePage = ({ user_id }) => {
   const [products, setProducts] = useState([]);
@@ -358,12 +359,18 @@ const HomePage = ({ user_id }) => {
                     gap: 1, // Adds spacing between icon and text
                   }}
                 >
-                  <IconButton size="large" color="inherit" sx={{ mr: 1 }}>
+                  <IconButton
+                    size="large"
+                    color="inherit"
+                    sx={{ mr: 1 }}
+                    onClick={() => navigate("/home")}
+                  >
                     <Shop />
                   </IconButton>
                   <Box
                     component="span"
                     sx={{ display: { xs: "none", sm: "inline" } }}
+                    onClick={() => navigate("/home")}
                   >
                     Niplan Market
                   </Box>
@@ -378,6 +385,7 @@ const HomePage = ({ user_id }) => {
                           md: "none",
                         },
                       }}
+                      onClick={() => navigate("/home")}
                     >
                       Niplan
                     </Box>
@@ -412,13 +420,28 @@ const HomePage = ({ user_id }) => {
                   <ShoppingCart />
                 </IconButton>
                 */}
-                <Button
-                  variant="contained"
-                  sx={{ mr: 1 }}
-                  onClick={() => navigate("/auth")}
-                >
-                  Login
-                </Button>
+
+                {!getUser() && (
+                  <Button
+                    variant="contained"
+                    sx={{ mr: 1 }}
+                    onClick={() => navigate("/auth")}
+                  >
+                    Login
+                  </Button>
+                )}
+                {getUser() && (
+                  <Button
+                    variant="contained"
+                    sx={{ mr: 1 }}
+                    onClick={() => {
+                      localStorage.removeItem("token");
+                      window.location.reload();
+                    }}
+                  >
+                    Logout
+                  </Button>
+                )}
                 <IconButton
                   className="theme-icon"
                   color="inherit"

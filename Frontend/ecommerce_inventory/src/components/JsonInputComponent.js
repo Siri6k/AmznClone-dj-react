@@ -34,7 +34,7 @@ const JsonInputComponent = ({ fields }) => {
             fullWidth
             margin="normal"
             sx={{ ml: 1, mr: 1 }}
-            key={fields.name}
+            key={fields.name + index + "key"}
             label="Key"
             {...register(`${fields.name}[${index}].key`)}
             defaultValue={pair.key}
@@ -44,7 +44,7 @@ const JsonInputComponent = ({ fields }) => {
             fullWidth
             margin="normal"
             sx={{ ml: 1, mr: 1 }}
-            key={fields.name}
+            key={fields.name + index + "value"}
             label="Value"
             {...register(`${fields.name}[${index}].value`)}
             defaultValue={pair.value}
