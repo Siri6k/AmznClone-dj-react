@@ -35,6 +35,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import UserForm from "./pages/users/UserProfilePage";
 import ChartExamples from "./tools/ChartExample";
+import VisitLogger from "./components/VisitLoggerComponent";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -123,6 +124,7 @@ function App() {
   return (
     // Assuming the Layout component is used for wrapping the main content
     <>
+      <VisitLogger />
       <RouterProvider router={router} />
       <ToastContainer
         position="bottom-right"
