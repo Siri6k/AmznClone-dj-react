@@ -54,6 +54,8 @@ const Auth = () => {
     handleSubmit,
     watch,
     formState: { errors },
+    setError,
+    clearErrors,
   } = useForm();
 
   useEffect(() => {
@@ -254,6 +256,7 @@ const Auth = () => {
                     fullWidth
                     label="Password"
                     type="password"
+                    name="password"
                     {...register("password", {
                       required: "Password is required",
                       minLength: {
@@ -267,12 +270,30 @@ const Auth = () => {
                     })}
                     error={!!errors.password}
                     helperText={errors.password?.message}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      clearErrors("password");
+                      if (value.length < 8) {
+                        setError("password", {
+                          type: "manual",
+                          message: "Password must be at least 8 characters",
+                        });
+                      } else if (value.length > 20) {
+                        setError("password", {
+                          type: "manual",
+                          message: "Password must be less than 20 characters",
+                        });
+                      } else {
+                        clearErrors("password");
+                      }
+                    }}
                   />
                   <TextField
                     margin="normal"
                     required
                     fullWidth
                     label="Confirm Password"
+                    name="confirmpassword"
                     type="password"
                     {...register("confirmpassword", {
                       required: "Confirm Password is required",
@@ -281,6 +302,18 @@ const Auth = () => {
                     })}
                     error={!!errors.confirmpassword}
                     helperText={errors.confirmpassword?.message}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      clearErrors("confirmpassword");
+                      if (value !== watch("password")) {
+                        setError("confirmpassword", {
+                          type: "manual",
+                          message: "Passwords do not match",
+                        });
+                      } else {
+                        clearErrors("confirmpassword");
+                      }
+                    }}
                   />
                   <FormControlLabel
                     control={

@@ -6,7 +6,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 
 const StepTextComponents = ({ formConfig, fieldType }) => {
   const {
@@ -16,6 +16,7 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
     setError,
     clearErrors,
     reset,
+    setValue,
   } = useFormContext();
   const [textFields, setTextFields] = useState(formConfig.data.text);
   useEffect(() => {
@@ -28,6 +29,8 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
     }, {});
     reset(defaultValue); // Reset form with default values
   }, [formConfig.data.text]);
+
+  const passwordValue = useWatch({ name: "password" });
 
   return (
     <Box>
@@ -53,13 +56,12 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
                 placeholder={field.placeholder}
                 {...register(field.name, {
                   required: field.required,
-                  validate: (value) => {
-                    const password = watch("password");
-                    return password === value || "Passwords do not match";
-                  },
+                  validate: (value) =>
+                    value === passwordValue || "Passwords do not match",
                 })}
                 onChange={(e) => {
                   const value = e.target.value;
+                  clearErrors(field.name);
                   if (value !== watch("password")) {
                     setError(field.name, {
                       type: "manual",
@@ -81,12 +83,23 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
                 required={field.required}
                 key={field.name}
                 type={
-                  field.name.toLowerCase().includes("password")
+                  "isDate" in field
+                    ? "date"
+                    : "isDateTime" in field
+                    ? "datetime-local"
+                    : field.name.toLowerCase().includes("password")
                     ? "password"
                     : "text"
                 }
                 error={!!errors[field.name]}
-                defaultValue={field.default}
+                defaultValue={
+                  "isDateTime" in field || "isDate" in field
+                    ? new Date(field.default).toISOString().slice(0, 16)
+                    : field.default
+                }
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 placeholder={field.placeholder}
                 helperText={
                   errors[field.name] ? errors[field.name].message : ""
@@ -94,15 +107,30 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
                 {...register(field.name, { required: field.required })}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (field.name.toLowerCase().includes("email")) {
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(value)) {
+                  clearErrors(field.name);
+                  if (field.name.toLowerCase().includes("password")) {
+                    if (value.length < 8) {
                       setError(field.name, {
                         type: "manual",
-                        message: "Invalid email address",
+                        message: "Password must be at least 8 characters",
                       });
-                    } else {
-                      clearErrors(field.name);
+                    }
+                    if (
+                      watch("confirm-password").length > 0 &&
+                      value !== watch("confirm-password")
+                    ) {
+                      setError("confirm-password", {
+                        type: "manual",
+                        message: "Passwords do not match",
+                      });
+                    } else if (field.name.toLowerCase().includes("email")) {
+                      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                      if (!emailRegex.test(value)) {
+                        setError(field.name, {
+                          type: "manual",
+                          message: "Invalid email address",
+                        });
+                      }
                     }
                   }
                 }}
