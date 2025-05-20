@@ -56,8 +56,6 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
                 placeholder={field.placeholder}
                 {...register(field.name, {
                   required: field.required,
-                  validate: (value) =>
-                    value === passwordValue || "Passwords do not match",
                 })}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -113,15 +111,6 @@ const StepTextComponents = ({ formConfig, fieldType }) => {
                       setError(field.name, {
                         type: "manual",
                         message: "Password must be at least 8 characters",
-                      });
-                    }
-                    if (
-                      watch("confirm-password").length > 0 &&
-                      value !== watch("confirm-password")
-                    ) {
-                      setError("confirm-password", {
-                        type: "manual",
-                        message: "Passwords do not match",
                       });
                     } else if (field.name.toLowerCase().includes("email")) {
                       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

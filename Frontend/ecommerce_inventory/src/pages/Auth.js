@@ -297,8 +297,6 @@ const Auth = () => {
                     type="password"
                     {...register("confirmpassword", {
                       required: "Confirm Password is required",
-                      validate: (value) =>
-                        value === watch("password") || "Passwords do not match",
                     })}
                     error={!!errors.confirmpassword}
                     helperText={errors.confirmpassword?.message}

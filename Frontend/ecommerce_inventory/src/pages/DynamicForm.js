@@ -58,14 +58,36 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
     });
     if (response?.data) {
       // Filter steps that have datas
+      let configData = response.data;
+
+      const newField = {
+        name: "confirm-password",
+        label: "Confirm Password",
+        placeholder: "Confirm your password",
+        default: "",
+        required: true,
+        type: "text",
+      };
+
+      const updatedTextFields = [];
+
+      configData.data.text.forEach((field) => {
+        updatedTextFields.push(field);
+        if (field.name === "password") {
+          updatedTextFields.push(newField); // Ajout juste après "password"
+        }
+      });
+
+      configData.data.text = updatedTextFields;
+
+      let fetcData = configData.data;
       let stepFilter = stepItems.filter(
         (step) =>
-          response.data.data[step.fieldType] &&
-          response.data.data[step.fieldType].length > 0
+          fetcData[step.fieldType] && fetcData[step.fieldType].length > 0
       );
-
       setSteps(stepFilter);
-      setFormConfig(response.data);
+      setFormConfig(configData);
+
       setCurrentStep(0);
     } else {
       toast.error("Error in Fetching Form Data");

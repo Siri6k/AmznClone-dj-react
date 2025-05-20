@@ -99,7 +99,7 @@ const UserForm = () => {
 
       setCurrentStep(0);
     } else {
-      toast.error("Error in Fetching Form Data");
+      toast.error("Error in Fetching Profile Form Data");
     }
   };
 
@@ -123,6 +123,7 @@ const UserForm = () => {
       }
 
       if (isError) {
+        toast.error("Please fill all required fields");
         return;
       }
       const response = await callApi({
@@ -133,7 +134,7 @@ const UserForm = () => {
       toast.success(response.data.message);
       setCurrentStep(0);
       methods.reset();
-      navigate("myprofile");
+      navigate("/myprofile");
     } catch (err) {
       console.log(err);
     }
@@ -166,9 +167,7 @@ const UserForm = () => {
 
   const validateCurrentStepFields = (fields) => {
     return fields.filter(
-      (field) =>
-        (field.required && !methods.getValues()[field.name]) ||
-        methods.formState.errors[field.name]
+      (field) => field.required && !methods.getValues()[field.name]
     );
   };
 
