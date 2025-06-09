@@ -17,8 +17,10 @@ import ProfileCard from "./ProfileCard";
 import { toast } from "react-toastify";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { getFormTypes } from "../../utils/Helper";
+import { getFormTypes, refreshToken } from "../../utils/Helper";
 import { ArrowBackIos, ArrowForwardIos, Save } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/reducer/isLoggedInReducer";
 
 const UserForm = () => {
   const [tab, setTab] = useState(0);
@@ -54,6 +56,7 @@ const UserForm = () => {
   const [steps, setSteps] = useState(stepItems);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     methods.reset();
@@ -134,7 +137,9 @@ const UserForm = () => {
       toast.success(response.data.message);
       setCurrentStep(0);
       methods.reset();
-      navigate("/myprofile");
+      getMyProfile();
+      setTab(0);
+      fetchForm();
     } catch (err) {
       console.log(err);
     }

@@ -54,6 +54,9 @@ import {
   ReceiptOutlined,
   WarehouseOutlined,
   ShoppingBasketRounded,
+  Update,
+  UpdateDisabledRounded,
+  SystemUpdate,
 } from "@mui/icons-material";
 import { ThemeProvider as Emotion10ThemeProvider } from "@emotion/react";
 import "./style.scss";
@@ -191,6 +194,7 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
   const handleLogout = () => {
     // Handle logout action
     localStorage.removeItem("token");
+    localStorage.removeItem("refresh");
     dispatch(logout());
     navigate("/auth");
   };
@@ -343,13 +347,13 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
       transformOrigin={{ horizontal: "right", vertical: "top" }}
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      <MenuItem onClick={() => navigate("myprofile")}>
+      <MenuItem onClick={() => navigate("/myprofile")}>
         <ListItemIcon>
           <AccountCircle fontSize="small" />
         </ListItemIcon>
         <Typography variant="inherit">Profile</Typography>
       </MenuItem>
-      <MenuItem>
+      <MenuItem onClick={() => navigate("/settings")}>
         <ListItemIcon>
           <SettingsIcon fontSize="small" />
         </ListItemIcon>
@@ -576,6 +580,25 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
                 </Typography>
 
                 <Box sx={{ flexGrow: 1 }} />
+                {isMobile
+                  ? !getUser()?.address && (
+                      <IconButton
+                        color="error"
+                        aria-label="open drawer"
+                        onClick={() => navigate("/myprofile")}
+                      >
+                        <SystemUpdate />
+                      </IconButton>
+                    )
+                  : !getUser()?.address && (
+                      <IconButton
+                        color="error"
+                        aria-label="open drawer"
+                        onClick={() => navigate("/myprofile")}
+                      >
+                        <SystemUpdate /> Update Profile
+                      </IconButton>
+                    )}
                 {getUser()?.profile_pic ? (
                   <img
                     src={profilePic}
@@ -624,7 +647,11 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
                 mt: "auto",
               }}
             >
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                onClick={() => navigate("/contact")}
+              >
                 Niplan - Version 1.0.0 (2025)
               </Typography>
             </Box>

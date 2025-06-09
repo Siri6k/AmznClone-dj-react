@@ -82,7 +82,10 @@ const ProfileCard = ({ profile }) => {
             <Typography variant="subtitle2">
               <WhatsApp fontSize="small" /> WhatsApp Number:
             </Typography>
-            <Chip label={profile.phone_number || "N/A"} size="small" />
+            <Chip
+              label={profile.whatsapp_number || profile.phone_number || "N/A"}
+              size="small"
+            />
           </Grid>
           <Grid item xs={6}>
             <Typography variant="subtitle2">

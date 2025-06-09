@@ -47,9 +47,6 @@ import {
 } from "../../layout/themes";
 import { GlobalStyles } from "../../layout/GlobalStyle";
 import {
-  Save,
-  ShoppingCart,
-  Search,
   AutoAwesomeTwoTone,
   Settings as SettingsIcon,
   Circle,
@@ -57,9 +54,7 @@ import {
   ExpandMore,
   Article,
 } from "@mui/icons-material";
-import useApi from "../../hooks/APIHandler";
 import { useNavigate } from "react-router-dom";
-import PromoCarousel from "../../components/PromoCarrousel";
 import { getUser } from "../../utils/Helper";
 
 const LegalDocuments = () => {
@@ -489,8 +484,20 @@ const LegalDocuments = () => {
                 mt: "auto",
               }}
             >
-              <Typography variant="body2" color="text.secondary">
-                Niplan - Version 1.0.0 (2025)
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                textAlign="center"
+                onClick={() => navigate("/home")}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    textDecoration: "underline",
+                  },
+                }}
+              >
+                © {new Date().getFullYear()} - Niplan Market. Tous droits
+                réservés.
               </Typography>
             </Box>
           </Box>

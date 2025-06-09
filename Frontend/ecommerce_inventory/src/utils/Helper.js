@@ -6,20 +6,64 @@ import StepTextareaComponents from "../components/StepTextareaComponents";
 import StepJsonComponents from "../components/StepJsonComponents";
 import StepFileComponents from "../components/StepFileComponents";
 import StepTextComponents from "../components/StepTextComponents";
+import useApi from "../hooks/APIHandler";
+import axios from "axios";
+import config from "./config";
 
 export const isAuthenticated = () => {
   const token = localStorage.getItem("token");
+  const refresh = localStorage.getItem("refresh");
   if (!token) {
     return false;
   }
   try {
     const decodedToken = jwtDecode(token);
+    const decodedRefreshToken = jwtDecode(refresh);
     const currentTime = Date.now() / 1000;
-    if (decodedToken.exp < currentTime) {
+    if (decodedRefreshToken.exp < currentTime) {
       localStorage.removeItem("token");
+      localStorage.removeItem("refresh");
+      return false;
+    }
+    if (decodedToken.exp < currentTime) {
+      refreshToken();
+      return true;
     }
     return decodedToken.exp > currentTime;
   } catch (err) {
+    return false;
+  }
+};
+export const refreshToken = async () => {
+  const refresh = localStorage.getItem("refresh");
+  if (!refresh) {
+    return false;
+  }
+  const gUrl = config.API_URL + "auth/token/refresh/";
+  let header = {};
+  header["Authorization"] = localStorage.getItem("token")
+    ? `Bearer ${localStorage.getItem("token")}`
+    : "";
+  try {
+    const response = await axios.request({
+      url: gUrl,
+      method: "POST",
+      body: refresh,
+      headers: header,
+    });
+
+    if (response.status === 200) {
+      localStorage.setItem("token", response.data.access);
+      localStorage.setItem("refresh", response.data.refresh);
+      return true;
+    } else {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refresh");
+      return false;
+    }
+  } catch (err) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refresh");
     return false;
   }
 };

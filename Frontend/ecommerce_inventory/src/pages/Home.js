@@ -49,11 +49,14 @@ import {
   Settings as SettingsIcon,
   Circle,
   Shop,
+  SystemUpdate,
+  AddCardRounded,
 } from "@mui/icons-material";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import useApi from "../hooks/APIHandler";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { getUser } from "../utils/Helper";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -289,11 +292,44 @@ const Home = () => {
       maxWidth="xl"
       sx={{ flex: 1, padding: "20px" }}
     >
-      <Breadcrumbs aria-label="breadcrumb">
-        <Typography variant="body2" onClick={() => navigate("/home")}>
-          Featured Products
-        </Typography>
-      </Breadcrumbs>
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Typography variant="body2" onClick={() => navigate("/home")}>
+            My Products
+          </Typography>
+        </Breadcrumbs>
+        {isMobile
+          ? !getUser()?.address && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => navigate("/myprofile")}
+                startIcon={<SystemUpdate />}
+              >
+                Profile
+              </Button>
+            )
+          : !getUser()?.address && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => navigate("/myprofile")}
+                startIcon={<SystemUpdate />}
+              >
+                Profile
+              </Button>
+            )}
+        {getUser()?.phone_number && (
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => navigate("/home")}
+            startIcon={<AddCardRounded />}
+          >
+            Vendre
+          </Button>
+        )}
+      </Box>
       <Divider sx={{ mb: 2, mt: 2 }} />
       <Grid container spacing={4}>
         {products.map((product) => (

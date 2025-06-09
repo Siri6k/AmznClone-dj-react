@@ -58,7 +58,7 @@ import useApi from "../hooks/APIHandler";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import PromoCarousel from "../components/PromoCarrousel";
-import { getUser } from "../utils/Helper";
+import { getUser, isAuthenticated } from "../utils/Helper";
 
 const HomePage = ({ user_id }) => {
   const [products, setProducts] = useState([]);
@@ -363,14 +363,14 @@ const HomePage = ({ user_id }) => {
                     size="large"
                     color="inherit"
                     sx={{ mr: 1 }}
-                    onClick={() => navigate("/home")}
+                    onClick={() => navigate("/dashboard")}
                   >
                     <Shop />
                   </IconButton>
                   <Box
                     component="span"
                     sx={{ display: { xs: "none", sm: "inline" } }}
-                    onClick={() => navigate("/home")}
+                    onClick={() => navigate("/dashboard")}
                   >
                     Niplan Market
                   </Box>
@@ -385,7 +385,7 @@ const HomePage = ({ user_id }) => {
                           md: "none",
                         },
                       }}
-                      onClick={() => navigate("/home")}
+                      onClick={() => navigate("/dashboard")}
                     >
                       Niplan
                     </Box>
@@ -453,7 +453,7 @@ const HomePage = ({ user_id }) => {
               </Toolbar>
             </AppBar>
             {themeMenuUI}
-            <PromoCarousel />
+            {!isAuthenticated() && <PromoCarousel />}
 
             {/* Main Content */}
             <Container

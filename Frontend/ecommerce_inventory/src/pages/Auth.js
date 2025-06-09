@@ -115,6 +115,8 @@ const Auth = () => {
     });
     if (response?.data?.access) {
       localStorage.setItem("token", response.data.access);
+      localStorage.setItem("refresh", response.data.refresh);
+
       toast.success("Login successfully");
       dispatch(login());
       navigate("/dashboard");
@@ -139,6 +141,7 @@ const Auth = () => {
     });
     if (response?.data?.access) {
       localStorage.setItem("token", response.data.access);
+      localStorage.setItem("refresh", response.data.refresh);
       toast.success("Signup successfully");
       dispatch(login());
       dispatch(login());
@@ -367,7 +370,8 @@ const Auth = () => {
               }}
             >
               <Typography variant="body2" color="text.secondary">
-                © 2025 Niplan. All rights reserved.
+                © {new Date().getFullYear()} - Niplan Market. Tous droits
+                réservés.
               </Typography>
             </Box>
           </Card>
