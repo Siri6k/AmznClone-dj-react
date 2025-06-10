@@ -369,7 +369,11 @@ const Auth = () => {
                 borderColor: theme.palette.divider,
               }}
             >
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                onClick={() => navigate("/contact")}
+              >
                 © {new Date().getFullYear()} - Niplan Market. Tous droits
                 réservés.
               </Typography>

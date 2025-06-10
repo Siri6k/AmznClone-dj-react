@@ -45,12 +45,18 @@ function App() {
 
   useEffect(() => {
     if (status === "idle") {
-      dispatch(fetchSidebar());
+      // Check if the user is authenticated before fetching sidebar data
+      if (isAuthenticated()) {
+        dispatch(fetchSidebar());
+      }
     }
   }, [status, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchSidebar());
+    // Fetch sidebar data when the user logs in
+    if (isAuthenticated() && isLoggedIn) {
+      dispatch(fetchSidebar());
+    }
   }, [isLoggedIn]);
 
   // Define the routes using 'element' instead of 'component'
@@ -61,37 +67,41 @@ function App() {
     },
 
     {
-      path: "/home",
-      element: <HomePage />, // Corrected: 'element' for route definition
-    },
-    {
-      path: "/policies",
-      element: <LegalDocuments />, // Corrected: 'element' for route definition
-    },
-    {
-      path: "/contact",
-      element: <ContactPage />, // Corrected: 'element' for route definition
-    },
-    {
       path: "/",
       element: <Layout sidebarList={items} />,
       errorElement: <Layout sidebarList={items} childPage={<Error404Page />} />,
       children: [
-        { path: "/dashboard", element: <ProtectedRoute element={<Home />} /> },
         {
-          path: "/form/:formName/:id?",
+          path: "",
+          element: <HomePage />, // Corrected: 'element' for route definition
+        },
+        {
+          path: "home",
+          element: <HomePage />, // Corrected: 'element' for route definition
+        },
+        {
+          path: "policies",
+          element: <LegalDocuments />, // Corrected: 'element' for route definition
+        },
+        {
+          path: "contact",
+          element: <ContactPage />, // Corrected: 'element' for route definition
+        },
+        { path: "dashboard", element: <ProtectedRoute element={<Home />} /> },
+        {
+          path: "form/:formName/:id?",
           element: <ProtectedRoute element={<DynamicForm />} />,
         },
         {
-          path: "/manage/category",
+          path: "manage/category",
           element: <ProtectedRoute element={<ManageCategories />} />,
         },
         {
-          path: "/manage/product",
+          path: "manage/product",
           element: <ProtectedRoute element={<ManageProducts />} />,
         },
         {
-          path: "/manage/warehouse",
+          path: "manage/warehouse",
           element: <ProtectedRoute element={<ManageWarehouse />} />,
         },
         {

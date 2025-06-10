@@ -24,6 +24,7 @@ import {
   BottomNavigationAction,
   Link,
   useMediaQuery,
+  Button,
 } from "@mui/material";
 import {
   LightMode,
@@ -57,6 +58,7 @@ import {
   Update,
   UpdateDisabledRounded,
   SystemUpdate,
+  Shop,
 } from "@mui/icons-material";
 import { ThemeProvider as Emotion10ThemeProvider } from "@emotion/react";
 import "./style.scss";
@@ -97,6 +99,7 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
   const [openChildMenu, setOpenChildMenu] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [themeMenu, setThemeMenu] = useState(null);
+
   //const [sidebarItems, setSidebarItems] = useState(sidebarList);
   const sidebarItems = useSelector((state) => state.sidebardata.items);
 
@@ -107,13 +110,6 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
   useEffect(() => {
     dispatch(triggerPageChange(location));
   }, [location]);
-
-  useEffect(() => {
-    //setSidebarItems(sidebarList);
-    if (!isAuthenticated()) {
-      navigate("/home");
-    }
-  }, [sidebarList]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "basic";
@@ -199,7 +195,7 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
     navigate("/auth");
   };
 
-  const drawerWidth = 280;
+  const drawerWidth = isAuthenticated() ? 280 : 0;
   const handleSidebarMenuClick = (sidebarItem, index) => {
     if (sidebarItem.submenus && sidebarItem.submenus.length > 0) {
       dispatch(expandItem({ id: sidebarItem.id }));
@@ -551,86 +547,150 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
               }}
               className="appbar"
             >
-              <Toolbar>
-                {isMobile ? (
-                  <IconButton
-                    color="inherit"
-                    aria-label="open drawer"
-                    onClick={handleDrawerToggle}
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                ) : (
-                  <IconButton
-                    color="inherit"
-                    aria-label="open drawer"
-                    onClick={handleDrawerToggle}
-                    sx={{ mr: 2 }}
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                )}
+              {isAuthenticated() ? (
+                <Toolbar>
+                  {isMobile ? (
+                    <IconButton
+                      color="inherit"
+                      aria-label="open drawer"
+                      onClick={handleDrawerToggle}
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                  ) : (
+                    <IconButton
+                      color="inherit"
+                      aria-label="open drawer"
+                      onClick={handleDrawerToggle}
+                      sx={{ mr: 2 }}
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                  )}
 
-                <Typography
-                  variant="h6"
-                  sx={{ flexGrow: 1 }}
-                  onClick={() => navigate("/dashboard")}
-                >
-                  {pageTitle || "Dashboard"}
-                </Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{ flexGrow: 1 }}
+                    onClick={() => navigate("/dashboard")}
+                  >
+                    {pageTitle || "Dashboard"}
+                  </Typography>
 
-                <Box sx={{ flexGrow: 1 }} />
-                {isMobile
-                  ? !getUser()?.address && (
-                      <IconButton
-                        color="error"
-                        aria-label="open drawer"
-                        onClick={() => navigate("/myprofile")}
-                      >
-                        <SystemUpdate />
-                      </IconButton>
-                    )
-                  : !getUser()?.address && (
-                      <IconButton
-                        color="error"
-                        aria-label="open drawer"
-                        onClick={() => navigate("/myprofile")}
-                      >
-                        <SystemUpdate /> Update Profile
-                      </IconButton>
-                    )}
-                {getUser()?.profile_pic ? (
-                  <img
-                    src={profilePic}
-                    className="shimmer"
-                    onClick={handleProfileMenuOpen}
-                    style={{
-                      borderRadius: "50%",
-                      width: "40px", // ou la taille désirée
-                      height: "40px", // doit être égal à width pour un cercle parfait
-                      objectFit: "cover", // corrigé de "cover: 'fit'" qui n'est pas valide
-                      display: "block", // évite l'espace sous l'image
+                  <Box sx={{ flexGrow: 1 }} />
+                  {isMobile
+                    ? !getUser()?.address && (
+                        <IconButton
+                          color="error"
+                          aria-label="open drawer"
+                          onClick={() => navigate("/myprofile")}
+                        >
+                          <SystemUpdate />
+                        </IconButton>
+                      )
+                    : !getUser()?.address && (
+                        <IconButton
+                          color="error"
+                          aria-label="open drawer"
+                          onClick={() => navigate("/myprofile")}
+                        >
+                          <SystemUpdate /> Update Profile
+                        </IconButton>
+                      )}
+                  {getUser()?.profile_pic ? (
+                    <img
+                      src={profilePic}
+                      className="shimmer"
+                      onClick={handleProfileMenuOpen}
+                      style={{
+                        borderRadius: "50%",
+                        width: "40px", // ou la taille désirée
+                        height: "40px", // doit être égal à width pour un cercle parfait
+                        objectFit: "cover", // corrigé de "cover: 'fit'" qui n'est pas valide
+                        display: "block", // évite l'espace sous l'image
+                      }}
+                    />
+                  ) : (
+                    <IconButton
+                      className="profile-icon"
+                      color="inherit"
+                      aria-label="profile"
+                      onClick={handleProfileMenuOpen}
+                    >
+                      <AccountCircle />
+                    </IconButton>
+                  )}
+                  <IconButton
+                    className="theme-icon"
+                    color="inherit"
+                    aria-label="theme"
+                    onClick={handleThemeMenuOpen}
+                  >
+                    <AutoAwesomeTwoTone />
+                  </IconButton>
+                </Toolbar>
+              ) : (
+                <Toolbar>
+                  <Typography
+                    variant="h6"
+                    component="div"
+                    sx={{
+                      flexGrow: 1,
+                      display: "flex",
+                      alignItems: "center",
                     }}
-                  />
-                ) : (
-                  <IconButton
-                    className="profile-icon"
-                    color="inherit"
-                    aria-label="profile"
-                    onClick={handleProfileMenuOpen}
                   >
-                    <AccountCircle />
+                    <IconButton
+                      size="large"
+                      color="inherit"
+                      onClick={() => navigate("/dashboard")}
+                    >
+                      {/* Use a custom icon or logo here */}
+                      <Shop />
+                    </IconButton>
+                    <Box
+                      component="span"
+                      onClick={() => navigate("/dashboard")}
+                    >
+                      Niplan
+                    </Box>
+                  </Typography>
+                  <Box sx={{ flexGrow: 1 }} />
+
+                  {!getUser() && (
+                    <Button
+                      variant="contained"
+                      color="success"
+                      sx={{ mr: 1 }}
+                      onClick={() => navigate("/auth")}
+                      startIcon={<AccountCircle />}
+                    >
+                      vendre
+                    </Button>
+                  )}
+                  {getUser() && (
+                    <Button
+                      variant="contained"
+                      color="error"
+                      sx={{ mr: 1 }}
+                      onClick={() => {
+                        localStorage.removeItem("token");
+                        dispatch(logout());
+                        navigate("/auth");
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  )}
+                  <IconButton
+                    className="theme-icon"
+                    color="inherit"
+                    aria-label="theme"
+                    onClick={handleThemeMenuOpen}
+                  >
+                    <AutoAwesomeTwoTone />
                   </IconButton>
-                )}
-                <IconButton
-                  className="theme-icon"
-                  color="inherit"
-                  aria-label="theme"
-                  onClick={handleThemeMenuOpen}
-                >
-                  <AutoAwesomeTwoTone />
-                </IconButton>
-              </Toolbar>
+                </Toolbar>
+              )}
             </AppBar>
             {profileMenu}
             {themeMenuUI}
@@ -652,7 +712,8 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
                 color="text.secondary"
                 onClick={() => navigate("/contact")}
               >
-                Niplan - Version 1.0.0 (2025)
+                © {new Date().getFullYear()} - Niplan Market. Tous droits
+                réservés.
               </Typography>
             </Box>
           </Box>
