@@ -8,6 +8,13 @@ import {
   CardActions,
   Grid,
 } from "@mui/material";
+import {
+  DetailsOutlined,
+  Note,
+  Shop,
+  ShopOutlined,
+  ViewAgendaOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
@@ -37,7 +44,7 @@ const ProductCard = ({ product }) => {
             component="img"
             image={product.image[0] || "https://via.placeholder.com/300"}
             alt={product.name}
-            sx={{ height: 200, objectFit: "cover" }}
+            sx={{ height: 100, objectFit: "cover" }}
             onLoad={handleLoad}
           />
         }
@@ -45,7 +52,6 @@ const ProductCard = ({ product }) => {
           <Typography gutterBottom variant="h5" component="h2">
             {product.name}
           </Typography>
-          <Typography>{product.description?.substring(0, 100)}...</Typography>
           <Typography variant="h6" color="primary" sx={{ mt: 2 }}>
             {new Intl.NumberFormat("fr-CD", {
               style: "currency",
@@ -53,12 +59,24 @@ const ProductCard = ({ product }) => {
             }).format(product.initial_selling_price)}
           </Typography>
         </CardContent>
-        <CardActions>
-          <Button size="small" color="primary">
-            Add to Cart
+        <CardActions sx={{ justifyContent: "space-evenly" }}>
+          <Button
+            size="small"
+            color="success"
+            variant="contained"
+            startIcon={<ShopOutlined />}
+            onClick={handleViewDetails}
+          >
+            Buy Now
           </Button>
-          <Button size="small" color="secondary">
-            View Details
+          <Button
+            size="small"
+            color="secondary"
+            variant="outlined"
+            startIcon={<ViewAgendaOutlined />}
+            onClick={handleViewDetails}
+          >
+            Details
           </Button>
         </CardActions>
       </Card>

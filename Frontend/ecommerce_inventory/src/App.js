@@ -37,6 +37,8 @@ import UserForm from "./pages/users/UserProfilePage";
 import ChartExamples from "./tools/ChartExample";
 import VisitLogger from "./components/VisitLoggerComponent";
 import ContactPage from "./pages/docs/ContactPage";
+import ProductDetail from "./pages/product/ProductDetail";
+import ProductPage from "./pages/product/ProductPage";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -90,6 +92,10 @@ function App() {
         {
           path: "policies",
           element: <LegalDocuments />, // Corrected: 'element' for route definition
+        },
+        {
+          path: "product/:id",
+          element: <ProductPage />, // Corrected: 'element' for route definition
         },
         {
           path: "contact",
