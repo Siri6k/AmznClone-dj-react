@@ -61,6 +61,7 @@ import { useNavigate } from "react-router-dom";
 import PromoCarousel from "../components/PromoCarrousel";
 import { getUser, isAuthenticated } from "../utils/Helper";
 import ProductCard from "./product/ProductCard";
+import Title from "../components/Title";
 
 const HomePage = ({ user_id }) => {
   const [products, setProducts] = useState([]);
@@ -149,56 +150,59 @@ const HomePage = ({ user_id }) => {
   }, [handleScroll]);
 
   return (
-    <Box component={"div"} sx={{ width: "100%" }}>
-      {/* Navbar */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {!isAuthenticated() && <PromoCarousel />}
-
-        {/* Main Content */}
-        <Container
-          className="main-content"
-          maxWidth="xl"
-          sx={{ flex: 1, padding: "20px" }}
+    <>
+      <Title />
+      <Box component={"div"} sx={{ width: "100%" }}>
+        {/* Navbar */}
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: "column",
+          }}
         >
-          <Breadcrumbs aria-label="breadcrumb">
-            <Typography variant="body2" onClick={() => navigate("/home")}>
-              Featured Products
-            </Typography>
-          </Breadcrumbs>
+          {!isAuthenticated() && <PromoCarousel />}
 
-          <Divider sx={{ mb: 2, mt: 2 }} />
+          {/* Main Content */}
+          <Container
+            className="main-content"
+            maxWidth="xl"
+            sx={{ flex: 1, padding: "20px" }}
+          >
+            <Breadcrumbs aria-label="breadcrumb">
+              <Typography variant="body2" onClick={() => navigate("/home")}>
+                Featured Products
+              </Typography>
+            </Breadcrumbs>
 
-          <Grid container spacing={4}>
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onClick={() => navigate(`/product/${product.id}`)}
-              />
-            ))}
-          </Grid>
+            <Divider sx={{ mb: 2, mt: 2 }} />
 
-          {loading && (
-            <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
-              <CircularProgress />
-            </Box>
-          )}
+            <Grid container spacing={4}>
+              {products.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onClick={() => navigate(`/product/${product.id}`)}
+                />
+              ))}
+            </Grid>
 
-          {!hasMore && (
-            <Typography variant="body1" align="center" sx={{ my: 4 }}>
-              No more products to load
-            </Typography>
-          )}
-        </Container>
+            {loading && (
+              <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+                <CircularProgress />
+              </Box>
+            )}
+
+            {!hasMore && (
+              <Typography variant="body1" align="center" sx={{ my: 4 }}>
+                No more products to load
+              </Typography>
+            )}
+          </Container>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

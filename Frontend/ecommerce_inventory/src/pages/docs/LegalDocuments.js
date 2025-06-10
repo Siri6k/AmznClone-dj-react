@@ -56,6 +56,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../../utils/Helper";
+import Title from "../../components/Title";
 
 const LegalDocuments = () => {
   const [expanded, setExpanded] = useState(null);
@@ -131,66 +132,76 @@ const LegalDocuments = () => {
   ];
 
   return (
-    <Box component={"div"} sx={{ width: "100%" }}>
-      <Box
-        sx={{
-          mx: "auto",
-          p: 3,
-          borderRadius: 2,
-          boxShadow: 1,
-          my: "auto",
-        }}
-      >
-        <Typography
-          variant="h5"
-          gutterBottom
+    <>
+      <Title
+        title="Mentions Légales"
+        description="Consultez les mentions légales de Niplan Market, y compris les conditions générales de vente, la politique de confidentialité et l'utilisation des cookies."
+        pageTitle="Mentions Légales"
+      />
+      <Box component={"div"} sx={{ width: "100%" }}>
+        <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
+            mx: "auto",
+            p: 3,
+            borderRadius: 2,
+            boxShadow: 1,
+            my: "auto",
           }}
         >
-          <Article /> Mentions Légales
-        </Typography>
-
-        <Typography paragraph sx={{ mb: 3 }}>
-          Documents conformes à la législation congolaise (Loi n°17/001 sur le
-          commerce électronique)
-        </Typography>
-
-        {legalDocs.map((doc) => (
-          <Accordion
-            key={doc.id}
-            expanded={expanded === doc.id}
-            onChange={handleChange(doc.id)}
-            sx={{ mb: 2 }}
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
           >
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography fontWeight="bold">{doc.title}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Divider sx={{ mb: 2 }} />
-              {doc.content}
-              {doc.id === "conditions" && (
-                <Typography variant="body2" sx={{ mt: 2, fontStyle: "italic" }}>
-                  Consultez la version complète sur{" "}
-                  <Link href="#" target="_blank">
-                    ce lien PDF
-                  </Link>
-                </Typography>
-              )}
-            </AccordionDetails>
-          </Accordion>
-        ))}
+            <Article /> Mentions Légales
+          </Typography>
 
-        <Typography
-          variant="body2"
-          sx={{ mt: 3, color: "text.secondary", textAlign: "center" }}
-        >
-          Dernière mise à jour : {new Date().toLocaleDateString("fr-CD")}
-        </Typography>
+          <Typography paragraph sx={{ mb: 3 }}>
+            Documents conformes à la législation congolaise (Loi n°17/001 sur le
+            commerce électronique)
+          </Typography>
+
+          {legalDocs.map((doc) => (
+            <Accordion
+              key={doc.id}
+              expanded={expanded === doc.id}
+              onChange={handleChange(doc.id)}
+              sx={{ mb: 2 }}
+            >
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography fontWeight="bold">{doc.title}</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Divider sx={{ mb: 2 }} />
+                {doc.content}
+                {doc.id === "conditions" && (
+                  <Typography
+                    variant="body2"
+                    sx={{ mt: 2, fontStyle: "italic" }}
+                  >
+                    Consultez la version complète sur{" "}
+                    <Link href="#" target="_blank">
+                      ce lien PDF
+                    </Link>
+                  </Typography>
+                )}
+              </AccordionDetails>
+            </Accordion>
+          ))}
+
+          <Typography
+            variant="body2"
+            sx={{ mt: 3, color: "text.secondary", textAlign: "center" }}
+          >
+            Dernière mise à jour : {new Date().toLocaleDateString("fr-CD")}
+          </Typography>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

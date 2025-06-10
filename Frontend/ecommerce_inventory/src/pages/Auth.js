@@ -41,6 +41,7 @@ import { login } from "../redux/reducer/isLoggedInReducer";
 import { FormProvider, useForm } from "react-hook-form";
 
 import defaultImg from "../assets/profile_default.png";
+import Title from "../components/Title";
 
 const Auth = () => {
   const [tab, setTab] = useState(0);
@@ -157,6 +158,11 @@ const Auth = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <GlobalStyles />
+        <Title
+          title="Login and signup page"
+          description="Manage users, login and signup page for Niplan ecommerce platform."
+          keywords="login, signup, users, Niplan ecommerce"
+        />
         <Box
           sx={{
             display: "flex",

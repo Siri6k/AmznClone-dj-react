@@ -26,6 +26,7 @@ import {
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { getFormTypes } from "../utils/Helper";
+import Title from "../components/Title";
 
 const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
   const stepItems = getFormTypes();
@@ -166,119 +167,132 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
   };
 
   return (
-    <Container>
-      {!formNameVar && (
-        <Box
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "15px",
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            {id ? "EDIT" : "ADD"} {formName.toUpperCase()}
-          </Typography>
-          <IconButton
-            onClick={() => {
-              navigate(-1);
-              navigate(`/form/${formName}`);
+    <>
+      <Title
+        title={`${id ? "Edit" : "Add"} ${formName}`}
+        description={`This is the ${
+          id ? "edit" : "add"
+        } page for ${formName.toUpperCase()}.`}
+        pageTitle="My Shop"
+        keywords={`${id ? "edit" : "add"} ${formName}`}
+      />
+      <Container>
+        {!formNameVar && (
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "15px",
             }}
-            color="primary"
-            className="hover-button"
           >
-            <span className="hover-content">Close</span> <Close />
-          </IconButton>
-        </Box>
-      )}
-      <Divider sx={{ marginBottom: "15px", marginTop: "15px" }} />
-      <Stepper
-        activeStep={currentStep}
-        sx={{ overflow: "auto" }}
-        alternativeLabel
-      >
-        {steps.map((step, index) => (
-          <Step key={index} onClick={() => goToStep(index)}>
-            <StepLabel>{step.label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <Divider sx={{ marginBottom: "15px", marginTop: "15px" }} />
-      <Typography variant="h6" gutterBottom>
-        {steps[currentStep].label}
-      </Typography>
-      {/* Section for form */}
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          {formConfig && (
-            <>
-              {steps.map((step, index) => (
-                <Box
-                  component={"div"}
-                  sx={{ display: index === currentStep ? "block" : "none" }}
-                >
-                  {step.component && (
-                    <step.component
-                      formConfig={formConfig}
-                      fieldType={step.fieldType}
-                    />
-                  )}
-                </Box>
-              ))}
-            </>
-          )}
-          {!formConfig && loading && <LinearProgress />}
-
-          <Box mt={2} display={"flex"} justifyContent={"space-between"}>
-            {currentStep > 0 && (
-              <Button
-                variant="contained"
-                type="button"
-                color="primary"
-                onClick={() => goToStep(currentStep - 1)}
-              >
-                <ArrowBackIos sx={{ fontSize: "18px", marginRight: "5px" }} />
-                Back
-              </Button>
-            )}
-            {currentStep < steps.length - 1 && (
-              <Button
-                variant="contained"
-                type="button"
-                color="primary"
-                onClick={() => nextStep()}
-              >
-                Next
-                <ArrowForwardIos sx={{ fontSize: "18px", marginLeft: "5px" }} />
-              </Button>
-            )}
-            {
-              <Button
-                sx={{
-                  display:
-                    currentStep === steps.length - 1 ? "inline-flex" : "none",
-                }}
-                variant="contained"
-                color="primary"
-                type="submit"
-              >
-                <Save sx={{ fontSize: "18px", marginRight: "5px" }} />
-                Submit
-              </Button>
-            }
+            <Typography variant="h6" gutterBottom>
+              {id ? "EDIT" : "ADD"} {formName.toUpperCase()}
+            </Typography>
+            <IconButton
+              onClick={() => {
+                //navigate(-1);
+                navigate(`/manage/${formName}`);
+                window.location.reload();
+              }}
+              color="primary"
+              className="hover-button"
+            >
+              <span className="hover-content">Close</span> <Close />
+            </IconButton>
           </Box>
-        </form>
-      </FormProvider>
-      {loading && (
-        <LinearProgress
-          style={{
-            width: "100%",
-            marginTop: "10px",
-            marginBottom: "10px",
-          }}
-        />
-      )}
-    </Container>
+        )}
+        <Divider sx={{ marginBottom: "15px", marginTop: "15px" }} />
+        <Stepper
+          activeStep={currentStep}
+          sx={{ overflow: "auto" }}
+          alternativeLabel
+        >
+          {steps.map((step, index) => (
+            <Step key={index} onClick={() => goToStep(index)}>
+              <StepLabel>{step.label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <Divider sx={{ marginBottom: "15px", marginTop: "15px" }} />
+        <Typography variant="h6" gutterBottom>
+          {steps[currentStep].label}
+        </Typography>
+        {/* Section for form */}
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            {formConfig && (
+              <>
+                {steps.map((step, index) => (
+                  <Box
+                    component={"div"}
+                    sx={{ display: index === currentStep ? "block" : "none" }}
+                  >
+                    {step.component && (
+                      <step.component
+                        formConfig={formConfig}
+                        fieldType={step.fieldType}
+                      />
+                    )}
+                  </Box>
+                ))}
+              </>
+            )}
+            {!formConfig && loading && <LinearProgress />}
+
+            <Box mt={2} display={"flex"} justifyContent={"space-between"}>
+              {currentStep > 0 && (
+                <Button
+                  variant="contained"
+                  type="button"
+                  color="primary"
+                  onClick={() => goToStep(currentStep - 1)}
+                >
+                  <ArrowBackIos sx={{ fontSize: "18px", marginRight: "5px" }} />
+                  Back
+                </Button>
+              )}
+              {currentStep < steps.length - 1 && (
+                <Button
+                  variant="contained"
+                  type="button"
+                  color="primary"
+                  onClick={() => nextStep()}
+                >
+                  Next
+                  <ArrowForwardIos
+                    sx={{ fontSize: "18px", marginLeft: "5px" }}
+                  />
+                </Button>
+              )}
+              {
+                <Button
+                  sx={{
+                    display:
+                      currentStep === steps.length - 1 ? "inline-flex" : "none",
+                  }}
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                >
+                  <Save sx={{ fontSize: "18px", marginRight: "5px" }} />
+                  Submit
+                </Button>
+              }
+            </Box>
+          </form>
+        </FormProvider>
+        {loading && (
+          <LinearProgress
+            style={{
+              width: "100%",
+              marginTop: "10px",
+              marginBottom: "10px",
+            }}
+          />
+        )}
+      </Container>
+    </>
   );
 };
 

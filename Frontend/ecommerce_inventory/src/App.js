@@ -42,6 +42,8 @@ function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
   const { isLoggedIn } = useSelector((state) => state.isLoggedInReducer);
   const dispatch = useDispatch();
+  // You can access the current title from Redux if needed
+  const currentTitle = useSelector((state) => state.title.pageTitle);
 
   useEffect(() => {
     if (status === "idle") {
@@ -69,7 +71,13 @@ function App() {
     {
       path: "/",
       element: <Layout sidebarList={items} />,
-      errorElement: <Layout sidebarList={items} childPage={<Error404Page />} />,
+      errorElement: (
+        <Layout
+          sidebarList={items}
+          childPage={<Error404Page />}
+          pageTitle={currentTitle}
+        />
+      ),
       children: [
         {
           path: "",

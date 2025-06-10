@@ -21,6 +21,7 @@ import { getFormTypes, refreshToken } from "../../utils/Helper";
 import { ArrowBackIos, ArrowForwardIos, Save } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/reducer/isLoggedInReducer";
+import Title from "../../components/Title";
 
 const UserForm = () => {
   const [tab, setTab] = useState(0);
@@ -177,126 +178,134 @@ const UserForm = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: "600px", margin: "auto" }}>
-      <Tabs
-        value={tab}
-        onChange={handleTabChange}
-        justifyContent="space-between"
-        centered
-      >
-        <Tab label="My Profile" sx={{ marginRight: "20%" }} />
-        <Tab label="Update My Profile" />
-      </Tabs>
+    <>
+      <Title
+        title="My Profile | Update My Profile"
+        description="Manage your profile, update your information, and view your details."
+        keywords="profile, update profile, user details, manage profile"
+        pageTitle="My Niplan Profile"
+      />
+      <Box sx={{ maxWidth: "600px", margin: "auto" }}>
+        <Tabs
+          value={tab}
+          onChange={handleTabChange}
+          justifyContent="space-between"
+          centered
+        >
+          <Tab label="My Profile" sx={{ marginRight: "20%" }} />
+          <Tab label="Update My Profile" />
+        </Tabs>
 
-      {/* Profile Tab */}
-      {tab === 0 && (
-        <Box sx={{ maxWidth: "600px", margin: "auto" }}>
-          {loading && <LinearProgress />}
-          {userData && <ProfileCard profile={userData} />}
-          {!loading && !userData && <div>No profile data available</div>}
-        </Box>
-      )}
+        {/* Profile Tab */}
+        {tab === 0 && (
+          <Box sx={{ maxWidth: "600px", margin: "auto" }}>
+            {loading && <LinearProgress />}
+            {userData && <ProfileCard profile={userData} />}
+            {!loading && !userData && <div>No profile data available</div>}
+          </Box>
+        )}
 
-      {/* Update Profile Tab */}
-      {tab === 1 && (
-        <Container>
-          <Stepper
-            activeStep={currentStep}
-            sx={{ overflow: "auto", mt: 2 }}
-            alternativeLabel
-          >
-            {steps.map((step, index) => (
-              <Step key={index} onClick={() => goToStep(index)}>
-                <StepLabel>{step.label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <Divider sx={{ marginBottom: "15px", marginTop: "15px" }} />
-          <Typography variant="h6" gutterBottom>
-            {steps[currentStep].label}
-          </Typography>
-          {/* Section for form */}
-          <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit(onSubmit)}>
-              {formConfig && (
-                <>
-                  {steps.map((step, index) => (
-                    <Box
-                      component={"div"}
-                      sx={{
-                        display: index === currentStep ? "block" : "none",
-                      }}
+        {/* Update Profile Tab */}
+        {tab === 1 && (
+          <Container>
+            <Stepper
+              activeStep={currentStep}
+              sx={{ overflow: "auto", mt: 2 }}
+              alternativeLabel
+            >
+              {steps.map((step, index) => (
+                <Step key={index} onClick={() => goToStep(index)}>
+                  <StepLabel>{step.label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+            <Divider sx={{ marginBottom: "15px", marginTop: "15px" }} />
+            <Typography variant="h6" gutterBottom>
+              {steps[currentStep].label}
+            </Typography>
+            {/* Section for form */}
+            <FormProvider {...methods}>
+              <form onSubmit={methods.handleSubmit(onSubmit)}>
+                {formConfig && (
+                  <>
+                    {steps.map((step, index) => (
+                      <Box
+                        component={"div"}
+                        sx={{
+                          display: index === currentStep ? "block" : "none",
+                        }}
+                      >
+                        {step.component && (
+                          <step.component
+                            formConfig={formConfig}
+                            fieldType={step.fieldType}
+                          />
+                        )}
+                      </Box>
+                    ))}
+                  </>
+                )}
+                {!formConfig && loading && <LinearProgress />}
+
+                <Box mt={2} display={"flex"} justifyContent={"space-between"}>
+                  {currentStep > 0 && (
+                    <Button
+                      variant="contained"
+                      type="button"
+                      color="primary"
+                      onClick={() => goToStep(currentStep - 1)}
                     >
-                      {step.component && (
-                        <step.component
-                          formConfig={formConfig}
-                          fieldType={step.fieldType}
-                        />
-                      )}
-                    </Box>
-                  ))}
-                </>
-              )}
-              {!formConfig && loading && <LinearProgress />}
-
-              <Box mt={2} display={"flex"} justifyContent={"space-between"}>
-                {currentStep > 0 && (
-                  <Button
-                    variant="contained"
-                    type="button"
-                    color="primary"
-                    onClick={() => goToStep(currentStep - 1)}
-                  >
-                    <ArrowBackIos
-                      sx={{ fontSize: "18px", marginRight: "5px" }}
-                    />
-                    Back
-                  </Button>
-                )}
-                {currentStep < steps.length - 1 && (
-                  <Button
-                    variant="contained"
-                    type="button"
-                    color="primary"
-                    onClick={() => nextStep()}
-                  >
-                    Next
-                    <ArrowForwardIos
-                      sx={{ fontSize: "18px", marginLeft: "5px" }}
-                    />
-                  </Button>
-                )}
-                {
-                  <Button
-                    sx={{
-                      display:
-                        currentStep === steps.length - 1
-                          ? "inline-flex"
-                          : "none",
-                    }}
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                  >
-                    <Save sx={{ fontSize: "18px", marginRight: "5px" }} />
-                    Submit
-                  </Button>
-                }
-              </Box>
-            </form>
-          </FormProvider>
-          {loading && (
-            <LinearProgress
-              style={{
-                width: "100%",
-                marginTop: "10px",
-                marginBottom: "10px",
-              }}
-            />
-          )}
-        </Container>
-      )}
-    </Box>
+                      <ArrowBackIos
+                        sx={{ fontSize: "18px", marginRight: "5px" }}
+                      />
+                      Back
+                    </Button>
+                  )}
+                  {currentStep < steps.length - 1 && (
+                    <Button
+                      variant="contained"
+                      type="button"
+                      color="primary"
+                      onClick={() => nextStep()}
+                    >
+                      Next
+                      <ArrowForwardIos
+                        sx={{ fontSize: "18px", marginLeft: "5px" }}
+                      />
+                    </Button>
+                  )}
+                  {
+                    <Button
+                      sx={{
+                        display:
+                          currentStep === steps.length - 1
+                            ? "inline-flex"
+                            : "none",
+                      }}
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                    >
+                      <Save sx={{ fontSize: "18px", marginRight: "5px" }} />
+                      Submit
+                    </Button>
+                  }
+                </Box>
+              </form>
+            </FormProvider>
+            {loading && (
+              <LinearProgress
+                style={{
+                  width: "100%",
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                }}
+              />
+            )}
+          </Container>
+        )}
+      </Box>
+    </>
   );
 };
 

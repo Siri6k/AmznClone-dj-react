@@ -51,12 +51,15 @@ import {
   Shop,
   SystemUpdate,
   AddCardRounded,
+  AddCircleOutline,
 } from "@mui/icons-material";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import useApi from "../hooks/APIHandler";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../utils/Helper";
+import Title from "../components/Title";
+import ProductCard from "./product/ProductCard";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -287,106 +290,76 @@ const Home = () => {
     </Menu>
   );
   return (
-    <Container
-      className="main-content"
-      maxWidth="xl"
-      sx={{ flex: 1, padding: "20px" }}
-    >
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Typography variant="body2" onClick={() => navigate("/home")}>
-            My Products
-          </Typography>
-        </Breadcrumbs>
-        {isMobile
-          ? !getUser()?.address && (
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => navigate("/myprofile")}
-                startIcon={<SystemUpdate />}
-              >
-                Profile
-              </Button>
-            )
-          : !getUser()?.address && (
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => navigate("/myprofile")}
-                startIcon={<SystemUpdate />}
-              >
-                Profile
-              </Button>
-            )}
-        {getUser()?.phone_number && (
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => navigate("/home")}
-            startIcon={<AddCardRounded />}
-          >
-            Vendre
-          </Button>
-        )}
-      </Box>
-      <Divider sx={{ mb: 2, mt: 2 }} />
-      <Grid container spacing={4}>
-        {products.map((product) => (
-          <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
-            <Card
-              sx={{
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-              }}
+    <>
+      <Title
+        title="My Shop"
+        description="Browse and manage your products"
+        keywords="products, inventory, e-commerce"
+        pageTitle="My Shop - Products"
+      />
+      <Container
+        className="main-content"
+        maxWidth="xl"
+        sx={{ flex: 1, padding: "20px" }}
+      >
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Breadcrumbs aria-label="breadcrumb">
+            <Typography variant="body2" onClick={() => navigate("/home")}>
+              My Products
+            </Typography>
+          </Breadcrumbs>
+          {isMobile
+            ? !getUser()?.address && (
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => navigate("/myprofile")}
+                  startIcon={<SystemUpdate />}
+                >
+                  Profile
+                </Button>
+              )
+            : !getUser()?.address && (
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => navigate("/myprofile")}
+                  startIcon={<SystemUpdate />}
+                >
+                  Profile
+                </Button>
+              )}
+          {getUser()?.phone_number && (
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => navigate("/form/product")}
+              startIcon={<AddCircleOutline />}
             >
-              {!loaded && <CardMedia className="shimmer" />}
-              {
-                <CardMedia
-                  component="img"
-                  image={product.image[0] || "https://via.placeholder.com/300"}
-                  alt={product.name}
-                  sx={{ height: 200, objectFit: "cover" }}
-                  onLoad={handleLoad}
-                />
-              }
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  {product.name}
-                </Typography>
-                <Typography>
-                  {product.description?.substring(0, 100)}...
-                </Typography>
-                <Typography variant="h6" color="primary" sx={{ mt: 2 }}>
-                  $ {product.initial_selling_price}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small" color="primary">
-                  Add to Cart
-                </Button>
-                <Button size="small" color="secondary">
-                  View Details
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-
-      {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
-          <CircularProgress />
+              Add Product
+            </Button>
+          )}
         </Box>
-      )}
+        <Divider sx={{ mb: 2, mt: 2 }} />
+        <Grid container spacing={4}>
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </Grid>
 
-      {!hasMore && (
-        <Typography variant="body1" align="center" sx={{ my: 4 }}>
-          No more products to load
-        </Typography>
-      )}
-    </Container>
+        {loading && (
+          <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+            <CircularProgress />
+          </Box>
+        )}
+
+        {!hasMore && (
+          <Typography variant="body1" align="center" sx={{ my: 4 }}>
+            No more products to load
+          </Typography>
+        )}
+      </Container>
+    </>
   );
 };
 export default Home;

@@ -91,8 +91,9 @@ import { logout } from "../redux/reducer/isLoggedInReducer";
 import { getUser, isAuthenticated } from "../utils/Helper";
 
 import defaultImg from "../assets/profile_default.png";
+import { setPageTitle } from "../redux/reducer/titleReducer";
 
-const Layout = ({ sidebarList, pageTitle, childPage }) => {
+const Layout = ({ sidebarList, childPage, pageTitle }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useState(true); // State for desktop sidebar
   const [themeMode, setThemeMode] = useState("light");
@@ -102,6 +103,9 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
 
   //const [sidebarItems, setSidebarItems] = useState(sidebarList);
   const sidebarItems = useSelector((state) => state.sidebardata.items);
+
+  const pageTitleFromRedux = useSelector((state) => state.title.pageTitle);
+  pageTitle = pageTitle || pageTitleFromRedux;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -114,6 +118,7 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "basic";
     setThemeMode(savedTheme);
+    //dispatch(setPageTitle(pageTitle));
   }, []);
 
   let theme = useMemo(() => {
@@ -573,7 +578,7 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
                     sx={{ flexGrow: 1 }}
                     onClick={() => navigate("/dashboard")}
                   >
-                    {pageTitle || "Dashboard"}
+                    {pageTitle || "Niplan"}
                   </Typography>
 
                   <Box sx={{ flexGrow: 1 }} />
@@ -651,7 +656,7 @@ const Layout = ({ sidebarList, pageTitle, childPage }) => {
                       component="span"
                       onClick={() => navigate("/dashboard")}
                     >
-                      Niplan
+                      {pageTitle || "Niplan"}
                     </Box>
                   </Typography>
                   <Box sx={{ flexGrow: 1 }} />

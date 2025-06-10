@@ -37,6 +37,7 @@ import {
 import TimeAgo from "../../components/TimeAgo";
 import RackAndShelfCard from "./RackAndShelfCard";
 import DynamicForm from "../DynamicForm";
+import Title from "../../components/Title";
 
 const ManageWarehouse = () => {
   const [data, setData] = useState([]);
@@ -309,175 +310,186 @@ const ManageWarehouse = () => {
   };
 
   return (
-    <Box component={"div"} sx={{ width: "100%" }}>
-      <Box
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Breadcrumbs>
-          <Typography variant="body2" onClick={() => navigate("/home")}>
-            Home
-          </Typography>
-          <Typography
-            variant="body2"
-            onClick={() => {
-              navigate(-1);
-              navigate("/home");
-            }}
+    <>
+      <Title
+        title="Manage Warehouse | Niplan"
+        description="Manage your warehouse, add racks, shelves, and floors, and view details of your inventory."
+        keywords="warehouse, manage warehouse, inventory management, racks, shelves, floors"
+        pageTitle="Niplan - Warehouse"
+      />
+      <Box component={"div"} sx={{ width: "100%" }}>
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Breadcrumbs>
+            <Typography variant="body2" onClick={() => navigate("/home")}>
+              Home
+            </Typography>
+            <Typography
+              variant="body2"
+              onClick={() => {
+                navigate(-1);
+                navigate("/home");
+              }}
+            >
+              Manage Warehouse
+            </Typography>
+          </Breadcrumbs>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddCircleOutlineRounded />}
+            onClick={() => navigate("/form/warehouse")}
           >
-            Manage Warehouse
-          </Typography>
-        </Breadcrumbs>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddCircleOutlineRounded />}
-          onClick={() => navigate("/form/warehouse")}
-        >
-          Add Warehouse
-        </Button>
-      </Box>
-      <Grid container spacing={2}>
-        <Grid
-          item
-          xs={12}
-          sm={showAddRackAndShelf || showViewRackAndShelf ? 7 : 12}
-          lg={showAddRackAndShelf || showViewRackAndShelf ? 8 : 12}
-        >
-          <TextField
-            label="search"
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <DataGrid
-            rows={data}
-            columns={columns}
-            autoHeight={true}
-            rowHeight={75}
-            sortingOrder={["asc", "desc"]}
-            sortModel={ordering}
-            onSortModelChange={handleSorting}
-            paginationMode="server"
-            initialState={{
-              ...data.initialState,
-              pagination: { paginationModel: paginationModel },
-            }}
-            pageSizeOptions={[5, 10, 20]}
-            pagination
-            rowCount={totalItems}
-            loading={loading}
-            rowSelection={false}
-            onPaginationModelChange={(pagedetails) => {
-              setPaginationModel({
-                page: pagedetails.page,
-                pageSize: pagedetails.pageSize,
-              });
-            }}
-            slots={{
-              loadingOverlay: LinearProgress,
-              toolbar: GridToolbar,
-            }}
-          />
+            Add
+          </Button>
+        </Box>
+        <Grid container spacing={2}>
+          <Grid
+            item
+            xs={12}
+            sm={showAddRackAndShelf || showViewRackAndShelf ? 7 : 12}
+            lg={showAddRackAndShelf || showViewRackAndShelf ? 8 : 12}
+          >
+            <TextField
+              label="search"
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <DataGrid
+              rows={data}
+              columns={columns}
+              autoHeight={true}
+              rowHeight={75}
+              sortingOrder={["asc", "desc"]}
+              sortModel={ordering}
+              onSortModelChange={handleSorting}
+              paginationMode="server"
+              initialState={{
+                ...data.initialState,
+                pagination: { paginationModel: paginationModel },
+              }}
+              pageSizeOptions={[5, 10, 20]}
+              pagination
+              rowCount={totalItems}
+              loading={loading}
+              rowSelection={false}
+              onPaginationModelChange={(pagedetails) => {
+                setPaginationModel({
+                  page: pagedetails.page,
+                  pageSize: pagedetails.pageSize,
+                });
+              }}
+              slots={{
+                loadingOverlay: LinearProgress,
+                toolbar: GridToolbar,
+              }}
+            />
+          </Grid>
+
+          {showAddRackAndShelf && (
+            <Grid
+              item
+              xs={12}
+              sm={5}
+              lg={4}
+              sx={{ height: "600px", overflowY: "auto" }}
+              ref={divImage}
+            >
+              <Box m={2} display={"flex"} justifyContent={"space-between"}>
+                <Typography variant="h6">
+                  {selectedRackAndShelfId !== null ? "Edit" : "Add"} Rack Shelf
+                  & Floor
+                </Typography>
+                <IconButton onClick={() => setShowAddRackAndShelf(false)}>
+                  <Close />
+                </IconButton>
+              </Box>
+              <DynamicForm
+                formNameVar="rackShelfFloor"
+                idVar={selectedRackAndShelfId}
+                onSaveEvent={onSaveEvent}
+              />
+              <Divider />
+            </Grid>
+          )}
+          {showViewRackAndShelf && (
+            <Grid
+              item
+              xs={12}
+              sm={5}
+              lg={4}
+              sx={{ height: "600px", overflowY: "auto" }}
+              ref={divImage}
+            >
+              <Box m={2} display={"flex"} justifyContent={"space-between"}>
+                <Typography variant="h6">Rack Shelf & Floor List</Typography>
+                <IconButton onClick={() => setShowViewRackAndShelf(false)}>
+                  <Close />
+                </IconButton>
+              </Box>
+              <Divider />
+              {selectedRackAndShelfList.length > 0 &&
+                selectedRackAndShelfList
+                  .reverse()
+                  .map((item, index) => (
+                    <RackAndShelfCard
+                      key={index}
+                      data={item}
+                      onEditClick={onEditclickRackAndShelf}
+                    />
+                  ))}
+            </Grid>
+          )}
         </Grid>
 
-        {showAddRackAndShelf && (
-          <Grid
-            item
-            xs={12}
-            sm={5}
-            lg={4}
-            sx={{ height: "600px", overflowY: "auto" }}
-            ref={divImage}
-          >
-            <Box m={2} display={"flex"} justifyContent={"space-between"}>
-              <Typography variant="h6">
-                {selectedRackAndShelfId !== null ? "Edit" : "Add"} Rack Shelf &
-                Floor
-              </Typography>
-              <IconButton onClick={() => setShowAddRackAndShelf(false)}>
-                <Close />
-              </IconButton>
-            </Box>
-            <DynamicForm
-              formNameVar="rackShelfFloor"
-              idVar={selectedRackAndShelfId}
-              onSaveEvent={onSaveEvent}
-            />
-            <Divider />
-          </Grid>
-        )}
-        {showViewRackAndShelf && (
-          <Grid
-            item
-            xs={12}
-            sm={5}
-            lg={4}
-            sx={{ height: "600px", overflowY: "auto" }}
-            ref={divImage}
-          >
-            <Box m={2} display={"flex"} justifyContent={"space-between"}>
-              <Typography variant="h6">Rack Shelf & Floor List</Typography>
-              <IconButton onClick={() => setShowViewRackAndShelf(false)}>
-                <Close />
-              </IconButton>
-            </Box>
-            <Divider />
-            {selectedRackAndShelfList.length > 0 &&
-              selectedRackAndShelfList
-                .reverse()
-                .map((item, index) => (
-                  <RackAndShelfCard
-                    key={index}
-                    data={item}
-                    onEditClick={onEditclickRackAndShelf}
-                  />
-                ))}
-          </Grid>
-        )}
-      </Grid>
+        <Dialog
+          open={open}
+          onClose={handleclose}
+          maxWidth={"lg"}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogContent>
+            <Typography variant="h5">{modelTitle}</Typography>
+            <Divider sx={{ margin: "10px 0" }} />
+            {jsonData.map((item, index) => {
+              let displayValue = "";
+              if (Array.isArray(item.value)) {
+                displayValue = item.value[0];
+              } else if (
+                typeof item.value === "object" &&
+                item.value !== null
+              ) {
+                displayValue = Object.keys(item.value)[0];
+              } else {
+                displayValue = item.value;
+              }
 
-      <Dialog
-        open={open}
-        onClose={handleclose}
-        maxWidth={"lg"}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogContent>
-          <Typography variant="h5">{modelTitle}</Typography>
-          <Divider sx={{ margin: "10px 0" }} />
-          {jsonData.map((item, index) => {
-            let displayValue = "";
-            if (Array.isArray(item.value)) {
-              displayValue = item.value[0];
-            } else if (typeof item.value === "object" && item.value !== null) {
-              displayValue = Object.keys(item.value)[0];
-            } else {
-              displayValue = item.value;
-            }
-
-            return (
-              <React.Fragment key={index}>
-                <Typography variant="body1">
-                  <Circle sx={{ fontSize: "10px", marginRight: "10px" }} />
-                  {item.key} :{" "}
-                  {String(displayValue) === "true"
-                    ? "Yes"
-                    : String(displayValue) === "false"
-                    ? "No"
-                    : String(displayValue)}
-                </Typography>
-                <Divider sx={{ margin: "5px 0" }} />
-              </React.Fragment>
-            );
-          })}
-        </DialogContent>
-      </Dialog>
-    </Box>
+              return (
+                <React.Fragment key={index}>
+                  <Typography variant="body1">
+                    <Circle sx={{ fontSize: "10px", marginRight: "10px" }} />
+                    {item.key} :{" "}
+                    {String(displayValue) === "true"
+                      ? "Yes"
+                      : String(displayValue) === "false"
+                      ? "No"
+                      : String(displayValue)}
+                  </Typography>
+                  <Divider sx={{ margin: "5px 0" }} />
+                </React.Fragment>
+              );
+            })}
+          </DialogContent>
+        </Dialog>
+      </Box>
+    </>
   );
 };
 

@@ -35,6 +35,7 @@ import TimeAgo from "../../components/TimeAgo";
 import Image from "../../components/Image";
 import ManageReviews from "./ManageReviews";
 import ManageQuestions from "./ManageQuestions";
+import Title from "../../components/Title";
 
 const ManageProducts = ({ onProductSelected }) => {
   const [data, setData] = useState([]);
@@ -346,155 +347,163 @@ const ManageProducts = ({ onProductSelected }) => {
   };
 
   return (
-    <Box component={"div"} sx={{ width: "100%" }}>
-      {!onProductSelected && (
-        <Breadcrumbs>
-          <Typography variant="body2" onClick={() => navigate("/home")}>
-            Home
-          </Typography>
-          <Typography
-            variant="body2"
-            onClick={() => navigate("/manage/product")}
-          >
-            Manage Products
-          </Typography>
-        </Breadcrumbs>
-      )}
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={showImages ? 8 : 12} lg={showImages ? 9 : 12}>
-          <TextField
-            label="search"
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <DataGrid
-            rows={data}
-            columns={columns}
-            autoHeight={true}
-            rowHeight={75}
-            sortingOrder={["asc", "desc"]}
-            sortModel={ordering}
-            onSortModelChange={handleSorting}
-            paginationMode="server"
-            initialState={{
-              ...data.initialState,
-              pagination: { paginationModel: paginationModel },
-            }}
-            pageSizeOptions={[5, 10, 20]}
-            pagination
-            rowCount={totalItems}
-            loading={loading}
-            rowSelection={false}
-            onPaginationModelChange={(pagedetails) => {
-              setPaginationModel({
-                page: pagedetails.page,
-                pageSize: pagedetails.pageSize,
-              });
-            }}
-            slots={{
-              loadingOverlay: LinearProgress,
-              toolbar: GridToolbar,
-            }}
-          />
+    <>
+      <Title
+        title="Manage Products"
+        description="Manage your products, view details, and edit them as needed."
+        keywords="manage, products, ecommerce, inventory"
+        pageTitle="My Shop"
+      />
+      <Box component={"div"} sx={{ width: "100%" }}>
+        {!onProductSelected && (
+          <Breadcrumbs>
+            <Typography variant="body2" onClick={() => navigate("/home")}>
+              Home
+            </Typography>
+            <Typography
+              variant="body2"
+              onClick={() => navigate("/manage/product")}
+            >
+              Manage Products
+            </Typography>
+          </Breadcrumbs>
+        )}
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={showImages ? 8 : 12} lg={showImages ? 9 : 12}>
+            <TextField
+              label="search"
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <DataGrid
+              rows={data}
+              columns={columns}
+              autoHeight={true}
+              rowHeight={75}
+              sortingOrder={["asc", "desc"]}
+              sortModel={ordering}
+              onSortModelChange={handleSorting}
+              paginationMode="server"
+              initialState={{
+                ...data.initialState,
+                pagination: { paginationModel: paginationModel },
+              }}
+              pageSizeOptions={[5, 10, 20]}
+              pagination
+              rowCount={totalItems}
+              loading={loading}
+              rowSelection={false}
+              onPaginationModelChange={(pagedetails) => {
+                setPaginationModel({
+                  page: pagedetails.page,
+                  pageSize: pagedetails.pageSize,
+                });
+              }}
+              slots={{
+                loadingOverlay: LinearProgress,
+                toolbar: GridToolbar,
+              }}
+            />
+          </Grid>
+
+          {showImages && (
+            <Grid
+              item
+              xs={12}
+              sm={4}
+              lg={3}
+              sx={{ height: "600px", overflowY: "auto" }}
+              ref={divImage}
+            >
+              <Box m={2} display={"flex"} justifyContent={"space-between"}>
+                <Typography variant="h6">Product Images</Typography>
+                <IconButton onClick={() => setShowImages(false)}>
+                  <Close />
+                </IconButton>
+              </Box>
+              <Divider />
+              {selectedImages.length > 0 &&
+                selectedImages.map((image, index) => (
+                  <Box
+                    key={index}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    margin={2}
+                  >
+                    <Image src={image} style={{ width: "100%" }} />
+                  </Box>
+                ))}
+            </Grid>
+          )}
         </Grid>
 
-        {showImages && (
-          <Grid
-            item
-            xs={12}
-            sm={4}
-            lg={3}
-            sx={{ height: "600px", overflowY: "auto" }}
-            ref={divImage}
+        <Dialog
+          open={open}
+          onClose={handleclose}
+          maxWidth={"lg"}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogContent>
+            <Typography variant="h5">{modelTitle} Details</Typography>
+            <Divider sx={{ margin: "10px 0" }} />
+            {jsonData.map((item, index) => (
+              <React.Fragment key={index}>
+                <Typography variant="body1">
+                  <Circle sx={{ fontSize: "10px", marginRight: "10px" }} />
+                  {item.key} : {item.value}
+                </Typography>
+                <Divider sx={{ margin: "5px 0" }} />
+              </React.Fragment>
+            ))}
+          </DialogContent>
+        </Dialog>
+
+        <Dialog
+          open={openHtml}
+          onClose={handleclose2}
+          maxWidth={"lg"}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogContent>
+            <Typography variant="h5">HTML Description</Typography>
+            <Divider sx={{ margin: "10px 0" }} />
+            <div dangerouslySetInnerHTML={{ __html: htmlData }}></div>
+            <Divider sx={{ margin: "5px 0" }} />
+          </DialogContent>
+        </Dialog>
+        {showReviews && (
+          <Dialog
+            open={showReviews}
+            fullWidth={true}
+            maxWidth={"lg"}
+            onClose={() => setShowReviews(false)}
+            aria-labelledby="form-dialog-title"
           >
-            <Box m={2} display={"flex"} justifyContent={"space-between"}>
-              <Typography variant="h6">Product Images</Typography>
-              <IconButton onClick={() => setShowImages(false)}>
-                <Close />
-              </IconButton>
-            </Box>
-            <Divider />
-            {selectedImages.length > 0 &&
-              selectedImages.map((image, index) => (
-                <Box
-                  key={index}
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  margin={2}
-                >
-                  <Image src={image} style={{ width: "100%" }} />
-                </Box>
-              ))}
-          </Grid>
-        )}
-      </Grid>
-
-      <Dialog
-        open={open}
-        onClose={handleclose}
-        maxWidth={"lg"}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogContent>
-          <Typography variant="h5">{modelTitle} Details</Typography>
-          <Divider sx={{ margin: "10px 0" }} />
-          {jsonData.map((item, index) => (
-            <React.Fragment key={index}>
-              <Typography variant="body1">
-                <Circle sx={{ fontSize: "10px", marginRight: "10px" }} />
-                {item.key} : {item.value}
-              </Typography>
+            <DialogContent>
+              <ManageReviews product_id={selectedProductId} />
               <Divider sx={{ margin: "5px 0" }} />
-            </React.Fragment>
-          ))}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog
-        open={openHtml}
-        onClose={handleclose2}
-        maxWidth={"lg"}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogContent>
-          <Typography variant="h5">HTML Description</Typography>
-          <Divider sx={{ margin: "10px 0" }} />
-          <div dangerouslySetInnerHTML={{ __html: htmlData }}></div>
-          <Divider sx={{ margin: "5px 0" }} />
-        </DialogContent>
-      </Dialog>
-      {showReviews && (
-        <Dialog
-          open={showReviews}
-          fullWidth={true}
-          maxWidth={"lg"}
-          onClose={() => setShowReviews(false)}
-          aria-labelledby="form-dialog-title"
-        >
-          <DialogContent>
-            <ManageReviews product_id={selectedProductId} />
-            <Divider sx={{ margin: "5px 0" }} />
-          </DialogContent>
-        </Dialog>
-      )}
-      {showQuestions && (
-        <Dialog
-          open={showQuestions}
-          fullWidth={true}
-          maxWidth={"lg"}
-          onClose={() => setShowQuestions(false)}
-          aria-labelledby="form-dialog-title"
-        >
-          <DialogContent>
-            <ManageQuestions product_id={selectedProductId} />
-            <Divider sx={{ margin: "5px 0" }} />
-          </DialogContent>
-        </Dialog>
-      )}
-    </Box>
+            </DialogContent>
+          </Dialog>
+        )}
+        {showQuestions && (
+          <Dialog
+            open={showQuestions}
+            fullWidth={true}
+            maxWidth={"lg"}
+            onClose={() => setShowQuestions(false)}
+            aria-labelledby="form-dialog-title"
+          >
+            <DialogContent>
+              <ManageQuestions product_id={selectedProductId} />
+              <Divider sx={{ margin: "5px 0" }} />
+            </DialogContent>
+          </Dialog>
+        )}
+      </Box>
+    </>
   );
 };
 

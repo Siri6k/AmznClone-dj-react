@@ -44,6 +44,7 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import FileInputComponent from "../../components/FileInputComponent";
 import { formatText } from "../../utils/Helper";
 import ManageUserPermissions from "./ManageUserPermissions";
+import Title from "../../components/Title";
 
 const ManageUsers = ({ onSupplierSelect }) => {
   const [data, setData] = useState([]);
@@ -355,253 +356,264 @@ const ManageUsers = ({ onSupplierSelect }) => {
   };
 
   return (
-    <Box component={"div"} sx={{ width: "100%" }}>
-      {!onSupplierSelect && (
-        <Box display={"flex"} justifyContent={"space-between"}>
-          <Breadcrumbs aria-label="breadcrumb">
-            <Typography variant="body2" onClick={() => navigate("/home")}>
-              Home
-            </Typography>
-            <Typography
-              variant="body2"
-              onClick={() => navigate("/manage/users")}
+    <>
+      <Title
+        title="Manage Users"
+        description="Super Admin can manage all users including customers, suppliers, staff, and admins."
+        keywords="manage users, ecommerce, admin panel, user management, permissions"
+        pageTitle="Niplan - Users"
+      />
+      <Box component={"div"} sx={{ width: "100%" }}>
+        {!onSupplierSelect && (
+          <Box display={"flex"} justifyContent={"space-between"}>
+            <Breadcrumbs aria-label="breadcrumb">
+              <Typography variant="body2" onClick={() => navigate("/home")}>
+                Home
+              </Typography>
+              <Typography
+                variant="body2"
+                onClick={() => navigate("/manage/users")}
+              >
+                Manage (Customer/Supplier/Admin/Staff)
+              </Typography>
+            </Breadcrumbs>
+
+            <Button
+              startIcon={<AddCircle />}
+              variant="contained"
+              onClick={() => {
+                navigate("/form/users");
+              }}
             >
-              Manage (Customer/Supplier/Admin/Staff)
-            </Typography>
-          </Breadcrumbs>
-
-          <Button
-            startIcon={<AddCircle />}
-            variant="contained"
-            onClick={() => {
-              navigate("/form/users");
-            }}
-          >
-            Add Users
-          </Button>
-        </Box>
-      )}
-      <Grid container spacing={2}>
-        <Grid
-          item
-          xs={12}
-          sm={showImages || showAddReview ? 7 : 12}
-          lg={showImages || showAddReview ? 9 : 12}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12} lg={9} md={8} sm={7}>
-              <TextField
-                label="search"
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} lg={3} md={4} sm={5}>
-              {showAdvanceSearch ? (
-                <Button
-                  sx={{ mt: { lg: 3, sm: 3, md: 3 }, mb: { xs: 3 } }}
-                  variant="outlined"
-                  onClick={() => setShowAdvanceSearch(false)}
-                  startIcon={<ExpandLessRounded />}
-                  fullWidth
-                >
-                  advance search
-                </Button>
-              ) : (
-                <Button
-                  sx={{ mt: { lg: 3, sm: 3, md: 3 }, mb: { xs: 3 } }}
-                  variant="outlined"
-                  onClick={() => setShowAdvanceSearch(true)}
-                  fullWidth
-                  startIcon={<ExpandMoreRounded />}
-                >
-                  advance search
-                </Button>
-              )}
-            </Grid>
-          </Grid>
-          <Collapse in={showAdvanceSearch}>
-            <FormProvider {...methods}>
-              <form onSubmit={methods.handleSubmit(onSubmitFilter)}>
-                <Grid container spacing={2}>
-                  {filterFields.length > 0 &&
-                    filterFields.map((field, index) => (
-                      <Grid
-                        item
-                        key={index}
-                        xs={12}
-                        sm={6}
-                        md={4}
-                        lg={3}
-                        mb={2}
-                      >
-                        {field.option ? (
-                          <Autocomplete
-                            {...register(field.key)}
-                            sx={{ mt: 2 }}
-                            options={field.option}
-                            getOptionLabel={(option) => option.value}
-                            defaultValue={
-                              field.option.find(
-                                (option) => option.id === watch(field.name)
-                              ) || null
-                            }
-                            onChange={(event, newValue) => {
-                              setValue(field.key, newValue ? newValue.id : "");
-                            }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label={formatText(field.key)}
-                                variant="outlined"
-                              />
-                            )}
-                          />
-                        ) : (
-                          <TextField
-                            label={formatText(field.key)}
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            {...register(field.key)}
-                          />
-                        )}
-                      </Grid>
-                    ))}
-                </Grid>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6} md={4} lg={3}>
-                    <Button
-                      sx={{ mt: { lg: 3, sm: 3, md: 3 }, mb: { xs: 3 } }}
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      startIcon={<SaveAltRounded />}
-                      fullWidth
-                    >
-                      Apply Filter
-                    </Button>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4} lg={3}>
-                    <Button
-                      sx={{ mt: { lg: 3, sm: 3, md: 3 }, mb: { xs: 3 } }}
-                      variant="contained"
-                      color="primary"
-                      type="button"
-                      fullWidth
-                      onClick={resetFilter}
-                    >
-                      Reset Filter
-                    </Button>
-                  </Grid>
-                </Grid>
-              </form>
-            </FormProvider>
-          </Collapse>
-          <DataGrid
-            rows={data}
-            columns={columns}
-            rowHeight={75}
-            autoHeight={true}
-            sortingOrder={["asc", "desc"]}
-            sortModel={ordering}
-            onSortModelChange={handleSorting}
-            paginationMode="server"
-            initialState={{
-              ...data.initialState,
-              pagination: { paginationModel: paginationModel },
-            }}
-            pageSizeOptions={[5, 10, 20]}
-            pagination
-            rowCount={totalItems}
-            loading={loading}
-            rowSelection={false}
-            onPaginationModelChange={(pagedetails) => {
-              setPaginationModel({
-                page: pagedetails.page,
-                pageSize: pagedetails.pageSize,
-              });
-            }}
-            slots={{
-              loadingOverlay: LinearProgress,
-              toolbar: GridToolbar,
-            }}
-          />
-        </Grid>
-
-        {showImages && (
+              Add Users
+            </Button>
+          </Box>
+        )}
+        <Grid container spacing={2}>
           <Grid
             item
             xs={12}
-            sm={5}
-            lg={3}
-            sx={{ height: "600px", overflowY: "auto" }}
-            ref={divImage}
+            sm={showImages || showAddReview ? 7 : 12}
+            lg={showImages || showAddReview ? 9 : 12}
           >
-            <Box m={2} display={"flex"} justifyContent={"space-between"}>
-              <Typography variant="h6">Profile Pictures</Typography>
-              <IconButton onClick={() => setShowImages(false)}>
-                <Close />
-              </IconButton>
-            </Box>
-            <Divider />
-            {selectedImages.length > 0 &&
-              selectedImages.map((image, index) => (
-                <Box
-                  key={index}
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  margin={2}
-                >
-                  <Image src={image} style={{ width: "100%" }} />
-                </Box>
-              ))}
+            <Grid container spacing={2}>
+              <Grid item xs={12} lg={9} md={8} sm={7}>
+                <TextField
+                  label="search"
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} lg={3} md={4} sm={5}>
+                {showAdvanceSearch ? (
+                  <Button
+                    sx={{ mt: { lg: 3, sm: 3, md: 3 }, mb: { xs: 3 } }}
+                    variant="outlined"
+                    onClick={() => setShowAdvanceSearch(false)}
+                    startIcon={<ExpandLessRounded />}
+                    fullWidth
+                  >
+                    advance search
+                  </Button>
+                ) : (
+                  <Button
+                    sx={{ mt: { lg: 3, sm: 3, md: 3 }, mb: { xs: 3 } }}
+                    variant="outlined"
+                    onClick={() => setShowAdvanceSearch(true)}
+                    fullWidth
+                    startIcon={<ExpandMoreRounded />}
+                  >
+                    advance search
+                  </Button>
+                )}
+              </Grid>
+            </Grid>
+            <Collapse in={showAdvanceSearch}>
+              <FormProvider {...methods}>
+                <form onSubmit={methods.handleSubmit(onSubmitFilter)}>
+                  <Grid container spacing={2}>
+                    {filterFields.length > 0 &&
+                      filterFields.map((field, index) => (
+                        <Grid
+                          item
+                          key={index}
+                          xs={12}
+                          sm={6}
+                          md={4}
+                          lg={3}
+                          mb={2}
+                        >
+                          {field.option ? (
+                            <Autocomplete
+                              {...register(field.key)}
+                              sx={{ mt: 2 }}
+                              options={field.option}
+                              getOptionLabel={(option) => option.value}
+                              defaultValue={
+                                field.option.find(
+                                  (option) => option.id === watch(field.name)
+                                ) || null
+                              }
+                              onChange={(event, newValue) => {
+                                setValue(
+                                  field.key,
+                                  newValue ? newValue.id : ""
+                                );
+                              }}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  label={formatText(field.key)}
+                                  variant="outlined"
+                                />
+                              )}
+                            />
+                          ) : (
+                            <TextField
+                              label={formatText(field.key)}
+                              variant="outlined"
+                              margin="normal"
+                              fullWidth
+                              {...register(field.key)}
+                            />
+                          )}
+                        </Grid>
+                      ))}
+                  </Grid>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                      <Button
+                        sx={{ mt: { lg: 3, sm: 3, md: 3 }, mb: { xs: 3 } }}
+                        variant="contained"
+                        color="primary"
+                        type="submit"
+                        startIcon={<SaveAltRounded />}
+                        fullWidth
+                      >
+                        Apply Filter
+                      </Button>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                      <Button
+                        sx={{ mt: { lg: 3, sm: 3, md: 3 }, mb: { xs: 3 } }}
+                        variant="contained"
+                        color="primary"
+                        type="button"
+                        fullWidth
+                        onClick={resetFilter}
+                      >
+                        Reset Filter
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </form>
+              </FormProvider>
+            </Collapse>
+            <DataGrid
+              rows={data}
+              columns={columns}
+              rowHeight={75}
+              autoHeight={true}
+              sortingOrder={["asc", "desc"]}
+              sortModel={ordering}
+              onSortModelChange={handleSorting}
+              paginationMode="server"
+              initialState={{
+                ...data.initialState,
+                pagination: { paginationModel: paginationModel },
+              }}
+              pageSizeOptions={[5, 10, 20]}
+              pagination
+              rowCount={totalItems}
+              loading={loading}
+              rowSelection={false}
+              onPaginationModelChange={(pagedetails) => {
+                setPaginationModel({
+                  page: pagedetails.page,
+                  pageSize: pagedetails.pageSize,
+                });
+              }}
+              slots={{
+                loadingOverlay: LinearProgress,
+                toolbar: GridToolbar,
+              }}
+            />
           </Grid>
-        )}
-      </Grid>
-      <Dialog
-        open={open}
-        onClose={() => {
-          setJsonData([]);
-          setOpen(false);
-        }}
-        maxWidth={"lg"}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogContent>
-          <Typography variant="h5">{modelTitle}</Typography>
-          <Divider sx={{ margin: "10px 0" }} />
-          {!jsonData && <Typography>No {modelTitle}</Typography>}
-          {jsonData &&
-            jsonData.length > 0 &&
-            jsonData.map((item, index) => (
-              <React.Fragment key={index}>
-                <Typography variant="body1">
-                  <Circle sx={{ fontSize: "10px", marginRight: "10px" }} />
-                  {item.key} : {item.value}
-                </Typography>
-                <Divider sx={{ margin: "5px 0" }} />
-              </React.Fragment>
-            ))}
-        </DialogContent>
-      </Dialog>
-      <Dialog
-        open={openPermission}
-        onClose={() => {
-          setOpenPermissionUserId(null);
-          setOpenPermission(false);
-        }}
-        fullWidth={true}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogContent>
-          <ManageUserPermissions user_id={openPermissionUserId} />
-        </DialogContent>
-      </Dialog>
-    </Box>
+
+          {showImages && (
+            <Grid
+              item
+              xs={12}
+              sm={5}
+              lg={3}
+              sx={{ height: "600px", overflowY: "auto" }}
+              ref={divImage}
+            >
+              <Box m={2} display={"flex"} justifyContent={"space-between"}>
+                <Typography variant="h6">Profile Pictures</Typography>
+                <IconButton onClick={() => setShowImages(false)}>
+                  <Close />
+                </IconButton>
+              </Box>
+              <Divider />
+              {selectedImages.length > 0 &&
+                selectedImages.map((image, index) => (
+                  <Box
+                    key={index}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    margin={2}
+                  >
+                    <Image src={image} style={{ width: "100%" }} />
+                  </Box>
+                ))}
+            </Grid>
+          )}
+        </Grid>
+        <Dialog
+          open={open}
+          onClose={() => {
+            setJsonData([]);
+            setOpen(false);
+          }}
+          maxWidth={"lg"}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogContent>
+            <Typography variant="h5">{modelTitle}</Typography>
+            <Divider sx={{ margin: "10px 0" }} />
+            {!jsonData && <Typography>No {modelTitle}</Typography>}
+            {jsonData &&
+              jsonData.length > 0 &&
+              jsonData.map((item, index) => (
+                <React.Fragment key={index}>
+                  <Typography variant="body1">
+                    <Circle sx={{ fontSize: "10px", marginRight: "10px" }} />
+                    {item.key} : {item.value}
+                  </Typography>
+                  <Divider sx={{ margin: "5px 0" }} />
+                </React.Fragment>
+              ))}
+          </DialogContent>
+        </Dialog>
+        <Dialog
+          open={openPermission}
+          onClose={() => {
+            setOpenPermissionUserId(null);
+            setOpenPermission(false);
+          }}
+          fullWidth={true}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogContent>
+            <ManageUserPermissions user_id={openPermissionUserId} />
+          </DialogContent>
+        </Dialog>
+      </Box>
+    </>
   );
 };
 
