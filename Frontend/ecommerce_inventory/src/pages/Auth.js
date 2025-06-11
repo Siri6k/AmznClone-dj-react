@@ -136,7 +136,7 @@ const Auth = () => {
         password: data.password,
         email: data.email,
         profile_pic: [
-          "https://niplan-drc.s3.amazonaws.com/uploads/0c96e58f828bd11700054ecbdce3ff426deddbadda620c51_profile_default.png",
+          "https://res.cloudinary.com/dihwey5iz/image/upload/v1749648449/uploads/jgqz3fxfaqjay0slxi5a.png",
         ],
       },
     });

@@ -39,6 +39,13 @@ const ProfileCard = ({ profile }) => {
   const last_login = new Date(profile.last_login);
   const timeAgo = formatDistanceToNow(last_login, { addSuffix: true });
 
+  const whatsapp_number = profile?.whatsapp_number
+    ? normalizedPhoneNumber(profile.whatsapp_number)
+    : "N/A";
+  const phone_number = profile?.phone_number
+    ? normalizedPhoneNumber(profile.phone_number)
+    : "N/A";
+
   return (
     <Card
       sx={{
@@ -61,8 +68,12 @@ const ProfileCard = ({ profile }) => {
       {/* Thumbnail Grid */}
 
       <CardContent>
-        <Typography variant="h5" gutterBottom>
-          {profile.username}
+        <Typography variant="h6" gutterBottom>
+          #{profile.id} {profile.username}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" mt={1}>
+          <AccountCircleIcon fontSize="small" />{" "}
+          {profile.first_name.toUpperCase()} {profile.last_name.toUpperCase()}
         </Typography>
         <Typography variant="body2" color="text.secondary" mt={1}>
           <EmailIcon fontSize="small" /> {profile.email}
@@ -79,23 +90,13 @@ const ProfileCard = ({ profile }) => {
             <Typography variant="subtitle2">
               <PhoneIphone fontSize="small" /> Phone Number:
             </Typography>
-            <Chip
-              label={normalizedPhoneNumber(profile.phone_number) || "N/A"}
-              size="small"
-            />
+            <Chip label={phone_number} size="small" />
           </Grid>
           <Grid item xs={6}>
             <Typography variant="subtitle2">
               <WhatsApp fontSize="small" /> WhatsApp Number:
             </Typography>
-            <Chip
-              label={
-                normalizedPhoneNumber(profile.whatsapp_number) ||
-                profile.phone_number ||
-                "N/A"
-              }
-              size="small"
-            />
+            <Chip label={whatsapp_number} size="small" />
           </Grid>
           <Grid item xs={6}>
             <Typography variant="subtitle2">

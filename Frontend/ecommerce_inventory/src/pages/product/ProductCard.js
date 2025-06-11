@@ -21,10 +21,13 @@ import {
   AddOutlined,
   AddCircleOutline,
   Edit,
+  DashboardCustomizeOutlined,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import TimeAgo from "../../components/TimeAgo";
 import { getUser } from "../../utils/Helper";
+
+import { useTheme, useMediaQuery } from "@mui/material";
 
 const ProductCard = ({ product, setSelectedProduct, setShowBuyModal }) => {
   const navigate = useNavigate();
@@ -45,6 +48,9 @@ const ProductCard = ({ product, setSelectedProduct, setShowBuyModal }) => {
 
   const isMyproduct =
     getUser() && getUser().username === product.added_by_user_id.username;
+
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("lg"));
 
   return (
     <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
@@ -81,10 +87,17 @@ const ProductCard = ({ product, setSelectedProduct, setShowBuyModal }) => {
           </Typography>
         </CardContent>
 
-        <CardActions sx={{ justifyContent: "space-evenly", mt: "auto" }}>
-          {!isMyproduct && (
+        <CardActions
+          sx={{
+            justifyContent: "space-evenly",
+            mt: "auto",
+            flexWrap: { sm: "wrap-reverse", lg: "nowrap" },
+            gap: 1, // espace entre les boutons
+          }}
+        >
+          {!isMyproduct ? (
             <Button
-              size="normal"
+              size="small"
               color="success"
               variant="contained"
               startIcon={<AddCircleOutline />}
@@ -92,27 +105,36 @@ const ProductCard = ({ product, setSelectedProduct, setShowBuyModal }) => {
                 setShowBuyModal(true);
                 setSelectedProduct(product);
               }}
+              sx={{
+                width: { xs: "100%", sm: "auto", lg: "60%", md: "70%" }, // full width en mobile
+              }}
             >
-              Buy
+              Buy Now
             </Button>
-          )}
-          {isMyproduct && (
+          ) : (
             <Button
-              size="normal"
+              size="small"
               color="success"
               variant="contained"
               startIcon={<Edit />}
               onClick={() => navigate(`/form/product/${product.id}`)}
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+              }}
             >
               Update
             </Button>
           )}
+
           <Button
-            size="normal"
+            size="small"
             color="secondary"
             variant="outlined"
-            startIcon={<ViewAgendaOutlined />}
+            startIcon={<DashboardCustomizeOutlined />}
             onClick={handleViewDetails}
+            sx={{
+              width: { xs: "100%", sm: "auto" },
+            }}
           >
             Details
           </Button>

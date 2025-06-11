@@ -141,7 +141,6 @@ const UserForm = () => {
       getMyProfile();
       setTab(0);
       fetchForm();
-      refreshToken();
     } catch (err) {
       console.log(err);
     }
