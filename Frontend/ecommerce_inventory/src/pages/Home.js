@@ -152,143 +152,8 @@ const Home = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [desktopOpen, setDesktopOpen] = useState(true); // State for desktop sidebar
-  const [themeMode, setThemeMode] = useState("light");
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "basic";
-    setThemeMode(savedTheme);
-  }, []);
-
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const handleDrawerToggle = () => {
-    if (window.innerWidth >= 960) {
-      setDesktopOpen(!desktopOpen); // Toggle desktop sidebar only when in desktop view
-    } else {
-      setMobileOpen(!mobileOpen);
-    }
-  };
-
-  const toggleTheme = () => {
-    const newTheme = themeMode === "light" ? "dark" : "light";
-    setThemeMode(newTheme);
-    localStorage.setItem("theme", newTheme);
-  };
-
-  const saveTheme = (themeI) => {
-    setThemeMode(themeI.name.toLowerCase());
-    localStorage.setItem("theme", themeI.name.toLowerCase());
-  };
-  const handleThemeMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleThemeMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const themeMenuItems = [
-    {
-      name: "Basic",
-      color: "rgba(159, 84, 252, 1)",
-      theme: basicTheme,
-    },
-    {
-      name: "Dark",
-      color: "rgba(17, 17, 17, 1)",
-      theme: darkTheme,
-    },
-    {
-      name: "Light",
-      color: "rgba(159, 84, 252, 1)",
-      theme: lightTheme,
-    },
-    {
-      name: "Custom",
-      color: "rgba(159, 84, 252, 1)",
-      theme: customTheme,
-    },
-    {
-      name: "Blue Light",
-      color: "rgba(135, 206, 250, 1)",
-      theme: blueLightTheme,
-    },
-    {
-      name: "Blue Dark",
-      color: "rgba(0, 0, 255, 1)",
-      theme: blueDarkTheme,
-    },
-    {
-      name: "Green Light",
-      color: "rgba(144, 238, 144, 1)",
-      theme: greenLightTheme,
-    },
-    {
-      name: "Green Dark",
-      color: "rgba(0, 100, 0, 1)",
-      theme: greenDarkTheme,
-    },
-    {
-      name: "Red Light",
-      color: "rgba(255, 192, 203, 1)",
-      theme: redLightTheme,
-    },
-    {
-      name: "Red Dark",
-      color: "rgba(139, 0, 0, 1)",
-      theme: redDarkTheme,
-    },
-    {
-      name: "Orange Light",
-      color: "rgba(255, 222, 173, 1)",
-      theme: orangeLightTheme,
-    },
-    {
-      name: "Orange Dark",
-      color: "rgba(255, 140, 0, 1)",
-      theme: orangeDarkTheme,
-    },
-  ];
-
-  const themeMenuUI = (
-    <Menu
-      id="theme-menu"
-      anchorEl={anchorEl}
-      open={open}
-      onClose={handleThemeMenuClose}
-      onClick={handleThemeMenuClose}
-      PaperProps={{
-        elevation: 0,
-        sx: {
-          overflow: "visible",
-          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-          mt: 1.5,
-        },
-      }}
-      transformOrigin={{ horizontal: "right", vertical: "top" }}
-      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-    >
-      <MenuItem>
-        <ListItemIcon>
-          <SettingsIcon />
-        </ListItemIcon>
-        <Typography variant="inherit">Theme Setting</Typography>
-      </MenuItem>
-      <Divider />
-
-      {themeMenuItems.map((themeMenu) => (
-        <MenuItem onClick={() => saveTheme(themeMenu)} key={themeMenu.name}>
-          <ListItemIcon>
-            <Circle sx={{ color: themeMenu.color }} />
-          </ListItemIcon>
-          <Typography variant="inherit">{themeMenu.name}</Typography>
-        </MenuItem>
-      ))}
-    </Menu>
-  );
   return (
     <>
       <Title
@@ -303,16 +168,20 @@ const Home = () => {
         sx={{ flex: 1, padding: "20px" }}
       >
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Breadcrumbs aria-label="breadcrumb">
-            <Typography variant="body2" onClick={() => navigate("/home")}>
-              My Products
-            </Typography>
-          </Breadcrumbs>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => navigate("/home")}
+            startIcon={<ShoppingCart />}
+          >
+            Buy Now
+          </Button>
           {isMobile
             ? !getUser()?.address && (
                 <Button
                   variant="contained"
                   color="error"
+                  size="small"
                   onClick={() => navigate("/myprofile")}
                   startIcon={<SystemUpdate />}
                 >
@@ -323,6 +192,7 @@ const Home = () => {
                 <Button
                   variant="contained"
                   color="error"
+                  size="small"
                   onClick={() => navigate("/myprofile")}
                   startIcon={<SystemUpdate />}
                 >
@@ -333,6 +203,7 @@ const Home = () => {
             <Button
               variant="contained"
               color="success"
+              size="small"
               onClick={() => navigate("/form/product")}
               startIcon={<AddCircleOutline />}
             >

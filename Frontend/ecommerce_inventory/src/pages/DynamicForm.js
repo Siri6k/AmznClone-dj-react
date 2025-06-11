@@ -131,7 +131,7 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
       } else {
         navigate(`/manage/${formName}`);
       }
-      navigate(0);
+      window.location.reload();
     } catch (err) {
       console.log(err);
     }
@@ -192,7 +192,7 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
             <IconButton
               onClick={() => {
                 //navigate(-1);
-                navigate(`/manage/${formName}`);
+                navigate(`/dashboard`);
                 window.location.reload();
               }}
               color="primary"

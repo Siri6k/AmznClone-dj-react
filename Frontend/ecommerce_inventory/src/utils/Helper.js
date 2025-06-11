@@ -211,3 +211,27 @@ export const getFileMimeTypeFromFileName = (filename) => {
     return "other/other";
   }
 };
+
+export const formatDateSimple = (isoString) => {
+  const date = new Date(isoString);
+
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const year = String(date.getUTCFullYear()).slice(-2);
+  const hours = String(date.getUTCHours()).padStart(2, "0");
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+
+  return `${day}-${month}-20${year} ${hours}:${minutes}`;
+};
+
+export const normalizedPhoneNumber = (phone_number) => {
+  let rawPhone = phone_number;
+  rawPhone = rawPhone.replace(/\D/g, "");
+
+  if (rawPhone.startsWith("0")) {
+    rawPhone = "+243" + rawPhone.slice(1);
+  } else if (!phone_number.startsWith("+")) {
+    rawPhone = "+243" + rawPhone;
+  }
+  return rawPhone;
+};

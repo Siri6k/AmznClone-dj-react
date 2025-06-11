@@ -24,12 +24,13 @@ import {
   Announcement,
 } from "@mui/icons-material";
 import { formatDistanceToNow } from "date-fns";
+import { normalizedPhoneNumber } from "../../utils/Helper";
 
 const ProfileCard = ({ profile }) => {
   const [loaded, setLoaded] = useState(false);
 
   const profilePic = Array.isArray(profile.profile_pic)
-    ? profile.profile_pic[0] // Si c'est un tableau, prends le premier élément
+    ? profile.profile_pic[profile.profile_pic.length - 1] // Si c'est un tableau, prends le premier élément
     : defaultImg || "https://picsum.photos/100"; // Sinon, affiche l'image par défaut
 
   const handleLoad = () => {
@@ -53,10 +54,12 @@ const ProfileCard = ({ profile }) => {
           component="img"
           image={profilePic}
           alt={profile.username}
-          sx={{ height: 200, objectFit: "cover" }}
+          sx={{ height: "100%", objectFit: "cover" }}
           onLoad={handleLoad}
         />
       }
+      {/* Thumbnail Grid */}
+
       <CardContent>
         <Typography variant="h5" gutterBottom>
           {profile.username}
@@ -76,14 +79,21 @@ const ProfileCard = ({ profile }) => {
             <Typography variant="subtitle2">
               <PhoneIphone fontSize="small" /> Phone Number:
             </Typography>
-            <Chip label={profile.phone_number || "N/A"} size="small" />
+            <Chip
+              label={normalizedPhoneNumber(profile.phone_number) || "N/A"}
+              size="small"
+            />
           </Grid>
           <Grid item xs={6}>
             <Typography variant="subtitle2">
               <WhatsApp fontSize="small" /> WhatsApp Number:
             </Typography>
             <Chip
-              label={profile.whatsapp_number || profile.phone_number || "N/A"}
+              label={
+                normalizedPhoneNumber(profile.whatsapp_number) ||
+                profile.phone_number ||
+                "N/A"
+              }
               size="small"
             />
           </Grid>
@@ -121,10 +131,10 @@ const ProfileCard = ({ profile }) => {
             color="primary"
           />
 
-          <Chip
+          {/* <Chip
             label={`Plan: ${profile.plan_type || "Free"}`}
             color="secondary"
-          />
+          />*/}
           <Chip label={`Last Login: ${timeAgo || "Now"}`} />
         </Stack>
       </CardContent>

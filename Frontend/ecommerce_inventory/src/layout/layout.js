@@ -480,7 +480,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
       getUser()?.profile_pic &&
       getUser()?.profile_pic !== "null" &&
       Array.isArray(getUser()?.profile_pic)
-        ? getUser()?.profile_pic[0]
+        ? getUser()?.profile_pic[getUser().profile_pic.length - 1]
         : defaultImg;
   }
   return (
@@ -647,15 +647,12 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                     <IconButton
                       size="large"
                       color="inherit"
-                      onClick={() => navigate("/dashboard")}
+                      onClick={() => navigate("/home")}
                     >
                       {/* Use a custom icon or logo here */}
                       <Shop />
                     </IconButton>
-                    <Box
-                      component="span"
-                      onClick={() => navigate("/dashboard")}
-                    >
+                    <Box component="span" onClick={() => navigate("/home")}>
                       {pageTitle || "Niplan"}
                     </Box>
                   </Typography>
@@ -664,7 +661,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                   {!getUser() && (
                     <Button
                       variant="contained"
-                      color="success"
+                      color="error"
                       sx={{ mr: 1 }}
                       onClick={() => navigate("/auth")}
                       startIcon={<AccountCircle />}
@@ -680,7 +677,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                       onClick={() => {
                         localStorage.removeItem("token");
                         dispatch(logout());
-                        navigate("/auth");
+                        navigate("/home");
                       }}
                     >
                       Logout

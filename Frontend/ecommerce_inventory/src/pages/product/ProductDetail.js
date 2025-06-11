@@ -33,6 +33,8 @@ import {
 import useApi from "../../hooks/APIHandler";
 import { get } from "react-hook-form";
 import { useParams } from "react-router-dom";
+import TimeAgo from "../../components/TimeAgo";
+import { formatDateSimple, normalizedPhoneNumber } from "../../utils/Helper";
 
 const ProductDetail = ({ data }) => {
   const theme = useTheme();
@@ -144,7 +146,7 @@ const ProductDetail = ({ data }) => {
             {new Intl.NumberFormat("fr-CD", {
               style: "currency",
               currency: "CDF",
-            }).format(product.initial_selling_price)}
+            }).format(product.price)}
           </Typography>
 
           {/*<Chip
@@ -160,7 +162,7 @@ const ProductDetail = ({ data }) => {
 
           <Divider sx={{ my: 2 }} />
 
-          {/* Highlights */}
+          {/* Highlights 
           <Box sx={{ mb: 2 }}>
             <Typography variant="h6" gutterBottom>
               Highlights
@@ -175,36 +177,18 @@ const ProductDetail = ({ data }) => {
               ))}
             </Grid>
           </Box>
+          */}
 
           {/* Additional Details */}
+
           <Box sx={{ mb: 2 }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h5" gutterBottom>
               Details
             </Typography>
             <Grid container spacing={1}>
               <Grid item xs={6}>
                 <Typography variant="body2">
-                  <strong>Brand:</strong> {product.brand}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  <strong>Model:</strong> {product.brand_model}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  <strong>Color:</strong> {product.color}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  <strong>Dimensions:</strong> {product.dimensions}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  <strong>Weight:</strong> {product.weight} kg
+                  <strong>Quantity:</strong> {product.quantity}
                 </Typography>
               </Grid>
               <Grid item xs={6}>
@@ -212,11 +196,48 @@ const ProductDetail = ({ data }) => {
                   <strong>SKU:</strong> {product.sku}
                 </Typography>
               </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body2">
+                  <strong>Seller:</strong> {product.added_by_user_id.username}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body2">
+                  <strong>Contact:</strong>{" "}
+                  {normalizedPhoneNumber(
+                    product.added_by_user_id.whatsapp_number
+                  )}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body2">
+                  <strong>Country:</strong> {product.added_by_user_id.country}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body2">
+                  <strong>City:</strong> {product.added_by_user_id.city}
+                </Typography>
+              </Grid>
+            </Grid>
+            <Divider sx={{ my: 2 }} />
+            <Grid container spacing={1}>
+              <Grid item xs={6}>
+                <Typography variant="body2">
+                  <strong>Date:</strong> {formatDateSimple(product.created_at)}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body2">
+                  <strong>Update:</strong>{" "}
+                  <TimeAgo timestamp={product.updated_at} />
+                </Typography>
+              </Grid>
             </Grid>
           </Box>
 
           {/* Warranty */}
-          {product.addition_details && (
+          {product.additionnal_details && (
             <Box sx={{ mb: 2 }}>
               {product.addition_details.map((detail, index) => (
                 <Typography key={index} variant="body2">
@@ -332,46 +353,49 @@ const ProductDetail = ({ data }) => {
                   </Box>
                 </Box>
 
-                {reviews.map((review) => (
-                  <Paper key={review.id} sx={{ p: 2, mb: 2 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                      <Avatar sx={{ width: 40, height: 40, mr: 1 }}>
-                        {review.review_user_id.charAt(1)}
-                      </Avatar>
-                      <Box>
-                        <Typography variant="subtitle2">
-                          {review.review_user_id}
-                        </Typography>
-                        <Rating value={review.rating} size="small" readOnly />
-                      </Box>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ ml: "auto" }}
+                {reviews.length > 0 &&
+                  reviews.map((review) => (
+                    <Paper key={review.id} sx={{ p: 2, mb: 2 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
                       >
-                        {new Date(review.created_at).toLocaleDateString()}
-                      </Typography>
-                    </Box>
-                    <Typography variant="body1" sx={{ mb: 1 }}>
-                      {review.reviews}
-                    </Typography>
-                    {review.review_images &&
-                      review.review_images.length > 0 && (
-                        <Box sx={{ display: "flex", gap: 1 }}>
-                          {review.review_images.map((img, idx) => (
-                            <CardMedia
-                              key={idx}
-                              component="img"
-                              height="80"
-                              image={img}
-                              alt={`Review image ${idx + 1}`}
-                              sx={{ width: 80, borderRadius: 1 }}
-                            />
-                          ))}
+                        <Avatar sx={{ width: 40, height: 40, mr: 1 }}>
+                          {review.review_user_id.charAt(1)}
+                        </Avatar>
+                        <Box>
+                          <Typography variant="subtitle2">
+                            {review.review_user_id}
+                          </Typography>
+                          <Rating value={review.rating} size="small" readOnly />
                         </Box>
-                      )}
-                  </Paper>
-                ))}
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ ml: "auto" }}
+                        >
+                          {new Date(review.created_at).toLocaleDateString()}
+                        </Typography>
+                      </Box>
+                      <Typography variant="body1" sx={{ mb: 1 }}>
+                        {review.reviews}
+                      </Typography>
+                      {review.review_images &&
+                        review.review_images.length > 0 && (
+                          <Box sx={{ display: "flex", gap: 1 }}>
+                            {review.review_images.map((img, idx) => (
+                              <CardMedia
+                                key={idx}
+                                component="img"
+                                height="80"
+                                image={img}
+                                alt={`Review image ${idx + 1}`}
+                                sx={{ width: 80, borderRadius: 1 }}
+                              />
+                            ))}
+                          </Box>
+                        )}
+                    </Paper>
+                  ))}
               </>
             )}
           </Box>
@@ -389,26 +413,29 @@ const ProductDetail = ({ data }) => {
               </Typography>
             ) : (
               <List>
-                {questions.map((question) => (
-                  <Accordion key={question.id} defaultExpanded>
-                    <AccordionSummary expandIcon={<ExpandMore />}>
-                      <Typography variant="subtitle1">
-                        {question.question}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography variant="body1">{question.answer}</Typography>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ mt: 1, display: "block" }}
-                      >
-                        Answered by {question.answer_user_id} on{" "}
-                        {new Date(question.created_at).toLocaleDateString()}
-                      </Typography>
-                    </AccordionDetails>
-                  </Accordion>
-                ))}
+                {questions.length > 0 &&
+                  questions.map((question) => (
+                    <Accordion key={question.id} defaultExpanded>
+                      <AccordionSummary expandIcon={<ExpandMore />}>
+                        <Typography variant="subtitle1">
+                          {question.question}
+                        </Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Typography variant="body1">
+                          {question.answer}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ mt: 1, display: "block" }}
+                        >
+                          Answered by {question.answer_user_id} on{" "}
+                          {new Date(question.created_at).toLocaleDateString()}
+                        </Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  ))}
               </List>
             )}
           </Box>
