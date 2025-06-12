@@ -23,7 +23,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../../redux/reducer/isLoggedInReducer";
 import Title from "../../components/Title";
 
-const UserForm = () => {
+const ProfilePageForm = () => {
   const [tab, setTab] = useState(0);
   const { error, loading, callApi } = useApi();
   const [userData, setUserData] = useState(null); // Initialize as null instead of {}
@@ -180,11 +180,15 @@ const UserForm = () => {
   return (
     <>
       <Title
-        title="My Profile | Update My Profile"
+        title={
+          loading
+            ? "Loading..."
+            : `Niplan ${userData?.username || "My Profile"}'s Profile`
+        }
         description="Manage your profile, update your information, and view your details."
-        keywords="profile, update profile, user details, manage profile"
-        pageTitle="My Niplan Profile"
+        pageTitle="My Profile"
       />
+
       <Box sx={{ maxWidth: "600px", margin: "auto" }}>
         <Tabs
           value={tab}
@@ -309,4 +313,4 @@ const UserForm = () => {
   );
 };
 
-export default UserForm;
+export default ProfilePageForm;

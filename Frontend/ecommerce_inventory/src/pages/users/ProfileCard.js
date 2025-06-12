@@ -71,10 +71,12 @@ const ProfileCard = ({ profile }) => {
         <Typography variant="h6" gutterBottom>
           #{profile.id} {profile.username}
         </Typography>
-        <Typography variant="body2" color="text.secondary" mt={1}>
-          <AccountCircleIcon fontSize="small" />{" "}
-          {profile.first_name.toUpperCase()} {profile.last_name.toUpperCase()}
-        </Typography>
+        {profile.first_name && profile.last_name && (
+          <Typography variant="body2" color="text.secondary" mt={1}>
+            <AccountCircleIcon fontSize="small" />{" "}
+            {profile.first_name.toUpperCase()} {profile.last_name.toUpperCase()}
+          </Typography>
+        )}
         <Typography variant="body2" color="text.secondary" mt={1}>
           <EmailIcon fontSize="small" /> {profile.email}
         </Typography>

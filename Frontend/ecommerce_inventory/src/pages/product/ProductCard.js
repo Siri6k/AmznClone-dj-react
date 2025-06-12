@@ -39,7 +39,7 @@ const ProductCard = ({ product, setSelectedProduct, setShowBuyModal }) => {
   const imageSrc = product.image?.[0] || "https://via.placeholder.com/300";
 
   const username = product.added_by_user_id?.username || "Inconnu";
-  const phone = product.added_by_user_id?.whatsapp_number;
+  const id = "profile@" + product.added_by_user_id?.id;
 
   const priceFormatted = new Intl.NumberFormat("fr-CD", {
     style: "currency",
@@ -145,7 +145,10 @@ const ProductCard = ({ product, setSelectedProduct, setShowBuyModal }) => {
             <TimeAgo timestamp={product.updated_at} />
           </Stack>
           <Stack spacing={1}>
-            <Typography variant="body2">
+            <Typography
+              variant="body2"
+              onClick={() => navigate(`/profile/${id}`)}
+            >
               <PersonOutline fontSize="small" /> {username}
             </Typography>
           </Stack>

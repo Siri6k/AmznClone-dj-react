@@ -33,12 +33,12 @@ import { isAuthenticated } from "./utils/Helper";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import UserForm from "./pages/users/UserProfilePage";
 import ChartExamples from "./tools/ChartExample";
 import VisitLogger from "./components/VisitLoggerComponent";
 import ContactPage from "./pages/docs/ContactPage";
-import ProductDetail from "./pages/product/ProductDetail";
 import ProductPage from "./pages/product/ProductPage";
+import ProfilePageForm from "./pages/users/ProfilePageForm";
+import UserProfile from "./pages/users/UserProfile";
 
 function App() {
   const { status, items, error } = useSelector((state) => state.sidebardata);
@@ -94,6 +94,10 @@ function App() {
           element: <LegalDocuments />, // Corrected: 'element' for route definition
         },
         {
+          path: "profile/:id",
+          element: <UserProfile />,
+        },
+        {
           path: "product/:id",
           element: <ProductPage />, // Corrected: 'element' for route definition
         },
@@ -140,8 +144,9 @@ function App() {
         },
         {
           path: "myprofile",
-          element: <ProtectedRoute element={<UserForm />} />,
+          element: <ProtectedRoute element={<ProfilePageForm />} />,
         },
+
         {
           path: "settings",
           element: <ProtectedRoute element={<ChartExamples />} />,

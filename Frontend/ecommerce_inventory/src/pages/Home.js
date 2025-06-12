@@ -118,7 +118,7 @@ const Home = () => {
           : "-" + ordering[0].field;
     }
     const result = await callApi({
-      url: `products/all/`,
+      url: `products/`,
       method: "GET",
       params: {
         page: page,
