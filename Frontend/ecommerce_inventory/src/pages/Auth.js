@@ -150,9 +150,9 @@ const Auth = () => {
         last_name: data.lastName || "",
         phone_number: data.phoneNumber || "",
         whatsapp_number: data.whatsappNumber || "",
-        province: data.province || "",
-        city: data.city || "",
-        address: data.address || "",
+        province: data.province || "Kinshasa",
+        city: data.city || "Kinshasa",
+        address: data.address || "Kinshasa, Gombe",
       },
     });
     if (response?.data?.access) {
