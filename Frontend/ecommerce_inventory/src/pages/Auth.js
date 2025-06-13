@@ -15,8 +15,11 @@ import {
   FormControlLabel,
   createTheme,
   LinearProgress,
+  TextareaAutosize,
 } from "@mui/material";
 import { ThemeProvider as Emotion10ThemeProvider } from "@emotion/react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useTheme } from "@mui/system";
 import {
   orangeDarkTheme,
@@ -42,6 +45,7 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import defaultImg from "../assets/profile_default.png";
 import Title from "../components/Title";
+import { getAnonId } from "../utils/Helper";
 
 const Auth = () => {
   const [tab, setTab] = useState(0);
@@ -49,6 +53,8 @@ const Auth = () => {
   const navigate = useNavigate();
   const { callApi, error, loading } = useApi();
   const dispatch = useDispatch();
+
+  const [showMore, setShowMore] = useState(false);
 
   const {
     register,
@@ -128,6 +134,7 @@ const Auth = () => {
   };
 
   const doSignup = async (data) => {
+    const anon_id = getAnonId();
     let response = await callApi({
       url: "auth/signup/",
       method: "POST",
@@ -135,16 +142,23 @@ const Auth = () => {
         username: data.username,
         password: data.password,
         email: data.email,
+        anon_id: anon_id,
         profile_pic: [
           "https://res.cloudinary.com/dihwey5iz/image/upload/v1749648449/uploads/jgqz3fxfaqjay0slxi5a.png",
         ],
+        first_name: data.firstName || "",
+        last_name: data.lastName || "",
+        phone_number: data.phoneNumber || "",
+        whatsapp_number: data.whatsappNumber || "",
+        province: data.province || "",
+        city: data.city || "",
+        address: data.address || "",
       },
     });
     if (response?.data?.access) {
       localStorage.setItem("token", response.data.access);
       localStorage.setItem("refresh", response.data.refresh);
       toast.success("Signup successfully");
-      dispatch(login());
       dispatch(login());
       navigate("/dashboard");
     } else {
@@ -322,6 +336,75 @@ const Auth = () => {
                       }
                     }}
                   />
+
+                  {/* Toggle Button */}
+                  <Button
+                    variant="outlined"
+                    onClick={() => setShowMore((prev) => !prev)}
+                    sx={{ my: 2 }}
+                    fullWidth
+                    color="primary"
+                    size="small"
+                  >
+                    {showMore ? "Hide Additional Info" : "Add More Info"}
+                    {showMore ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                  </Button>
+                  {showMore && (
+                    <>
+                      <TextField
+                        fullWidth
+                        label="First Name"
+                        {...register("firstName")}
+                      />
+                      <TextField
+                        margin="normal"
+                        fullWidth
+                        label="Last Name"
+                        {...register("lastName")}
+                      />
+                      <TextField
+                        margin="normal"
+                        fullWidth
+                        label="Phone Number"
+                        type="tel"
+                        {...register("phoneNumber")}
+                      />
+                      <TextField
+                        margin="normal"
+                        fullWidth
+                        label="WhatsApp Number"
+                        type="tel"
+                        {...register("whatsappNumber")}
+                      />
+                      <TextField
+                        margin="normal"
+                        fullWidth
+                        label="Province"
+                        {...register("province")}
+                      />
+                      <TextField
+                        margin="normal"
+                        fullWidth
+                        label="City"
+                        {...register("city")}
+                      />
+                      <TextareaAutosize
+                        minRows={3}
+                        style={{
+                          width: "100%",
+                          padding: "10px",
+                          px: 3,
+                          borderRadius: "4px",
+                          borderColor: theme.palette.divider,
+                          backgroundColor: theme.palette.background.paper,
+                        }}
+                        margin="normal"
+                        fullWidth
+                        placeholder="Address"
+                        {...register("address")}
+                      />
+                    </>
+                  )}
                   <FormControlLabel
                     control={
                       <Checkbox
