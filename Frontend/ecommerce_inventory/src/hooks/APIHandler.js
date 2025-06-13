@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import config from "../utils/config";
 import { toast } from "react-toastify";
+import { isAuthenticated } from "../utils/Helper";
 
 function useApi() {
   const [error, setError] = useState("");
@@ -16,7 +17,6 @@ function useApi() {
   }) => {
     const gUrl = config.API_URL + url;
     setLoading(true);
-
     let response = null;
     header["Authorization"] = localStorage.getItem("token")
       ? `Bearer ${localStorage.getItem("token")}`

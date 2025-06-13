@@ -207,11 +207,11 @@ const Auth = () => {
                 Niplan
               </Typography>
               <Tabs value={tab} onChange={handleChange} centered>
-                <Tab label="Sign In" />
-
                 <Tab label="Sign Up" />
+
+                <Tab label="Sign In" />
               </Tabs>
-              {tab === 0 && (
+              {tab === 1 && (
                 <Box component="form" sx={{ mt: 2 }} onSubmit={doLogin}>
                   <TextField
                     margin="normal"
@@ -246,7 +246,7 @@ const Auth = () => {
                   )}
                 </Box>
               )}
-              {tab === 1 && (
+              {tab === 0 && (
                 <Box
                   component="form"
                   sx={{ mt: 2 }}

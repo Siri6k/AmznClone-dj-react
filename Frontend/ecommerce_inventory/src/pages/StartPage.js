@@ -182,13 +182,13 @@ const HomePage = ({ user_id }) => {
               <Button
                 variant="contained"
                 size="small"
-                onClick={() => navigate("/dashbooard")}
+                onClick={() => navigate("/dashboard")}
                 startIcon={<Home />}
               >
-                my products
+                my shop
               </Button>
               {isMobile
-                ? !getUser()?.address && (
+                ? !getUser()?.phone_number && (
                     <Button
                       variant="contained"
                       color="error"
@@ -199,7 +199,7 @@ const HomePage = ({ user_id }) => {
                       Profile
                     </Button>
                   )
-                : !getUser()?.address && (
+                : !getUser()?.phone_number && (
                     <Button
                       variant="contained"
                       color="error"
@@ -231,7 +231,7 @@ const HomePage = ({ user_id }) => {
             sx={{ flex: 1, padding: "20px" }}
           >
             <Breadcrumbs aria-label="breadcrumb">
-              <Typography variant="body2" onClick={() => navigate("/home")}>
+              <Typography variant="body2" >
                 Featured Products
               </Typography>
             </Breadcrumbs>

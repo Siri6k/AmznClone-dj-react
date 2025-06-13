@@ -17,6 +17,9 @@ export const isAuthenticated = () => {
   if (!token) {
     return false;
   }
+
+  const anon_id = getUser()?.anon_id;
+  localStorage.setItem("anon_id", anon_id || getAnonId());
   try {
     const decodedToken = jwtDecode(token);
     const decodedRefreshToken = jwtDecode(refresh);
@@ -28,6 +31,7 @@ export const isAuthenticated = () => {
     }
     if (decodedToken.exp < currentTime) {
       refreshToken();
+      getUser();
       return true;
     }
     return decodedToken.exp > currentTime;
@@ -35,37 +39,48 @@ export const isAuthenticated = () => {
     return false;
   }
 };
+
 export const refreshToken = async () => {
   const refresh = localStorage.getItem("refresh");
   if (!refresh) {
     return null;
   }
+
   const gUrl = config.API_URL + "auth/token/refresh/";
-  let header = {};
-  header["Authorization"] = localStorage.getItem("token")
-    ? `Bearer ${localStorage.getItem("token")}`
-    : "";
+
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: localStorage.getItem("token")
+      ? `Bearer ${localStorage.getItem("token")}`
+      : "",
+  };
+
   try {
     const response = await axios.request({
       url: gUrl,
       method: "POST",
-      body: { refresh: refresh },
-      headers: header,
+      data: { refresh: refresh },
+      headers: headers,
     });
 
-    if (response.status === 200) {
+    if (response?.status === 200) {
       localStorage.setItem("token", response.data.access);
-      localStorage.setItem("refresh", response.data.refresh);
-      return true;
+      if (response.data.refresh) {
+        localStorage.setItem("refresh", response.data.refresh);
+      }
+      return {
+        token: response.data.access,
+        refresh: response.data.refresh || refresh,
+      };
     } else {
       localStorage.removeItem("token");
       localStorage.removeItem("refresh");
-      return false;
+      return null;
     }
   } catch (err) {
     localStorage.removeItem("token");
     localStorage.removeItem("refresh");
-    return false;
+    return null;
   }
 };
 

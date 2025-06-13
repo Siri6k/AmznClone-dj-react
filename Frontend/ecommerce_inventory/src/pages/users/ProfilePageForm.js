@@ -11,14 +11,22 @@ import {
   Step,
   StepLabel,
   Button,
+  IconButton,
 } from "@mui/material";
 import useApi from "../../hooks/APIHandler";
 import ProfileCard from "./ProfileCard";
 import { toast } from "react-toastify";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { getFormTypes, refreshToken } from "../../utils/Helper";
-import { ArrowBackIos, ArrowForwardIos, Save } from "@mui/icons-material";
+import { getAnonId, getFormTypes, refreshToken } from "../../utils/Helper";
+import {
+  ArrowBackIos,
+  ArrowForwardIos,
+  Close,
+  CloseFullscreenOutlined,
+  CloseOutlined,
+  Save,
+} from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/reducer/isLoggedInReducer";
 import Title from "../../components/Title";
@@ -116,6 +124,7 @@ const ProfilePageForm = () => {
       const isError = false;
       const currentStepFields = getCurrentStepFields();
       const errors = validateCurrentStepFields(currentStepFields);
+      console.log(errors);
       if (errors.length > 0) {
         errors.forEach((error) => {
           methods.setError(error.name, {
@@ -138,9 +147,10 @@ const ProfilePageForm = () => {
       toast.success(response.data.message);
       setCurrentStep(0);
       methods.reset();
-      getMyProfile();
       setTab(0);
-      fetchForm();
+      localStorage.removeItem("token");
+      navigate(`/profile/${userData?.id}`);
+      window.location.reload();
     } catch (err) {
       console.log(err);
     }
@@ -190,18 +200,41 @@ const ProfilePageForm = () => {
       />
 
       <Box sx={{ maxWidth: "600px", margin: "auto" }}>
+        {tab === 0 && (
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mx: 2 }}>
+            <IconButton
+              onClick={() => {
+                //navigate(-1);
+                navigate(`/dashboard`);
+                window.location.reload();
+              }}
+              color="error"
+              className="hover-button"
+              sx={{ mx: 2 }}
+              size="small"
+              aria-label="Close"
+              variant="contained"
+            >
+              <span className="hover-content" color="error">
+                ESC
+              </span>{" "}
+              <Close />
+            </IconButton>
+          </Box>
+        )}
         <Tabs
           value={tab}
           onChange={handleTabChange}
           justifyContent="space-between"
           centered
+          sx={{ marginBottom: "20px" }}
         >
-          <Tab label="My Profile" sx={{ marginRight: "20%" }} />
           <Tab label="Update My Profile" />
+          <Tab label="My Profile" />
         </Tabs>
 
         {/* Profile Tab */}
-        {tab === 0 && (
+        {tab === 1 && (
           <Box sx={{ maxWidth: "600px", margin: "auto" }}>
             {loading && <LinearProgress />}
             {userData && <ProfileCard profile={userData} />}
@@ -210,8 +243,8 @@ const ProfilePageForm = () => {
         )}
 
         {/* Update Profile Tab */}
-        {tab === 1 && (
-          <Container>
+        {tab === 0 && (
+          <Container mt={2}>
             <Stepper
               activeStep={currentStep}
               sx={{ overflow: "auto", mt: 2 }}

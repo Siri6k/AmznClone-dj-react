@@ -197,7 +197,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("refresh");
     dispatch(logout());
-    navigate("/auth");
+    navigate("/home");
   };
 
   const drawerWidth = isAuthenticated() ? 280 : 0;
@@ -583,7 +583,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
 
                   <Box sx={{ flexGrow: 1 }} />
                   {isMobile
-                    ? !getUser()?.address && (
+                    ? !getUser()?.phone_number && (
                         <IconButton
                           color="error"
                           aria-label="open drawer"
@@ -658,7 +658,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                   </Typography>
                   <Box sx={{ flexGrow: 1 }} />
 
-                  {!getUser() && (
+                  {!isAuthenticated() && (
                     <Button
                       variant="contained"
                       color="error"
@@ -669,13 +669,14 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                       vendre
                     </Button>
                   )}
-                  {getUser() && (
+                  {isAuthenticated() && (
                     <Button
                       variant="contained"
                       color="error"
                       sx={{ mr: 1 }}
                       onClick={() => {
                         localStorage.removeItem("token");
+                        localStorage.removeItem("refresh");
                         dispatch(logout());
                         navigate("/home");
                       }}

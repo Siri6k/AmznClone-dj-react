@@ -60,6 +60,7 @@ import { useNavigate } from "react-router-dom";
 import { getUser } from "../utils/Helper";
 import Title from "../components/Title";
 import ProductCard from "./product/ProductCard";
+import { get } from "react-hook-form";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -117,8 +118,9 @@ const Home = () => {
           ? ordering[0].field
           : "-" + ordering[0].field;
     }
+    const url = getUser().phone_number ? `products/` : `products/all/`;
     const result = await callApi({
-      url: `products/`,
+      url: url,
       method: "GET",
       params: {
         page: page,
@@ -127,6 +129,7 @@ const Home = () => {
         ordering: order,
       },
     });
+
     if (result) {
       const fetchData = result.data.data.data || [];
       setProducts((prev) => [...prev, ...fetchData]);
@@ -177,7 +180,7 @@ const Home = () => {
             Buy Now
           </Button>
           {isMobile
-            ? !getUser()?.address && (
+            ? !getUser().phone_number && (
                 <Button
                   variant="contained"
                   color="error"
@@ -188,7 +191,7 @@ const Home = () => {
                   Profile
                 </Button>
               )
-            : !getUser()?.address && (
+            : !getUser().phone_number && (
                 <Button
                   variant="contained"
                   color="error"
@@ -199,7 +202,7 @@ const Home = () => {
                   Profile
                 </Button>
               )}
-          {getUser()?.phone_number && (
+          {getUser().phone_number && (
             <Button
               variant="contained"
               color="success"
@@ -211,7 +214,57 @@ const Home = () => {
             </Button>
           )}
         </Box>
+        {getUser().phone_number && (
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => navigate("/dashboard")}
+              startIcon={<Shop />}
+            >
+              My Shop
+            </Button>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => navigate("/form/product")}
+              startIcon={<AddCardRounded />}
+            >
+              Add Product
+            </Button>
+          </Box>
+        )}
         <Divider sx={{ mb: 2, mt: 2 }} />
+        {getUser().phone_number ? (
+          <Typography variant="body2">Manage My Products</Typography>
+        ) : (
+          <Box
+            sx={{
+              border: "1px solid #ffeeba",
+              borderRadius: 1,
+              p: 1,
+              mb: 2,
+            }}
+          >
+            <Typography
+              variant="caption"
+              fontWeight="bold"
+              color="warning.main"
+              onClick={() => navigate("/myprofile")}
+            >
+              🚧 Profile Incomplete
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{ mt: 0.5, display: "block", color: "error.main" }}
+            >
+              Please update your profile to be able to add a product on the
+              platform.
+            </Typography>
+          </Box>
+        )}
+        <Divider sx={{ mb: 2, mt: 2 }} />
+
         <Grid container spacing={4}>
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />

@@ -31,15 +31,18 @@ const FileInputComponent = ({ field }) => {
   const { callApi, loading } = useApi();
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [filePreviews, setFilePreviews] = useState([]);
-  const [fileUploaded, setFileUploaded] = useState(false);
+
   const [oldFiles, setOldFiles] = useState(
     Array.isArray(field.default) ? field.default : []
   );
+  const [fileUploaded, setFileUploaded] = useState(false);
   const [oldFilePreviews, setOldFilePreviews] = useState([]);
   const [newFilesUrl, setNewFilesUrl] = useState([]);
 
   useEffect(() => {
     if (oldFiles.length > 0) {
+      setFileUploaded(true);
+
       const preview = oldFiles.map((file, index) => ({
         url: new URL(file),
         name: getFileNameFromUrl(file),
@@ -70,7 +73,6 @@ const FileInputComponent = ({ field }) => {
         name: file.name,
         type: file.type.split("/")[0],
       }));
-      console.log(preview);
       setFilePreviews(preview);
       setFileUploaded(false);
     }
@@ -136,7 +138,6 @@ const FileInputComponent = ({ field }) => {
         toast.success(response?.data?.message);
 
         setFileUploaded(true);
-        console.log(fileUploaded);
       }
     } catch (err) {
       toast.error(err.message);
@@ -195,7 +196,9 @@ const FileInputComponent = ({ field }) => {
             <input
               type="file"
               multiple
-              {...register(field.name, { required: field.required })}
+              {...register(field.name, {
+                required: field.required && oldFiles.length === 0,
+              })}
             />
           </Box>
         </Box>
