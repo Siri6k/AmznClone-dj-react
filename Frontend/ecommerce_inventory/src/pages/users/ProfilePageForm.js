@@ -148,7 +148,9 @@ const ProfilePageForm = () => {
       setCurrentStep(0);
       methods.reset();
       setTab(0);
-      localStorage.removeItem("token");
+      if (!getUser()?.phone_number) {
+        localStorage.removeItem("token");
+      }
       navigate(`/profile/${userData?.id}`);
       window.location.reload();
     } catch (err) {
