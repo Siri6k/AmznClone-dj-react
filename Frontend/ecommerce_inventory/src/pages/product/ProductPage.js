@@ -9,10 +9,11 @@ const ProductPage = () => {
   const { id } = useParams();
   const { error, loading, callApi } = useApi();
   const [data, setData] = useState(null);
+  let liked = false;
 
   useEffect(() => {
     getProductDetails();
-  }, []);
+  }, [liked]);
 
   const getProductDetails = async () => {
     try {
@@ -24,7 +25,6 @@ const ProductPage = () => {
       if (result) {
         const fetchData = result.data.data || [];
         setData(fetchData);
-        console.log(fetchData);
       }
     } catch (err) {
       console.error("Failed to fetch product:", err);
@@ -66,7 +66,7 @@ const ProductPage = () => {
           <Typography color="error">Error loading product details</Typography>
         )}
         {!loading && !data && <Typography>Product not found</Typography>}
-        {data && <ProductDetail data={data} />}
+        {data && <ProductDetail data={data} liked={liked} callApi={callApi}/>}
       </Box>
     </>
   );

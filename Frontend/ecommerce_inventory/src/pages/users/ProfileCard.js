@@ -61,7 +61,7 @@ const ProfileCard = ({ profile }) => {
           component="img"
           image={profilePic}
           alt={profile.username}
-          sx={{ height: "100%", objectFit: "cover" }}
+          sx={{ height: "250", objectFit: "cover" }}
           onLoad={handleLoad}
         />
       }

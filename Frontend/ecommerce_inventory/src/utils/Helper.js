@@ -9,6 +9,7 @@ import StepTextComponents from "../components/StepTextComponents";
 import useApi from "../hooks/APIHandler";
 import axios from "axios";
 import config from "./config";
+import { toast } from "react-toastify";
 
 export const isAuthenticated = () => {
   const token = localStorage.getItem("token");
@@ -37,7 +38,7 @@ export const isAuthenticated = () => {
 export const refreshToken = async () => {
   const refresh = localStorage.getItem("refresh");
   if (!refresh) {
-    return false;
+    return null;
   }
   const gUrl = config.API_URL + "auth/token/refresh/";
   let header = {};
@@ -48,7 +49,7 @@ export const refreshToken = async () => {
     const response = await axios.request({
       url: gUrl,
       method: "POST",
-      body: refresh,
+      body: { refresh: refresh },
       headers: header,
     });
 
@@ -234,4 +235,41 @@ export const normalizedPhoneNumber = (phone_number) => {
     rawPhone = "+243" + rawPhone;
   }
   return rawPhone;
+};
+
+// utils/cookies.js
+export function getAnonId() {
+  let id = localStorage.getItem("anon_id");
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("anon_id", id);
+  }
+  return id;
+}
+
+export const productInteraction = async (data) => {
+  const anon_id = getAnonId();
+  const { action, product_id, like } = data;
+  if (!product_id) {
+    return null;
+  }
+  const gUrl = config.API_URL + `products/interaction/${product_id}/`;
+  const header = {};
+  header["Authorization"] = localStorage.getItem("token")
+    ? `Bearer ${localStorage.getItem("token")}`
+    : "";
+  try {
+    const response = await axios.request({
+      url: gUrl,
+      method: "POST",
+      body: { action: action, anon_id: anon_id },
+      headers: header,
+    });
+    if (data?.action === "like") {
+      toast(response.message);
+      return !like;
+    }
+  } catch (err) {
+    return false;
+  }
 };

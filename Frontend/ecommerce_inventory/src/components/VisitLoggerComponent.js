@@ -1,9 +1,11 @@
 // VisitLogger.js
 import { useEffect } from "react";
 import useApi from "../hooks/APIHandler";
+import { getAnonId, getUser } from "../utils/Helper";
 
 const VisitLogger = () => {
   const { error, loading, callApi } = useApi();
+  const anon_id = getAnonId();
 
   useEffect(() => {
     SaveVisit();
@@ -18,13 +20,19 @@ const VisitLogger = () => {
     }, {});
 
     // Envoi vers le backend
+    if (getUser()) {
+      return;
+    }
     const result = await callApi({
       url: "save-visit/",
       method: "POST",
       header: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ cookies: allCookies }),
+      body: JSON.stringify({
+        cookies: allCookies,
+        anon_id: getAnonId(),
+      }),
     });
     if (result) {
       console.log("Visite enregistrée avec succès");

@@ -34,9 +34,15 @@ import useApi from "../../hooks/APIHandler";
 import { get } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import TimeAgo from "../../components/TimeAgo";
-import { formatDateSimple, normalizedPhoneNumber } from "../../utils/Helper";
+import {
+  formatDateSimple,
+  getAnonId,
+  getUser,
+  normalizedPhoneNumber,
+} from "../../utils/Helper";
+import LikeChip from "../../components/LikeChip";
 
-const ProductDetail = ({ data }) => {
+const ProductDetail = ({ data, liked, callApi }) => {
   const theme = useTheme();
   const [value, setValue] = useState(0);
   const [expanded, setExpanded] = useState("panel1");
@@ -60,6 +66,75 @@ const ProductDetail = ({ data }) => {
     reviews.length > 0
       ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
       : 0;
+  const isMyproduct =
+    getUser() && getUser().username === product.added_by_user_id.username;
+
+  let phoneNumber = normalizedPhoneNumber(
+    product.added_by_user_id.whatsapp_number
+  );
+  phoneNumber = phoneNumber.replace(/\D/g, ""); // nettoie le numéro
+
+  //Whatsapp Handling
+  const baseUrl = "https://niplan-market.com"; // ← ton vrai domaine ici
+  const productUrl = `${baseUrl}/product/${product.id}`;
+  const message = `Bonjour, je suis intéressé par le produit "${product.name}" au prix de ${product.price} CDF.\nLien: ${productUrl}`;
+  const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+    message
+  )}`;
+
+  const productInteraction = async (data) => {
+    const anon_id = getAnonId();
+    const { action, product_id, like } = data;
+    if (!product_id) {
+      return null;
+    }
+    try {
+      const result = await callApi({
+        url: `products/detail/${product_id}/`,
+        method: "POST",
+        body: {
+          action: action,
+          anon_id: anon_id,
+        },
+      });
+    } catch (err) {
+      console.error("Failed to fetch product:", err);
+    }
+  };
+  const toggleLike = () => {
+    const data = {
+      action: "like",
+      product_id: product.id,
+      like: liked,
+    };
+    console.log(data);
+    productInteraction({ data });
+    liked = !liked;
+  };
+  const handleShare = (product) => {
+    const shareData = {
+      title: product.name,
+      text: `Check out this product: ${product.name}`,
+      url: window.location.origin + `/product/${product.id}`, // lien vers le produit
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch((err) => {
+        console.error("Share failed:", err);
+      });
+    } else {
+      // Fallback si Web Share API n’est pas supportée
+      navigator.clipboard.writeText(shareData.url);
+      alert("Lien copié dans le presse-papier !");
+    }
+    const data = {
+      action: "share",
+      product_id: product.id,
+      like: liked,
+    };
+    console.log(data);
+    productInteraction({ data });
+  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -81,7 +156,7 @@ const ProductDetail = ({ data }) => {
               component="img"
               image={product.image[0]}
               alt={product.name}
-              height="300"
+              height="250"
               sx={{
                 height: { xs: 200, md: 400 }, // Adjust height for different screens
                 objectFit: "cover",
@@ -99,7 +174,6 @@ const ProductDetail = ({ data }) => {
                   {!loaded && <CardMedia className="shimmer" />}
                   <CardMedia
                     component="img"
-                    height="100"
                     image={img}
                     alt={`${product.name} thumbnail ${index + 1}`}
                     sx={{
@@ -239,7 +313,7 @@ const ProductDetail = ({ data }) => {
           {/* Warranty */}
           {product.additionnal_details && (
             <Box sx={{ mb: 2 }}>
-              {product.addition_details.map((detail, index) => (
+              {product.additionnal_details.map((detail, index) => (
                 <Typography key={index} variant="body2">
                   <strong>{detail.key}:</strong> {detail.value}
                 </Typography>
@@ -248,38 +322,65 @@ const ProductDetail = ({ data }) => {
           )}
 
           {/* Action Buttons */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              gap: 1,
-              mt: 4,
-            }}
-          >
-            <Chip
-              icon={<ShoppingCart />}
-              label="Buy Now"
-              color="primary"
-              clickable
-              sx={{ px: 2 }}
-            />
-            <Chip
-              icon={<Favorite />}
-              label="like"
-              variant="outlined"
-              color="error"
-              clickable
-              sx={{ px: 2 }}
-            />
-            <Chip
-              icon={<Share />}
-              label="Share"
-              variant="outlined"
-              color="success"
-              clickable
-              sx={{ px: 2 }}
-            />
-          </Box>
+          {!isMyproduct && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mt: 4,
+                gap: 1,
+              }}
+            >
+              <Chip
+                icon={<ShoppingCart />}
+                label="Buy Now"
+                color="primary"
+                clickable
+                component="a" // 👉 important pour s'assurer que c'est un lien
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{ px: 1 }}
+              />{" "}
+              <Chip
+                icon={<Favorite />}
+                label="like"
+                variant="outlined"
+                color="error"
+                clickable
+                onClick={toggleLike}
+                sx={{ px: 1 }}
+              />
+              <Chip
+                icon={<Share />}
+                label="Share"
+                variant="outlined"
+                color="success"
+                clickable
+                sx={{ px: 1 }}
+                onClick={() => handleShare(product)}
+              />
+            </Box>
+          )}
+          {isMyproduct && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                gap: 1,
+                mt: 4,
+              }}
+            >
+              <Chip
+                icon={<Share />}
+                label="Share"
+                variant="outlined"
+                color="success"
+                clickable
+                sx={{ px: 2 }}
+              />
+            </Box>
+          )}
           <Divider sx={{ my: 2 }} />
         </Grid>
       </Grid>
@@ -308,24 +409,29 @@ const ProductDetail = ({ data }) => {
             <Typography variant="h6" gutterBottom>
               Product Description
             </Typography>
-            <div
-              dangerouslySetInnerHTML={{ __html: product.html_description }}
-            />
-
-            {product.specifications && product.specifications[0].key && (
-              <>
-                <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-                  Specifications
-                </Typography>
-                <List dense>
-                  {product.specifications.map((spec, index) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={spec.key} secondary={spec.value} />
-                    </ListItem>
-                  ))}
-                </List>
-              </>
-            )}
+            {/*
+              <div
+                dangerouslySetInnerHTML={{ __html: product.html_description }}
+              />
+              */}
+            {product.additionnal_details &&
+              product.additionnal_details[0].key && (
+                <>
+                  <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+                    Others Details
+                  </Typography>
+                  <List dense>
+                    {product.additionnal_details.map((spec, index) => (
+                      <ListItem key={index}>
+                        <ListItemText
+                          primary={spec.key}
+                          secondary={spec.value}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </>
+              )}
           </Box>
         )}
 
