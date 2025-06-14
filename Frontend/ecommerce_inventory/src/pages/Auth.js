@@ -207,11 +207,10 @@ const Auth = () => {
                 Niplan
               </Typography>
               <Tabs value={tab} onChange={handleChange} centered>
-                <Tab label="Sign Up" />
-
                 <Tab label="Sign In" />
+                <Tab label="Sign Up" />
               </Tabs>
-              {tab === 1 && (
+              {tab === 0 && (
                 <Box component="form" sx={{ mt: 2 }} onSubmit={doLogin}>
                   <TextField
                     margin="normal"
@@ -234,19 +233,34 @@ const Auth = () => {
                   {loading ? (
                     <LinearProgress sx={{ width: "100%" }} />
                   ) : (
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      sx={{ mt: 3, mb: 2 }}
-                    >
-                      Sign In
-                    </Button>
+                    <>
+                      <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        sx={{ mt: 3, mb: 2 }}
+                      >
+                        Sign In
+                      </Button>
+                      <Typography variant="body2" align="center">
+                        Don't have an account?{" "}
+                        <span
+                          style={{
+                            color: theme.palette.primary.main,
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => setTab(1)}
+                        >
+                          Sign Up Now!
+                        </span>
+                      </Typography>
+                    </>
                   )}
                 </Box>
               )}
-              {tab === 0 && (
+              {tab === 1 && (
                 <Box
                   component="form"
                   sx={{ mt: 2 }}

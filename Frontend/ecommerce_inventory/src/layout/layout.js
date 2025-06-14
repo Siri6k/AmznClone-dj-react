@@ -197,6 +197,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("refresh");
     dispatch(logout());
+    dispatch(logout());
     navigate("/home");
   };
 

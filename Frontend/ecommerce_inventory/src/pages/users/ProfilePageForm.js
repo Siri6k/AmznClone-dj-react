@@ -18,7 +18,12 @@ import ProfileCard from "./ProfileCard";
 import { toast } from "react-toastify";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { getAnonId, getFormTypes, refreshToken } from "../../utils/Helper";
+import {
+  getAnonId,
+  getFormTypes,
+  getUser,
+  refreshToken,
+} from "../../utils/Helper";
 import {
   ArrowBackIos,
   ArrowForwardIos,

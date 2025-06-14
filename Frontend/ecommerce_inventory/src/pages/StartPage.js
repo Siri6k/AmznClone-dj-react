@@ -69,6 +69,7 @@ import { getUser, isAuthenticated } from "../utils/Helper";
 import ProductCard from "./product/ProductCard";
 import Title from "../components/Title";
 import ProductBuyModal from "./product/ProductBuyModal";
+import { get } from "react-hook-form";
 
 const HomePage = ({ user_id }) => {
   const [products, setProducts] = useState([]);
@@ -188,7 +189,8 @@ const HomePage = ({ user_id }) => {
                 my shop
               </Button>
               {isMobile
-                ? !getUser()?.phone_number && (
+                ? getUser() &&
+                  !getUser()?.phone_number && (
                     <Button
                       variant="contained"
                       color="error"
@@ -199,7 +201,8 @@ const HomePage = ({ user_id }) => {
                       Profile
                     </Button>
                   )
-                : !getUser()?.phone_number && (
+                : getUser() &&
+                  !getUser()?.phone_number && (
                     <Button
                       variant="contained"
                       color="error"
@@ -210,7 +213,7 @@ const HomePage = ({ user_id }) => {
                       Profile
                     </Button>
                   )}
-              {getUser()?.phone_number && (
+              {getUser() && getUser()?.phone_number && (
                 <Button
                   variant="contained"
                   color="success"
@@ -231,9 +234,7 @@ const HomePage = ({ user_id }) => {
             sx={{ flex: 1, padding: "20px" }}
           >
             <Breadcrumbs aria-label="breadcrumb">
-              <Typography variant="body2" >
-                Featured Products
-              </Typography>
+              <Typography variant="body2">Featured Products</Typography>
             </Breadcrumbs>
 
             <Divider sx={{ mb: 2, mt: 2 }} />

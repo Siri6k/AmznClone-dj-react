@@ -118,7 +118,7 @@ const Home = () => {
           ? ordering[0].field
           : "-" + ordering[0].field;
     }
-    const url = getUser().phone_number ? `products/` : `products/all/`;
+    const url = getUser()?.phone_number ? `products/` : `products/all/`;
     const result = await callApi({
       url: url,
       method: "GET",
@@ -180,7 +180,7 @@ const Home = () => {
             Buy Now
           </Button>
           {isMobile
-            ? !getUser().phone_number && (
+            ? !getUser()?.phone_number && (
                 <Button
                   variant="contained"
                   color="error"
@@ -191,7 +191,7 @@ const Home = () => {
                   Profile
                 </Button>
               )
-            : !getUser().phone_number && (
+            : !getUser()?.phone_number && (
                 <Button
                   variant="contained"
                   color="error"
@@ -202,7 +202,7 @@ const Home = () => {
                   Profile
                 </Button>
               )}
-          {getUser().phone_number && (
+          {getUser()?.phone_number && (
             <Button
               variant="contained"
               color="success"
@@ -214,28 +214,9 @@ const Home = () => {
             </Button>
           )}
         </Box>
-        {getUser().phone_number && (
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => navigate("/dashboard")}
-              startIcon={<Shop />}
-            >
-              My Shop
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => navigate("/form/product")}
-              startIcon={<AddCardRounded />}
-            >
-              Add Product
-            </Button>
-          </Box>
-        )}
+
         <Divider sx={{ mb: 2, mt: 2 }} />
-        {getUser().phone_number ? (
+        {getUser()?.phone_number ? (
           <Typography variant="body2">Manage My Products</Typography>
         ) : (
           <Box
