@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, act } from "react";
 import { Box, LinearProgress, Typography } from "@mui/material";
 import useApi from "../../hooks/APIHandler";
 import { useParams } from "react-router-dom";
 import ProductDetail from "./ProductDetail";
 import Title from "../../components/Title";
+import { getAnonId } from "../../utils/Helper";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -26,6 +27,11 @@ const ProductPage = () => {
         const fetchData = result.data.data || [];
         setData(fetchData);
       }
+      const view = await callApi({
+        url: `products/interaction/${id}/`, // or products/detail/${id}/
+        method: "POST",
+        body: { action: "view", anon_id: getAnonId() },
+      });
     } catch (err) {
       console.error("Failed to fetch product:", err);
     }
@@ -66,7 +72,7 @@ const ProductPage = () => {
           <Typography color="error">Error loading product details</Typography>
         )}
         {!loading && !data && <Typography>Product not found</Typography>}
-        {data && <ProductDetail data={data} liked={liked} callApi={callApi}/>}
+        {data && <ProductDetail data={data} callApi={callApi} />}
       </Box>
     </>
   );

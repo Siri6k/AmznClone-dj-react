@@ -288,3 +288,10 @@ export const productInteraction = async (data) => {
     return false;
   }
 };
+
+export const formatCount = (count) => {
+  if (count < 1000) return `${count}`;
+  if (count < 1_000_000) return `${(count / 1000).toFixed(1)}k`;
+  if (count < 1_000_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
+  return `${(count / 1_000_000_000).toFixed(1)}B`;
+};

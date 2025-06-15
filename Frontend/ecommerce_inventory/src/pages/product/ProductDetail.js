@@ -20,6 +20,10 @@ import {
   Tab,
   Tabs,
   useTheme,
+  Button,
+  IconButton,
+  Tooltip,
+  Stack,
 } from "@mui/material";
 import {
   ExpandMore,
@@ -29,25 +33,34 @@ import {
   Share,
   Image,
   QuestionAnswer,
+  ThumbsUpDown,
+  Visibility,
 } from "@mui/icons-material";
 import useApi from "../../hooks/APIHandler";
 import { get } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import TimeAgo from "../../components/TimeAgo";
 import {
+  formatCount,
   formatDateSimple,
   getAnonId,
   getUser,
   normalizedPhoneNumber,
 } from "../../utils/Helper";
 import LikeChip from "../../components/LikeChip";
+import { toast } from "react-toastify";
 
-const ProductDetail = ({ data, liked, callApi }) => {
+const ProductDetail = ({ data, callApi }) => {
   const theme = useTheme();
   const [value, setValue] = useState(0);
   const [expanded, setExpanded] = useState("panel1");
 
-  const { product, reviews, questions } = data;
+  const { product, reviews, questions, like, share } = data;
+  const [liked, setLiked] = useState(like);
+  const [shared, setShared] = useState(share);
+  const [viewCount, setViewCount] = useState(product.view_count || 0);
+  const [likeCount, setLikeCount] = useState(product.like_count || 0);
+  const [shareCount, setShareCount] = useState(product.share_count || 0);
 
   const handleTabChange = (event, newValue) => {
     setValue(newValue);
@@ -82,36 +95,33 @@ const ProductDetail = ({ data, liked, callApi }) => {
     message
   )}`;
 
-  const productInteraction = async (data) => {
-    const anon_id = getAnonId();
-    const { action, product_id, like } = data;
-    if (!product_id) {
-      return null;
-    }
+  const toggleLike = async () => {
     try {
-      const result = await callApi({
-        url: `products/detail/${product_id}/`,
+      const id = product.id;
+      const liking = await callApi({
+        url: `products/interaction/${id}/`, // or products/detail/${id}/
         method: "POST",
-        body: {
-          action: action,
-          anon_id: anon_id,
-        },
+        body: { action: "like", anon_id: getAnonId() },
       });
+      if (liking) {
+        setLikeCount(liked ? likeCount - 1 : likeCount + 1); // Update like count
+        setLiked(!liked); // Toggle the liked state
+        toast.success(liked ? "Product liked!" : "Product unliked!", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
     } catch (err) {
       console.error("Failed to fetch product:", err);
     }
   };
-  const toggleLike = () => {
-    const data = {
-      action: "like",
-      product_id: product.id,
-      like: liked,
-    };
-    console.log(data);
-    productInteraction({ data });
-    liked = !liked;
-  };
-  const handleShare = (product) => {
+
+  const handleShare = async (product) => {
     const shareData = {
       title: product.name,
       text: `Check out this product: ${product.name}`,
@@ -127,17 +137,41 @@ const ProductDetail = ({ data, liked, callApi }) => {
       navigator.clipboard.writeText(shareData.url);
       alert("Lien copié dans le presse-papier !");
     }
-    const data = {
-      action: "share",
-      product_id: product.id,
-      like: liked,
-    };
-    console.log(data);
-    productInteraction({ data });
+    if (!shared) {
+      try {
+        const id = product.id;
+        const sharing = await callApi({
+          url: `products/interaction/${id}/`, // or products/detail/${id}/
+          method: "POST",
+          body: { action: "share", anon_id: getAnonId() },
+        });
+        if (sharing) {
+          setShareCount(shared ? shareCount - 1 : shareCount + 1); // Update share count
+          setShared(!shared); // Toggle the shared state
+        }
+      } catch (err) {
+        console.error("Failed to fetch product:", err);
+      }
+    }
   };
 
   return (
     <Box sx={{ p: 3 }}>
+      {/* Views */}
+      <Stack direction="row" spacing={2} justifyContent="flex-end" mb={2}>
+        {/* Views */}
+        <Tooltip title="Views">
+          <Chip
+            icon={<Visibility fontSize="small" />}
+            label={`${formatCount(viewCount)} view${
+              viewCount === 1 ? "" : "s"
+            }`}
+            variant="outlined"
+            color="success"
+            sx={{ px: 1, fontWeight: 500 }}
+          />
+        </Tooltip>
+      </Stack>
       <Grid container spacing={4}>
         {/* Main Product Image - Will reorder itself */}
         <Grid
@@ -151,6 +185,7 @@ const ProductDetail = ({ data, liked, callApi }) => {
           }}
         >
           <Card sx={{ mb: 2 }}>
+            {/* Main Image */}
             {!loaded && <CardMedia className="shimmer" />}
             <CardMedia
               component="img"
@@ -326,7 +361,7 @@ const ProductDetail = ({ data, liked, callApi }) => {
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "center",
+                justifyContent: "space-evenly",
                 mt: 4,
                 gap: 1,
               }}
@@ -342,18 +377,34 @@ const ProductDetail = ({ data, liked, callApi }) => {
                 rel="noopener noreferrer"
                 sx={{ px: 1 }}
               />{" "}
-              <Chip
-                icon={<Favorite />}
-                label="like"
-                variant="outlined"
-                color="error"
-                clickable
+              <IconButton
                 onClick={toggleLike}
-                sx={{ px: 1 }}
-              />
+                aria-label="like"
+                sx={{
+                  borderRadius: "9999px",
+                  padding: "4px 12px",
+                  backgroundColor: liked ? "#fdecea" : "#f3f4f6",
+                  color: liked ? "#d32f2f" : "#374151",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 1,
+                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
+                  fontSize: "0.875rem",
+                  fontWeight: 500,
+                  textTransform: "none",
+                }}
+              >
+                <Favorite
+                  size={16}
+                  fill={liked ? "#d32f2f" : "none"}
+                  strokeWidth={2}
+                  style={{ marginRight: 4 }}
+                />
+                {formatCount(likeCount)} like{likeCount === 1 ? "" : "s"}
+              </IconButton>
               <Chip
                 icon={<Share />}
-                label="Share"
+                label={`Share (${formatCount(shareCount)})`}
                 variant="outlined"
                 color="success"
                 clickable
@@ -378,6 +429,7 @@ const ProductDetail = ({ data, liked, callApi }) => {
                 color="success"
                 clickable
                 sx={{ px: 2 }}
+                onClick={() => handleShare(product)}
               />
             </Box>
           )}
