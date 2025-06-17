@@ -11,6 +11,7 @@ import {
   Chip,
   Skeleton,
   Box,
+  Tooltip,
 } from "@mui/material";
 import {
   ShopOutlined,
@@ -22,10 +23,11 @@ import {
   AddCircleOutline,
   Edit,
   DashboardCustomizeOutlined,
+  Favorite,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import TimeAgo from "../../components/TimeAgo";
-import { getUser } from "../../utils/Helper";
+import { formatCount, getUser } from "../../utils/Helper";
 
 import { useTheme, useMediaQuery } from "@mui/material";
 
@@ -53,7 +55,27 @@ const ProductCard = ({ product, setSelectedProduct, setShowBuyModal }) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("lg"));
 
   return (
-    <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
+    <Grid item key={product.id} xs={12} sm={6} md={4} lg={3} mt={4}>
+      {/* Views */}
+      <Stack
+        direction="row"
+        spacing={2}
+        justifyContent="flex-end"
+        sx={{ mb: 1 }}
+      >
+        {/* Views */}
+        <Tooltip title="likes">
+          <Chip
+            icon={<Favorite fontSize="small" />}
+            label={`${formatCount(product.like_count)} like${
+              product.like_count === 1 ? "" : "s"
+            }`}
+            variant="outlined"
+            color="error"
+            sx={{ px: 1, fontWeight: 500, fontSize: "0.8rem" }}
+          />
+        </Tooltip>
+      </Stack>
       <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
         {!loaded && (
           <Skeleton variant="rectangular" height={150} animation="wave" />
@@ -109,7 +131,7 @@ const ProductCard = ({ product, setSelectedProduct, setShowBuyModal }) => {
                 width: { xs: "100%", sm: "auto", lg: "60%", md: "70%" }, // full width en mobile
               }}
             >
-              Buy Now
+              Buy here
             </Button>
           ) : (
             <Button

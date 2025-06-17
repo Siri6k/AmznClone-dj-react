@@ -129,7 +129,7 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
       if (onSaveEvent) {
         onSaveEvent();
       } else {
-        navigate(`/manage/${formName}`);
+        navigate(`/dashboard`);
       }
       window.location.reload();
     } catch (err) {

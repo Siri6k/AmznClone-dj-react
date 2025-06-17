@@ -350,7 +350,13 @@ const Auth = () => {
                       }
                     }}
                   />
-
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    label="Phone Number"
+                    type="tel"
+                    {...register("phoneNumber")}
+                  />
                   {/* Toggle Button */}
                   <Button
                     variant="outlined"
@@ -376,13 +382,7 @@ const Auth = () => {
                         label="Last Name"
                         {...register("lastName")}
                       />
-                      <TextField
-                        margin="normal"
-                        fullWidth
-                        label="Phone Number"
-                        type="tel"
-                        {...register("phoneNumber")}
-                      />
+
                       <TextField
                         margin="normal"
                         fullWidth

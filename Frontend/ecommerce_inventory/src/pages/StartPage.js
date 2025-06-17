@@ -221,7 +221,7 @@ const HomePage = ({ user_id }) => {
                   onClick={() => navigate("/form/product")}
                   startIcon={<AddCircleOutline />}
                 >
-                  Add Product
+                  Product
                 </Button>
               )}
             </Box>

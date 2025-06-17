@@ -163,7 +163,7 @@ const Home = () => {
         title="My Shop"
         description="Browse and manage your products"
         keywords="products, inventory, e-commerce"
-        pageTitle="My Shop - Products"
+        pageTitle="My Shop"
       />
       <Container
         className="main-content"
@@ -177,7 +177,7 @@ const Home = () => {
             onClick={() => navigate("/home")}
             startIcon={<ShoppingCart />}
           >
-            Buy Now
+            Buy here
           </Button>
           {isMobile
             ? !getUser()?.phone_number && (
@@ -210,14 +210,14 @@ const Home = () => {
               onClick={() => navigate("/form/product")}
               startIcon={<AddCircleOutline />}
             >
-              Add Product
+              Product
             </Button>
           )}
         </Box>
 
-        <Divider sx={{ mb: 2, mt: 2 }} />
+        <Divider sx={{ mb: 2, smt: 2 }} />
         {getUser()?.phone_number ? (
-          <Typography variant="body2">Manage My Products</Typography>
+          <Typography variant="body2">Manage My Shop - Products</Typography>
         ) : (
           <Box
             sx={{

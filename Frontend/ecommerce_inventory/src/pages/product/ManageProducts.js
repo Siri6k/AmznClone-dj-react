@@ -161,6 +161,7 @@ const ManageProducts = ({ onProductSelected }) => {
                 <IconButton
                   onClick={() => {
                     onAddClick(params);
+                    window.location.reload();
                   }}
                 >
                   <Add color="light" />
@@ -201,6 +202,24 @@ const ManageProducts = ({ onProductSelected }) => {
                   >
                     <PanoramaRounded />
                   </IconButton>
+                </Box>
+              );
+            },
+          });
+        } else if (key === "added_by_user_id") {
+          columns.push({
+            field: key,
+            headerName:
+              key.charAt(0).toUpperCase() + key.slice(1).replaceAll("_", " "),
+            width: 150,
+            sortable: false,
+            renderCell: (params) => {
+              return (
+                <Box display={"flex"} alignItems={"center"} mt={3}>
+                  <Typography variant="body2" mr={3}>
+                    #{params.row.added_by_user_id?.id}{" "}
+                    {params.row.added_by_user_id?.username || "Unknown"}
+                  </Typography>
                 </Box>
               );
             },
@@ -261,7 +280,7 @@ const ManageProducts = ({ onProductSelected }) => {
           column.field === "specifications" ||
           column.field === "highlights" ||
           column.field === "seo_keywords" ||
-          column.field === "addition_details"
+          column.field === "additionnal_details"
         ) {
           return {
             field: column.field,
@@ -449,15 +468,17 @@ const ManageProducts = ({ onProductSelected }) => {
           <DialogContent>
             <Typography variant="h5">{modelTitle} Details</Typography>
             <Divider sx={{ margin: "10px 0" }} />
-            {jsonData.map((item, index) => (
-              <React.Fragment key={index}>
-                <Typography variant="body1">
-                  <Circle sx={{ fontSize: "10px", marginRight: "10px" }} />
-                  {item.key} : {item.value}
-                </Typography>
-                <Divider sx={{ margin: "5px 0" }} />
-              </React.Fragment>
-            ))}
+            {jsonData &&
+              jsonData.length > 0 &&
+              jsonData.map((item, index) => (
+                <React.Fragment key={index}>
+                  <Typography variant="body1">
+                    <Circle sx={{ fontSize: "10px", marginRight: "10px" }} />
+                    {item.key} : {item.value}
+                  </Typography>
+                  <Divider sx={{ margin: "5px 0" }} />
+                </React.Fragment>
+              ))}
           </DialogContent>
         </Dialog>
 
