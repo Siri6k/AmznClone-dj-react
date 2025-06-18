@@ -295,3 +295,10 @@ export const formatCount = (count) => {
   if (count < 1_000_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
   return `${(count / 1_000_000_000).toFixed(1)}B`;
 };
+
+export const orderOptions = [
+  { label: "Les plus récents", value: "-id" },
+  { label: "Les plus likés", value: "-like_count" },
+  { label: "Les plus vus", value: "-view_count" },
+  { label: "Les plus partagés", value: "-share_count" },
+];

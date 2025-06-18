@@ -81,10 +81,9 @@ const ProductDetail = ({ data, callApi }) => {
       : 0;
   const isMyproduct =
     getUser() && getUser().username === product.added_by_user_id.username;
-
-  let phoneNumber = normalizedPhoneNumber(
-    product.added_by_user_id.whatsapp_number
-  );
+  let phoneNumber =
+    product?.whatsapp_number || product?.added_by_user_id?.whatsapp_number;
+  phoneNumber = normalizedPhoneNumber(phoneNumber);
   phoneNumber = phoneNumber.replace(/\D/g, ""); // nettoie le numéro
 
   //Whatsapp Handling
@@ -94,6 +93,9 @@ const ProductDetail = ({ data, callApi }) => {
   const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
     message
   )}`;
+  // Fallback si le numéro n'est pas défini
+  let whatsapp_number =
+    product?.whatsapp_number || product?.added_by_user_id?.whatsapp_number;
 
   const toggleLike = async () => {
     try {
@@ -169,6 +171,17 @@ const ProductDetail = ({ data, callApi }) => {
             variant="outlined"
             color="success"
             sx={{ px: 1, fontWeight: 500 }}
+          />
+        </Tooltip>
+        <Tooltip title="likes">
+          <Chip
+            icon={<Favorite fontSize="small" />}
+            label={`${formatCount(product.like_count)} like${
+              product.like_count === 1 ? "" : "s"
+            }`}
+            variant="outlined"
+            color="error"
+            sx={{ px: 1, fontWeight: 500, fontSize: "0.8rem" }}
           />
         </Tooltip>
       </Stack>
@@ -313,9 +326,7 @@ const ProductDetail = ({ data, callApi }) => {
               <Grid item xs={6}>
                 <Typography variant="body2">
                   <strong>Contact:</strong>{" "}
-                  {normalizedPhoneNumber(
-                    product.added_by_user_id.whatsapp_number
-                  )}
+                  {normalizedPhoneNumber(whatsapp_number)}
                 </Typography>
               </Grid>
               <Grid item xs={6}>
@@ -325,7 +336,8 @@ const ProductDetail = ({ data, callApi }) => {
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="body2">
-                  <strong>City:</strong> {product.added_by_user_id.city}
+                  <strong>City:</strong>{" "}
+                  {product?.city || product?.added_by_user_id?.city}
                 </Typography>
               </Grid>
             </Grid>
@@ -346,13 +358,20 @@ const ProductDetail = ({ data, callApi }) => {
           </Box>
 
           {/* Warranty */}
-          {product.additionnal_details && (
+          {product?.additionnal_details?.length > 0 && (
             <Box sx={{ mb: 2 }}>
-              {product.additionnal_details.map((detail, index) => (
-                <Typography key={index} variant="body2">
-                  <strong>{detail.key}:</strong> {detail.value}
-                </Typography>
-              ))}
+              <Typography variant="h6" gutterBottom>
+                Additional Details
+              </Typography>
+              <Grid container spacing={1}>
+                {product?.additionnal_details.map((detail, index) => (
+                  <Grid item xs={6} key={index}>
+                    <Typography variant="body2">
+                      <strong>{detail.key}:</strong> {detail.value}
+                    </Typography>
+                  </Grid>
+                ))}
+              </Grid>
             </Box>
           )}
 

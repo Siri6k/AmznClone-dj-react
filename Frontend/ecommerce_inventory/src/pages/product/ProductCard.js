@@ -24,6 +24,7 @@ import {
   Edit,
   DashboardCustomizeOutlined,
   Favorite,
+  LocationOn,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import TimeAgo from "../../components/TimeAgo";
@@ -64,14 +65,12 @@ const ProductCard = ({ product, setSelectedProduct, setShowBuyModal }) => {
         sx={{ mb: 1 }}
       >
         {/* Views */}
-        <Tooltip title="likes">
+        <Tooltip title="city">
           <Chip
-            icon={<Favorite fontSize="small" />}
-            label={`${formatCount(product.like_count)} like${
-              product.like_count === 1 ? "" : "s"
-            }`}
+            icon={<LocationOn fontSize="small" />}
+            label={product?.city || product?.added_by_user_id?.city}
             variant="outlined"
-            color="error"
+            color="success"
             sx={{ px: 1, fontWeight: 500, fontSize: "0.8rem" }}
           />
         </Tooltip>

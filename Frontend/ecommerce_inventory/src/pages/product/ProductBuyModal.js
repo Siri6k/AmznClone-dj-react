@@ -18,9 +18,9 @@ const ProductBuyModal = ({ product, setShowBuyModal }) => {
 
   const handleLoad = () => setLoaded(true);
   const handleClose = () => setShowBuyModal(false);
-  let phoneNumber = normalizedPhoneNumber(
-    product.added_by_user_id.whatsapp_number
-  );
+  let phoneNumber =
+    product?.whatsapp_number || product?.added_by_user_id?.whatsapp_number;
+  phoneNumber = normalizedPhoneNumber(phoneNumber);
   phoneNumber = phoneNumber.replace(/\D/g, ""); // nettoie le numéro
 
   //Whatsapp Handling
