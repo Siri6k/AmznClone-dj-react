@@ -241,15 +241,19 @@ export const formatDateSimple = (isoString) => {
 };
 
 export const normalizedPhoneNumber = (phone_number) => {
-  let rawPhone = phone_number;
-  rawPhone = rawPhone.replace(/\D/g, "");
+  // Remove all non-digit characters first
+  let rawPhone = phone_number.replace(/\D/g, "");
 
+  // Handle local numbers (starting with 0 or without country code)
   if (rawPhone.startsWith("0")) {
-    rawPhone = "+243" + rawPhone.slice(1);
-  } else if (!phone_number.startsWith("+")) {
-    rawPhone = "+243" + rawPhone;
+    return "+243" + rawPhone.slice(1);
+  } else if (!rawPhone.startsWith("+") && rawPhone.length > 0) {
+    // For numbers without any prefix, assume it's Congo number
+    return "+243" + rawPhone;
   }
-  return rawPhone;
+  // For numbers already with +, just return the digits with +
+  // (the replace(/\D/g, "") has already removed all non-digits)
+  return "+" + rawPhone;
 };
 
 // utils/cookies.js
