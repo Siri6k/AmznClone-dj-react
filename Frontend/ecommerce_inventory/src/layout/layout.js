@@ -59,6 +59,7 @@ import {
   UpdateDisabledRounded,
   SystemUpdate,
   Shop,
+  MonetizationOnOutlined,
 } from "@mui/icons-material";
 import { ThemeProvider as Emotion10ThemeProvider } from "@emotion/react";
 import "./style.scss";
@@ -666,9 +667,9 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                       color="error"
                       sx={{ mr: 1 }}
                       onClick={() => navigate("/auth")}
-                      startIcon={<AccountCircle />}
+                      startIcon={<MonetizationOnOutlined />}
                     >
-                      vendre
+                      sell here
                     </Button>
                   )}
                   {isAuthenticated() && (
