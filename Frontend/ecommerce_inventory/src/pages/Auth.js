@@ -18,6 +18,10 @@ import {
   TextareaAutosize,
 } from "@mui/material";
 import { ThemeProvider as Emotion10ThemeProvider } from "@emotion/react";
+
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useTheme } from "@mui/system";
@@ -107,6 +111,33 @@ const Auth = () => {
 
   const handleChange = (event, newValue) => {
     setTab(newValue);
+  };
+
+  // ... dans ton composant
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const decoded = jwtDecode(credentialResponse.credential);
+
+      const response = await callApi({
+        url: "auth/social/google/",
+        method: "POST",
+        body: {
+          access_token: credentialResponse.credential, // token reçu
+        },
+      });
+
+      if (response?.data?.access) {
+        localStorage.setItem("token", response.data.access);
+        localStorage.setItem("refresh", response.data.refresh);
+        toast.success("Google login successful");
+        dispatch(login());
+        navigate("/dashboard");
+      } else {
+        toast.error("Google login failed");
+      }
+    } catch (err) {
+      console.error("Google login error", err);
+    }
   };
 
   const doLogin = async (e) => {
@@ -243,6 +274,21 @@ const Auth = () => {
                       >
                         Sign In
                       </Button>
+                      <Box>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          align="center"
+                          sx={{ mb: 1 }}
+                        >
+                          OR
+                        </Typography>
+                        <GoogleLogin
+                          onSuccess={handleGoogleSuccess}
+                          onError={() => toast.error("Google login failed")}
+                          useOneTap
+                        />
+                      </Box>
                       <Typography variant="body2" align="center">
                         Don't have an account?{" "}
                         <span
@@ -266,6 +312,21 @@ const Auth = () => {
                   sx={{ mt: 2 }}
                   onSubmit={handleSubmit(doSignup)}
                 >
+                  <Box sx={{ gap: 1, mt: 2 }}>
+                    <GoogleLogin
+                      onSuccess={handleGoogleSuccess}
+                      onError={() => toast.error("Google login failed")}
+                      useOneTap
+                    />
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      align="center"
+                      sx={{ mt: 1 }}
+                    >
+                      OR
+                    </Typography>
+                  </Box>
                   <TextField
                     margin="normal"
                     required
@@ -350,13 +411,7 @@ const Auth = () => {
                       }
                     }}
                   />
-                  <TextField
-                    margin="normal"
-                    fullWidth
-                    label="Phone Number"
-                    type="tel"
-                    {...register("phoneNumber")}
-                  />
+
                   {/* Toggle Button */}
                   <Button
                     variant="outlined"
@@ -382,7 +437,13 @@ const Auth = () => {
                         label="Last Name"
                         {...register("lastName")}
                       />
-
+                      <TextField
+                        margin="normal"
+                        fullWidth
+                        label="Phone Number"
+                        type="tel"
+                        {...register("phoneNumber")}
+                      />
                       <TextField
                         margin="normal"
                         fullWidth

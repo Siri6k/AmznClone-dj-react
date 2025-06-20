@@ -199,6 +199,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
     dispatch(logout());
     dispatch(logout());
     navigate("/home");
+    window.location.reload();
   };
 
   const drawerWidth = isAuthenticated() ? 280 : 0;

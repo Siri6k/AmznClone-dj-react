@@ -215,7 +215,7 @@ const Home = () => {
           )}
         </Box>
 
-        <Divider sx={{ mb: 2, smt: 2 }} />
+        <Divider sx={{ mb: 2, mt: 2 }} />
         {getUser()?.phone_number ? (
           <Typography variant="body2">Manage My Shop - Products</Typography>
         ) : (
