@@ -18,8 +18,7 @@ import {
   TextareaAutosize,
 } from "@mui/material";
 import { ThemeProvider as Emotion10ThemeProvider } from "@emotion/react";
-
-import { GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, useGoogleOneTapLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -139,6 +138,13 @@ const Auth = () => {
       console.error("Google login error", err);
     }
   };
+
+  useGoogleOneTapLogin({
+    onSuccess: handleGoogleSuccess,
+    onError: () => {
+      console.log("One Tap failed");
+    },
+  });
 
   const doLogin = async (e) => {
     e.preventDefault();
@@ -274,7 +280,12 @@ const Auth = () => {
                       >
                         Sign In
                       </Button>
-                      <Box>
+                      <Box
+                        sx={{
+                          mb: 1,
+                          gap: 1,
+                        }}
+                      >
                         <Typography
                           variant="body2"
                           color="text.secondary"
@@ -286,7 +297,8 @@ const Auth = () => {
                         <GoogleLogin
                           onSuccess={handleGoogleSuccess}
                           onError={() => toast.error("Google login failed")}
-                          useOneTap
+                          style={{ width: "100%" }}
+                          text="Sign in with Google"
                         />
                       </Box>
                       <Typography variant="body2" align="center">
@@ -312,17 +324,23 @@ const Auth = () => {
                   sx={{ mt: 2 }}
                   onSubmit={handleSubmit(doSignup)}
                 >
-                  <Box sx={{ gap: 1, mt: 2 }}>
+                  <Box
+                    sx={{
+                      mb: 1,
+                      mt: 2,
+                    }}
+                  >
                     <GoogleLogin
                       onSuccess={handleGoogleSuccess}
                       onError={() => toast.error("Google login failed")}
-                      useOneTap
+                      style={{ width: "100%" }}
+                      text="Sign up with Google"
                     />
                     <Typography
                       variant="body2"
                       color="text.secondary"
                       align="center"
-                      sx={{ mt: 1 }}
+                      sx={{ mt: 2 }}
                     >
                       OR
                     </Typography>

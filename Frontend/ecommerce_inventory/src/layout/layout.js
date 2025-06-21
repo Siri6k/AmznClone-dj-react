@@ -199,7 +199,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
     localStorage.removeItem("refresh");
     dispatch(logout());
     dispatch(logout());
-    navigate("/home");
+    navigate("/dashboard");
     window.location.reload();
   };
 
