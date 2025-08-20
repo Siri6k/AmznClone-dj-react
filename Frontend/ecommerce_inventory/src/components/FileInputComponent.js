@@ -12,7 +12,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import { toast } from "react-toastify";
 
 import useApi from "../hooks/APIHandler";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   checkIsJson,
   getFileMimeTypeFromFileName,
@@ -32,18 +32,19 @@ const FileInputComponent = ({ field }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [filePreviews, setFilePreviews] = useState([]);
 
-  const [oldFiles, setOldFiles] = useState(
-    Array.isArray(field.default) ? field.default : []
+  const stableOldFiles = useMemo(
+    () => (Array.isArray(field.default) ? field.default : []),
+    [field.default]
   );
   const [fileUploaded, setFileUploaded] = useState(false);
   const [oldFilePreviews, setOldFilePreviews] = useState([]);
   const [newFilesUrl, setNewFilesUrl] = useState([]);
 
   useEffect(() => {
-    if (oldFiles.length > 0) {
+    if (stableOldFiles.length > 0) {
       setFileUploaded(true);
 
-      const preview = oldFiles.map((file, index) => ({
+      const preview = stableOldFiles.map((file, index) => ({
         url: new URL(file),
         name: getFileNameFromUrl(file),
         type: getFileMimeTypeFromFileName(getFileNameFromUrl(file)).split(
@@ -53,22 +54,18 @@ const FileInputComponent = ({ field }) => {
 
       setOldFilePreviews(preview);
     }
-  }, [oldFiles]);
+  }, [stableOldFiles]);
 
+  // Prévisualisation des nouveaux fichiers
+  const currentFiles = watch(field.name);
   useEffect(() => {
-    if (
-      !selectedFiles.length &&
-      watch(field.name) &&
-      Array.from(watch(field.name)).filter((item) => item instanceof File)
-        .length > 0
-    ) {
-      const fileArray =
-        Array.from(watch(field.name)).filter((item) => item instanceof File) ||
-        [];
+    const files = Array.from(currentFiles || []).filter(
+      (f) => f instanceof File
+    );
+    if (files.length > 0) {
+      setSelectedFiles(files);
 
-      setSelectedFiles(fileArray);
-
-      const preview = fileArray.map((file, index) => ({
+      const preview = files.map((file, index) => ({
         url: URL.createObjectURL(file),
         name: file.name,
         type: file.type.split("/")[0],
@@ -76,14 +73,26 @@ const FileInputComponent = ({ field }) => {
       setFilePreviews(preview);
       setFileUploaded(false);
     }
-    buildFileUrls();
-  }, [watch(field.name)]);
+  }, [currentFiles]);
+
+  // Nettoyage des URLs temporaires
+  useEffect(() => {
+    return () => {
+      filePreviews.forEach((p) => URL.revokeObjectURL(p.url));
+    };
+  }, [filePreviews]);
+
+  // Construction finale des URLs
+  useEffect(() => {
+    const finalUrl = [...stableOldFiles, ...newFilesUrl];
+    setValue(field.name, finalUrl.length ? finalUrl : []);
+  }, [stableOldFiles, newFilesUrl, setValue, field.name]);
 
   const handleDeleteImageOld = (index) => {
     //Delete actual file
-    const updatedFiles = [...oldFiles];
+    const updatedFiles = [...stableOldFiles];
     updatedFiles.splice(index, 1);
-    setOldFiles(updatedFiles);
+    stableOldFiles = updatedFiles;
 
     // Delete actual preview
     const updatedPreviews = [...oldFilePreviews];
@@ -109,10 +118,10 @@ const FileInputComponent = ({ field }) => {
 
   useEffect(() => {
     buildFileUrls();
-  }, [oldFiles, newFilesUrl]);
+  }, [stableOldFiles, newFilesUrl]);
 
   const buildFileUrls = () => {
-    const finalUrl = [...oldFiles, ...newFilesUrl];
+    const finalUrl = [...stableOldFiles, ...newFilesUrl];
     if (finalUrl.length > 0) {
       setValue(field.name, finalUrl);
     } else {
@@ -197,12 +206,13 @@ const FileInputComponent = ({ field }) => {
               type="file"
               multiple
               {...register(field.name, {
-                required: field.required && oldFiles.length === 0,
+                required: field.required && stableOldFiles.length === 0,
               })}
             />
           </Box>
         </Box>
       )}
+
       {selectedFiles.length > 0 &&
         !fileUploaded &&
         (loading ? (

@@ -1,165 +1,254 @@
-import React from "react";
-import "./App.css";
-import ProtectedRoute from "./utils/ProtectedRoute";
-import Layout from "./layout/layout";
-
+import React, { lazy, Suspense, useEffect } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
-  useParams,
+  redirect,
 } from "react-router-dom";
-import Auth from "./pages/Auth";
-import Home from "./pages/Home";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
-
-import { fetchSidebar } from "./redux/reducer/sidebardata";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import DynamicForm from "./pages/DynamicForm";
-
-import "./style/style.css";
-import ManageCategories from "./pages/category/Managecategories";
-import ManageProducts from "./pages/product/ManageProducts";
-import Error404Page from "./pages/Error404Page";
-import ManageWarehouse from "./pages/warehouse/ManageWarehouse";
-import ManageUsers from "./pages/users/ManageUsers";
-import ManageModuleUrls from "./pages/module/ManageModuleUrls";
-import CreatePurchaseOrder from "./pages/purchaseOrder/CreatePurchaseOrder";
-import ManagePurchaseOrder from "./pages/purchaseOrder/ManagePuchaseOrder";
-import HomePage from "./pages/StartPage";
-import LegalDocuments from "./pages/docs/LegalDocuments";
-import { isAuthenticated } from "./utils/Helper";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import ChartExamples from "./tools/ChartExample";
-import VisitLogger from "./components/VisitLoggerComponent";
-import ContactPage from "./pages/docs/ContactPage";
-import ProductPage from "./pages/product/ProductPage";
-import ProfilePageForm from "./pages/users/ProfilePageForm";
-import UserProfile from "./pages/users/UserProfile";
+import "./App.css";
+import "./style/style.css";
+
+import Layout from "./layout/layout";
+import { fetchSidebar } from "./redux/reducer/sidebardata";
+import { isAuthenticated } from "./utils/Helper";
+import ProtectedRoute from "./utils/ProtectedRoute";
+
+// Lazy pages (réduire bundle initial)
+const Auth = lazy(() => import("./pages/Auth"));
+const HomePage = lazy(() => import("./pages/StartPage"));
+const LegalDocuments = lazy(() => import("./pages/docs/LegalDocuments"));
+const UserProfile = lazy(() => import("./pages/users/UserProfile"));
+const ProductPage = lazy(() => import("./pages/product/ProductPage"));
+const ContactPage = lazy(() => import("./pages/docs/ContactPage"));
+const Home = lazy(() => import("./pages/Home"));
+const DynamicForm = lazy(() => import("./pages/DynamicForm"));
+const ManageCategories = lazy(() =>
+  import("./pages/category/Managecategories")
+);
+const ManageProducts = lazy(() => import("./pages/product/ManageProducts"));
+const ManageWarehouse = lazy(() => import("./pages/warehouse/ManageWarehouse"));
+const ManageUsers = lazy(() => import("./pages/users/ManageUsers"));
+const ManageModuleUrls = lazy(() => import("./pages/module/ManageModuleUrls"));
+const CreatePurchaseOrder = lazy(() =>
+  import("./pages/purchaseOrder/CreatePurchaseOrder")
+);
+const ManagePurchaseOrder = lazy(() =>
+  import("./pages/purchaseOrder/ManagePuchaseOrder")
+);
+const ProfilePageForm = lazy(() => import("./pages/users/ProfilePageForm"));
+const ChartExamples = lazy(() => import("./tools/ChartExample"));
+const Error404Page = lazy(() => import("./pages/Error404Page"));
+
+// loader sécurisé (bloque avant render)
+const protectedLoader = () => (isAuthenticated() ? null : redirect("/auth"));
 
 function App() {
-  const { status, items, error } = useSelector((state) => state.sidebardata);
+  const { items } = useSelector((state) => state.sidebardata);
   const { isLoggedIn } = useSelector((state) => state.isLoggedInReducer);
   const dispatch = useDispatch();
-  // You can access the current title from Redux if needed
-  const currentTitle = useSelector((state) => state.title.pageTitle);
 
+  // 1 seul useEffect : charge sidebar si authentifié
   useEffect(() => {
-    if (status === "idle") {
-      // Check if the user is authenticated before fetching sidebar data
-      if (isAuthenticated()) {
-        dispatch(fetchSidebar());
-      }
-    }
-  }, [status, dispatch]);
+    if (isAuthenticated()) dispatch(fetchSidebar());
+  }, [isLoggedIn]); // isLoggedIn change → re-fetch
 
-  useEffect(() => {
-    // Fetch sidebar data when the user logs in
-    if (isAuthenticated() && isLoggedIn) {
-      dispatch(fetchSidebar());
-    }
-  }, [isLoggedIn]);
-
-  // Define the routes using 'element' instead of 'component'
   const router = createBrowserRouter([
     {
       path: "/auth",
-      element: <Auth />, // Corrected: 'element' for route definition
+      element: (
+        <Suspense>
+          <Auth />
+        </Suspense>
+      ),
     },
-
     {
       path: "/",
-      element: <Layout sidebarList={items} />,
+      element: (
+        <Suspense>
+          <Layout sidebarList={items} />
+        </Suspense>
+      ),
       errorElement: (
-        <Layout
-          sidebarList={items}
-          childPage={<Error404Page />}
-          pageTitle={currentTitle}
-        />
+        <Suspense>
+          <Layout sidebarList={items} childPage={<Error404Page />} />
+        </Suspense>
       ),
       children: [
         {
-          path: "",
-          element: <HomePage />, // Corrected: 'element' for route definition
+          index: true,
+          element: (
+            <Suspense>
+              <HomePage />
+            </Suspense>
+          ),
         },
         {
           path: "home",
-          element: <HomePage />, // Corrected: 'element' for route definition
+          element: (
+            <Suspense>
+              <HomePage />
+            </Suspense>
+          ),
         },
         {
           path: "policies",
-          element: <LegalDocuments />, // Corrected: 'element' for route definition
+          element: (
+            <Suspense>
+              <LegalDocuments />
+            </Suspense>
+          ),
         },
         {
           path: "profile/:id",
-          element: <UserProfile />,
+          element: (
+            <Suspense>
+              <UserProfile />
+            </Suspense>
+          ),
         },
         {
           path: "product/:id",
-          element: <ProductPage />, // Corrected: 'element' for route definition
+          element: (
+            <Suspense>
+              <ProductPage />
+            </Suspense>
+          ),
         },
         {
           path: "contact",
-          element: <ContactPage />, // Corrected: 'element' for route definition
+          element: (
+            <Suspense>
+              <ContactPage />
+            </Suspense>
+          ),
         },
-        { path: "dashboard", element: <ProtectedRoute element={<Home />} /> },
+
+        // pages protégées
+        {
+          path: "dashboard",
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<Home />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
+        },
         {
           path: "form/:formName/:id?",
-          element: <ProtectedRoute element={<DynamicForm />} />,
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<DynamicForm />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
         },
         {
           path: "manage/category",
-          element: <ProtectedRoute element={<ManageCategories />} />,
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<ManageCategories />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
         },
         {
           path: "manage/product",
-          element: <ProtectedRoute element={<ManageProducts />} />,
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<ManageProducts />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
         },
         {
           path: "manage/warehouse",
-          element: <ProtectedRoute element={<ManageWarehouse />} />,
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<ManageWarehouse />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
         },
         {
           path: "manage/users",
-          element: <ProtectedRoute element={<ManageUsers />} />,
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<ManageUsers />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
         },
         {
           path: "manage/moduleUrls",
-          element: <ProtectedRoute element={<ManageModuleUrls />} />,
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<ManageModuleUrls />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
         },
         {
           path: "create/po",
-          element: <ProtectedRoute element={<CreatePurchaseOrder />} />,
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<CreatePurchaseOrder />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
         },
         {
           path: "create/po/:id?",
-          element: <ProtectedRoute element={<CreatePurchaseOrder />} />,
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<CreatePurchaseOrder />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
         },
         {
           path: "manage/purchaseOrder",
-          element: <ProtectedRoute element={<ManagePurchaseOrder />} />,
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<ManagePurchaseOrder />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
         },
         {
           path: "myprofile",
-          element: <ProtectedRoute element={<ProfilePageForm />} />,
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<ProfilePageForm />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
         },
-
         {
           path: "settings",
-          element: <ProtectedRoute element={<ChartExamples />} />,
+          element: (
+            <Suspense>
+              <ProtectedRoute element={<ChartExamples />} />
+            </Suspense>
+          ),
+          loader: protectedLoader,
         },
       ],
     },
   ]);
 
   return (
-    // Assuming the Layout component is used for wrapping the main content
     <>
-      <VisitLogger />
-      <RouterProvider router={router} />
+      <Suspense
+        fallback={
+          <div style={{ padding: 40, textAlign: "center" }}>⏳ Chargement…</div>
+        }
+      >
+        <RouterProvider router={router} />
+      </Suspense>
       <ToastContainer
         position="bottom-right"
         theme="colored"

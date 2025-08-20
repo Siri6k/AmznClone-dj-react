@@ -192,7 +192,7 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
             <IconButton
               onClick={() => {
                 //navigate(-1);
-                navigate(`/dashboard`);
+                navigate(`/home`);
                 window.location.reload();
               }}
               color="primary"
@@ -209,7 +209,7 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
           alternativeLabel
         >
           {steps.map((step, index) => (
-            <Step key={index} onClick={() => goToStep(index)}>
+            <Step key={step.label} onClick={() => goToStep(index)}>
               <StepLabel>{step.label}</StepLabel>
             </Step>
           ))}
@@ -225,6 +225,7 @@ const DynamicForm = ({ formNameVar, idVar, onSaveEvent }) => {
               <>
                 {steps.map((step, index) => (
                   <Box
+                    key={step.label}
                     component={"div"}
                     sx={{ display: index === currentStep ? "block" : "none" }}
                   >

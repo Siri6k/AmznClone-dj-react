@@ -305,3 +305,9 @@ export const orderOptions = [
   { label: "Les plus vus", value: "-view_count" },
   { label: "Les plus partagés", value: "-share_count" },
 ];
+
+export const formatCDF = (amount) =>
+  new Intl.NumberFormat("fr-CD", {
+    style: "currency",
+    currency: "CDF",
+  }).format(amount);

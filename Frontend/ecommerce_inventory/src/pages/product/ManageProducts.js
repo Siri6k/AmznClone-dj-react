@@ -161,7 +161,6 @@ const ManageProducts = ({ onProductSelected }) => {
                 <IconButton
                   onClick={() => {
                     onAddClick(params);
-                    window.location.reload();
                   }}
                 >
                   <Add color="light" />
@@ -169,7 +168,6 @@ const ManageProducts = ({ onProductSelected }) => {
                 <IconButton
                   onClick={() => {
                     onEditClick(params);
-                    navigate(0);
                   }}
                 >
                   <Edit color="primary" />

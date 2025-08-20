@@ -26,6 +26,7 @@ import {
   useMediaQuery,
   Button,
 } from "@mui/material";
+import nplogo from "../assets/niplan-logo.svg";
 import {
   LightMode,
   DarkMode,
@@ -77,7 +78,7 @@ import {
   redLightTheme,
   redDarkTheme,
 } from "./themes";
-import logo from "../assets/logo.svg";
+import logo from "../assets/niplan-small.svg";
 import { GlobalStyles } from "./GlobalStyle";
 import TextField from "@mui/material/TextField";
 import { Outlet, useLocation, useNavigate } from "react-router-dom"; // Import Outlet
@@ -198,9 +199,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("refresh");
     dispatch(logout());
-    dispatch(logout());
-    navigate("/dashboard");
-    window.location.reload();
+    navigate("/home");
   };
 
   const drawerWidth = isAuthenticated() ? 280 : 0;
@@ -271,7 +270,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
         sx={{ "& .MuiListItem-root": { transition: "background-color 0.3s" } }}
       >
         {sidebarItems.map((sidebarItem) => (
-          <>
+          <React.Fragment key={sidebarItem.id}>
             <ListItem
               key={sidebarItem.id}
               onClick={() => handleSidebarMenuClick(sidebarItem)}
@@ -313,7 +312,6 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                 <List component="div" disablePadding>
                   {sidebarItem.submenus.map((child) => (
                     <ListItem
-                      button
                       sx={{ pl: 4 }}
                       key={child.module_name}
                       onClick={() => handleSidebarMenuClick(child)}
@@ -328,7 +326,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
             ) : (
               ""
             )}
-          </>
+          </React.Fragment>
         ))}
       </List>
     </div>
@@ -642,7 +640,6 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                     variant="h6"
                     component="div"
                     sx={{
-                      flexGrow: 1,
                       display: "flex",
                       alignItems: "center",
                     }}
@@ -653,7 +650,11 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                       onClick={() => navigate("/home")}
                     >
                       {/* Use a custom icon or logo here */}
-                      <Shop />
+                      <img
+                        src={nplogo}
+                        alt="Niplan Logo"
+                        style={{ width: "150px" }}
+                      />
                     </IconButton>
                     <Box component="span" onClick={() => navigate("/home")}>
                       {pageTitle || "Niplan"}

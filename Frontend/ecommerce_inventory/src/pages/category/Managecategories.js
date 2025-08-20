@@ -10,6 +10,7 @@ import {
   TextField,
   Typography,
   Divider,
+  Button,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 
@@ -105,6 +106,7 @@ const ManageCategories = () => {
   const onAddClick = (params) => {
     navigate("/form/category");
     //setUrl("/form/category");
+    console.log("Add clicked → navigate /form/category");
   };
 
   const generateColumns = (data) => {
@@ -119,23 +121,21 @@ const ManageCategories = () => {
             return (
               <>
                 <IconButton
-                  onClick={() => {
-                    onAddClick(params);
-                    navigate("/form/category", {
-                      replace: true,
-                    });
-                  }}
+                  onClick={() => navigate("/form/category", { replace: true })}
                 >
                   <Add color="light" />
                 </IconButton>
+
                 <IconButton
-                  onClick={() => {
-                    onEditClick(params);             
-                    navigate(0);
-                  }}
+                  onClick={() =>
+                    navigate(`/form/category/${params.row.id}`, {
+                      replace: true,
+                    })
+                  }
                 >
                   <Edit color="primary" />
                 </IconButton>
+
                 <IconButton onClick={() => onDeleteClick(params)}>
                   <Delete color="secondary" />
                 </IconButton>

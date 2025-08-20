@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200"
+     xmlns="http://www.w3.org/2000/svg">
+  <!-- Black & white only -->
+  <style>text{font-family:Arial,sans-serif;font-weight:bold}</style>
+
+  <!-- White shield -->
+  <path d="M100 10 L180 50 L180 150 L100 190 L20 150 L20 50 Z"
+        fill="#FFFFFF" stroke="#000000" stroke-width="2"/>
+
+  <!-- Black handshake -->
+  <g stroke="#000000" stroke-width="3" stroke-linecap="round">
+    <path d="M70 95 C75 85 80 90 75 100"/>
+    <path d="M130 95 C125 85 120 90 125 100"/>
+    <path d="M75 100 C90 110 110 110 125 100"/>
+  </g>
+
+  <!-- Black dollar -->
+  <text x="100" y="160" text-anchor="middle" font-size="24" fill="#000000">$</text>
+
+  <!-- Brand -->
+  <text x="100" y="185" text-anchor="middle" font-size="14" fill="#000000">Niplan Market</text>
+</svg>

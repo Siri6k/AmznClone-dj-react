@@ -1,0 +1,13 @@
+<svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon -->
+  <path d="M8 4 20 8 20 32 8 36 4 32 4 8 Z" fill="#000" stroke="#fff" stroke-width="1"/>
+  <g stroke="#fff" stroke-width="1.5" stroke-linecap="round">
+    <path d="M10 19 12 16 14 19"/><path d="M14 19 16 22 18 19"/>
+  </g>
+  <text x="12" y="31" text-anchor="middle" font-size="9" fill="#fff">$</text>
+
+  <!-- Text -->
+  <text x="28" y="22" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff">
+    Niplan Market
+  </text>
+</svg>
