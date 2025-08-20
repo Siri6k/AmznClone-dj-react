@@ -1,0 +1,17 @@
+<!-- Niplan-Market logo (PNG + text) -->
+<svg width="120" height="40" viewBox="0 0 120 40"
+     xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- fallback background -->
+    <rect id="bg" x="0" y="0" width="40" height="40" fill="#000"/>
+  </defs>
+
+  <!-- your PNG icon -->
+  <image href="https://res.cloudinary.com/dihwey5iz/image/upload/v1755685218/My%20Brand/niplan_wms8y0_0dcaff.png"
+         x="0" y="0" width="40" height="40"/>
+
+  <!-- Brand text -->
+  <text x="50" y="22" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff">
+    Niplan Market
+  </text>
+</svg>

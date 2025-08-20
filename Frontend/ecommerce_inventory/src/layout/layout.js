@@ -26,7 +26,7 @@ import {
   useMediaQuery,
   Button,
 } from "@mui/material";
-import nplogo from "../assets/niplan-logo.svg";
+import nplogo from "../assets/logo2.svg";
 import {
   LightMode,
   DarkMode,
@@ -651,9 +651,10 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                     >
                       {/* Use a custom icon or logo here */}
                       <img
-                        src={nplogo}
+                        src="https://res.cloudinary.com/dihwey5iz/image/upload/v1755685218/My%20Brand/niplan_wms8y0_0dcaff.png"
                         alt="Niplan Logo"
-                        style={{ width: "150px" }}
+                        width="40"
+                        height="40"
                       />
                     </IconButton>
                     <Box component="span" onClick={() => navigate("/home")}>

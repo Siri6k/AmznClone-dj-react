@@ -77,3 +77,9 @@
 .hover-button:hover .hover-content {
   max-height: 200px; /* Adjust based on content */
 }
+
+.my-logo {
+  width: 120px;
+  height: 40px;
+  fill: currentColor; /* adapts to dark/light mode */
+}
