@@ -230,9 +230,15 @@ const Auth = () => {
                 onClick={() => navigate("/home")}
               >
                 <img
-                  src={"https://picsum.photos/100"}
+                  src={
+                    "https://res.cloudinary.com/dihwey5iz/image/upload/v1755699638/logo_iicznj.png"
+                  }
                   alt="Logo"
-                  style={{ borderRadius: "50%" }}
+                  style={{
+                    borderRadius: "50%",
+                    width: "100px",
+                    height: "80px",
+                  }}
                 />
               </Box>
               <Typography
