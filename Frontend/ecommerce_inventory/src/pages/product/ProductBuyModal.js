@@ -24,12 +24,29 @@ const ProductBuyModal = ({ product, setShowBuyModal }) => {
   phoneNumber = phoneNumber.replace(/\D/g, ""); // nettoie le numéro
 
   //Whatsapp Handling
-  const baseUrl = "https://niplan-market.com"; // ← ton vrai domaine ici
+  const baseUrl = "https://niplan-market.onrender.com"; // ← ton vrai domaine ici
   const productUrl = `${baseUrl}/product/${product.id}`;
-  const message = `Bonjour, je suis intéressé par le produit "${product.name}" au prix de ${product.price} CDF.\nLien: ${productUrl}`;
+  const message =
+    `*👋 Bonjour !*\n\n` +
+    `Je suis intéressé par le produit suivant :\n\n` +
+    `*${product.name}*\n\n` +
+    `💰 _Prix_ : \`${new Intl.NumberFormat("fr-CD", {
+      style: "currency",
+      currency: "CDF",
+    }).format(product.price ?? 0)}\`\n` +
+    `📦 _Disponibilité_ : ✅ En stock\n\n` +
+    `📸 Aperçu : ${
+      product?.image?.[0] || "https://via.placeholder.com/300"
+    }\n\n` +
+    `🔗 Voir le produit : ${productUrl}\n\n` +
+    `-------------------------\n` +
+    `Merci de confirmer votre intérêt 🙏`;
+
   const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
     message
   )}`;
+
+  console.log(product?.image?.[0]);
   return (
     <>
       <Stack spacing={2}>
@@ -39,13 +56,14 @@ const ProductBuyModal = ({ product, setShowBuyModal }) => {
 
         <CardMedia
           component="img"
-          image={product.image?.[0] || "https://via.placeholder.com/300"}
+          image={product?.image?.[0] || "https://via.placeholder.com/300"}
           alt={product.name}
           sx={{
             height: 250,
             objectFit: "cover",
             display: loaded ? "block" : "none",
           }}
+          onLoad={handleLoad}
         />
         <Typography variant="h6">{product.name}</Typography>
         <Typography variant="body1" color="primary">

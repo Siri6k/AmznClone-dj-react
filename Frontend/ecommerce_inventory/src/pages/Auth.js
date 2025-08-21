@@ -237,7 +237,7 @@ const Auth = () => {
                   style={{
                     borderRadius: "50%",
                     width: "100px",
-                    height: "80px",
+                    height: "75px",
                   }}
                 />
               </Box>
@@ -247,7 +247,7 @@ const Auth = () => {
                 onClick={() => navigate("/home")}
                 gutterBottom
               >
-                Niplan
+                Niplan Market
               </Typography>
               <Tabs value={tab} onChange={handleChange} centered>
                 <Tab label="Sign In" />

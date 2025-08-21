@@ -54,6 +54,7 @@ const ProductDetail = ({ data, callApi }) => {
   const theme = useTheme();
   const [value, setValue] = useState(0);
   const [expanded, setExpanded] = useState("panel1");
+  const [currentImg, setCurrentImg] = useState(0);
 
   const { product, reviews, questions, like, share } = data;
   const [liked, setLiked] = useState(like);
@@ -62,6 +63,8 @@ const ProductDetail = ({ data, callApi }) => {
   const [likeCount, setLikeCount] = useState(product.like_count || 0);
   const [shareCount, setShareCount] = useState(product.share_count || 0);
 
+  const baseUrl = "https://niplan-market.onrender.com"; // ← ton vrai domaine ici
+  const productUrl = `${baseUrl}/product/${product.id}`;
   const handleTabChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -87,9 +90,22 @@ const ProductDetail = ({ data, callApi }) => {
   phoneNumber = phoneNumber.replace(/\D/g, ""); // nettoie le numéro
 
   //Whatsapp Handling
-  const baseUrl = "https://niplan-market.com"; // ← ton vrai domaine ici
-  const productUrl = `${baseUrl}/product/${product.id}`;
-  const message = `Bonjour, je suis intéressé par le produit "${product.name}" au prix de ${product.price} CDF.\nLien: ${productUrl}`;
+  const message =
+    `*👋 Bonjour !*\n\n` +
+    `Je suis intéressé par le produit suivant :\n\n` +
+    `*${product.name}*\n\n` +
+    `💰 _Prix_ : \`${new Intl.NumberFormat("fr-CD", {
+      style: "currency",
+      currency: "CDF",
+    }).format(product.price ?? 0)}\`\n` +
+    `📦 _Disponibilité_ : ✅ En stock\n\n` +
+    `📸 Aperçu : ${
+      product?.image?.[0] || "https://via.placeholder.com/300"
+    }\n\n` +
+    `🔗 Voir le produit : ${productUrl}\n\n` +
+    `-------------------------\n` +
+    `Merci de confirmer votre intérêt 🙏`;
+
   const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
     message
   )}`;
@@ -126,8 +142,19 @@ const ProductDetail = ({ data, callApi }) => {
   const handleShare = async (product) => {
     const shareData = {
       title: product.name,
-      text: `Check out this product: ${product.name}`,
-      url: window.location.origin + `/product/${product.id}`, // lien vers le produit
+      text:
+        `*📦 Nouveau produit disponible !*\n\n` +
+        `✨ *${product.name}*\n` +
+        `💰 *Prix* : ${new Intl.NumberFormat("fr-CD", {
+          style: "currency",
+          currency: "CDF",
+        }).format(product.price)}\n\n` +
+        `📸 *Aperçu* :\n${
+          product?.image?.[0] || "https://via.placeholder.com/300"
+        }\n\n` +
+        `🔗 *Lien complet* :\n${productUrl}\n\n` +
+        `👉 Écrivez-moi pour l’acheter ou poser vos questions !`,
+      url: baseUrl + `/product/${product.id}`, // lien vers le produit
     };
 
     if (navigator.share) {
@@ -202,37 +229,40 @@ const ProductDetail = ({ data, callApi }) => {
             {!loaded && <CardMedia className="shimmer" />}
             <CardMedia
               component="img"
-              image={product.image[0]}
+              image={product.image[currentImg]}
               alt={product.name}
               height="250"
               sx={{
                 height: { xs: 200, md: 400 }, // Adjust height for different screens
                 objectFit: "cover",
                 width: "100%",
+                cursor: "zoom-in",
               }}
               onLoad={handleLoad}
+              onClick={() => window.open(product.image[currentImg], "_blank")}
             />
           </Card>
 
           {/* Thumbnail Grid */}
           <Grid container spacing={1}>
-            {product.image.slice(0, 4).map((img, index) => (
-              <Grid item xs={3} key={index}>
-                <Card>
-                  {!loaded && <CardMedia className="shimmer" />}
-                  <CardMedia
-                    component="img"
-                    image={img}
-                    alt={`${product.name} thumbnail ${index + 1}`}
-                    sx={{
-                      height: { xs: 60, sm: 80, md: 100 },
-                      objectFit: "cover",
-                    }}
-                    onLoad={handleLoad}
-                  />
-                </Card>
+            {product.image.length > 1 && (
+              <Grid container spacing={1}>
+                {product.image.map((img, idx) => (
+                  <Grid item key={idx} xs={3}>
+                    <Card
+                      onClick={() => setCurrentImg(idx)}
+                      sx={{
+                        cursor: "pointer",
+                        border:
+                          idx === currentImg ? "2px solid #FF6B35" : "none",
+                      }}
+                    >
+                      <CardMedia component="img" height={60} image={img} />
+                    </Card>
+                  </Grid>
+                ))}
               </Grid>
-            ))}
+            )}
           </Grid>
         </Grid>
 

@@ -674,7 +674,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                         src="https://res.cloudinary.com/dihwey5iz/image/upload/v1755699638/logo_iicznj.png"
                         alt="Niplan Logo"
                         width="40"
-                        height="40"
+                        height="30"
                       />
                     </IconButton>
                     <Box component="span" onClick={() => navigate("/home")}>
@@ -691,7 +691,7 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
                       onClick={() => navigate("/auth")}
                       startIcon={<MonetizationOnOutlined />}
                     >
-                      sell here
+                      start
                     </Button>
                   )}
                   {isAuthenticated() && (
