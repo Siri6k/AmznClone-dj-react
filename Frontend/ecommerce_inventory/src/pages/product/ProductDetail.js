@@ -143,18 +143,18 @@ const ProductDetail = ({ data, callApi }) => {
     const shareData = {
       title: product.name,
       text:
-        `*📦 Nouveau produit disponible !*\n\n` +
-        `✨ *${product.name}*\n` +
-        `💰 *Prix* : ${new Intl.NumberFormat("fr-CD", {
+        `*👋 Bonjour !*\n\n` +
+        `📦 Nouveau produit disponible !\n\n` +
+        `✨ *${product.name}*\n\n` +
+        `💰 Prix : ${new Intl.NumberFormat("fr-CD", {
           style: "currency",
           currency: "CDF",
         }).format(product.price)}\n\n` +
-        `📸 *Aperçu* :\n${
+        `📸 Aperçu : ${
           product?.image?.[0] || "https://via.placeholder.com/300"
         }\n\n` +
-        `🔗 *Lien complet* :\n${productUrl}\n\n` +
-        `👉 Écrivez-moi pour l’acheter ou poser vos questions !`,
-      url: baseUrl + `/product/${product.id}`, // lien vers le produit
+        `👉 Découvrez plus ici : `,
+      url: `${baseUrl}/product/${product.id}`,
     };
 
     if (navigator.share) {
@@ -175,8 +175,8 @@ const ProductDetail = ({ data, callApi }) => {
           body: { action: "share", anon_id: getAnonId() },
         });
         if (sharing) {
-          setShareCount(shared ? shareCount - 1 : shareCount + 1); // Update share count
-          setShared(!shared); // Toggle the shared state
+          setShareCount((prev) => prev + 1);
+          setShared(true);
         }
       } catch (err) {
         console.error("Failed to fetch product:", err);
