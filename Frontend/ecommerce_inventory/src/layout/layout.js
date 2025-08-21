@@ -258,13 +258,33 @@ const Layout = ({ sidebarList, childPage, pageTitle }) => {
       }}
       className="sidebar"
     >
-      <Box sx={{ display: "flex", alignItems: "center", marginBottom: "16px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "space-evenly",
+          gap: "16px",
+          ml: "8px",
+          marginBottom: "16px",
+        }}
+      >
         <img
-          src={logo}
-          alt="Logo"
-          className="logo"
-          style={{ marginRight: "16px" }}
+          src="https://res.cloudinary.com/dihwey5iz/image/upload/v1755699638/logo_iicznj.png"
+          alt="Niplan Logo"
+          width="40"
+          height="30"
         />
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "1.25rem",
+          }}
+        >
+          Niplan Market
+        </Typography>
       </Box>
       <List
         sx={{ "& .MuiListItem-root": { transition: "background-color 0.3s" } }}
