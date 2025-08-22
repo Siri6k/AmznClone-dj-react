@@ -57,6 +57,8 @@ import ProductCard from "./product/ProductCard";
 import Title from "../components/Title";
 import ProductBuyModal from "./product/ProductBuyModal";
 import { FormProvider, get, useForm } from "react-hook-form";
+import TrendingSection from "../components/TrendingSection";
+import TrendingSearchBar from "../components/TrendingSearchBar";
 
 const HomePage = ({ user_id }) => {
   const [products, setProducts] = useState([]);
@@ -254,111 +256,10 @@ const HomePage = ({ user_id }) => {
             maxWidth="xl"
             sx={{ flex: 1, padding: "20px" }}
           >
-            <Breadcrumbs aria-label="breadcrumb">
-              <Typography variant="body2">Featured Products</Typography>
-            </Breadcrumbs>
-            <Grid container spacing={2}>
-              {/*  <Grid item xs={12} lg={9} md={8} sm={7}>
-                <TextField
-                  label="search"
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} lg={3} md={4} sm={5}>
-                <Autocomplete
-                  disablePortal
-                  fullWidth
-                  id="combo-box-demo"
-                  options={orderOptions}
-                  getOptionLabel={(option) => option.label}
-                  onChange={(event, newValue) => {
-                    if (newValue) {
-                      setOrdering([
-                        { field: newValue.field, sort: newValue.sort },
-                      ]);
-                    }
-                  }}
-                  sx={{ mb: 3, width: 300 }}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Filter By" />
-                  )}
-                />
-              </Grid>
-         */}
-            </Grid>
-            {/*
-            <Button
-              onClick={() => setShowAdvanceSearch(!showAdvanceSearch)}
-              fullWidth
-              variant="outlined"
-              startIcon={
-                showAdvanceSearch ? (
-                  <ExpandLessRounded />
-                ) : (
-                  <ExpandMoreRounded />
-                )
-              }
-              sx={{ my: 2 }}
-            >
-              {showAdvanceSearch ? "Hide Filters" : "Show Filters"}
-            </Button>
-            <Collapse in={showAdvanceSearch}>
-              <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit(onSubmitFilter)}>
-                  <Grid container spacing={2} sx={{ mb: 2 }}>
-                    {filterFields.length > 0 &&
-                      filterFields?.map((field) => (
-                        <Grid item xs={12} sm={6} md={3} key={field.key}>
-                          <TextField
-                            label={field?.key && formatText(field?.key)}
-                            variant="outlined"
-                            fullWidth
-                            {...register(field.key)}
-                          />
-                        </Grid>
-                      ))}
-                  </Grid>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: 2,
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Button type="submit" variant="contained" color="primary">
-                      Apply Filter
-                    </Button>
-                    <Button onClick={resetFilter} variant="outlined">
-                      Reset Filter
-                    </Button>
-                  </Box>
-                </form>
-              </FormProvider>
-            </Collapse>
-            {aFilterFields && Object.keys(aFilterFields).length > 0 && (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, my: 2 }}>
-                {Object.entries(aFilterFields).map(([key, value]) => (
-                  <Chip
-                    key={key}
-                    label={`${formatText(key)}: ${value}`}
-                    onDelete={() => {
-                      // Supprimer le filtre spécifique
-                      const updatedFilters = { ...aFilterFields };
-                      delete updatedFilters[key];
-                      setAFilterFields(updatedFilters);
-                      reset({ ...updatedFilters }); // remet le champ vide dans le formulaire
-                    }}
-                    color="primary"
-                    variant="outlined"
-                  />
-                ))}
-              </Box>
-            )}
-         */}
-
+            <TrendingSearchBar
+              searchQuery={search}
+              setSearchQuery={setSearch}
+            />
             <Divider sx={{ mb: 2, mt: 2 }} />
 
             <Grid container spacing={4}>
