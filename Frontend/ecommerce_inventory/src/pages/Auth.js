@@ -48,7 +48,7 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import defaultImg from "../assets/profile_default.png";
 import Title from "../components/Title";
-import { getAnonId } from "../utils/Helper";
+import { getAnonId, getUser } from "../utils/Helper";
 
 const Auth = () => {
   const [tab, setTab] = useState(0);

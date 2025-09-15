@@ -149,15 +149,13 @@ const ProfilePageForm = () => {
         method: "POST",
         body: data,
       });
-      toast.success(response.data.message);
       setCurrentStep(0);
       methods.reset();
       setTab(0);
-      if (!getUser()?.phone_number) {
-        localStorage.removeItem("token");
-      }
-      navigate(`/profile/${userData?.id}`);
+      refreshToken();
+      navigate(`/dashboard`);
       window.location.reload();
+      toast.success("Profile Updated Successfully");
     } catch (err) {
       console.log(err);
     }
