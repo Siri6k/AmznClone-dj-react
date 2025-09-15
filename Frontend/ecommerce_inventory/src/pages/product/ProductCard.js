@@ -28,7 +28,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import TimeAgo from "../../components/TimeAgo";
-import { formatCount, getUser } from "../../utils/Helper";
+import { formatCount, formatCurrency, getUser } from "../../utils/Helper";
 
 import { useTheme, useMediaQuery } from "@mui/material";
 
@@ -44,11 +44,10 @@ const ProductCard = ({ product, setSelectedProduct, setShowBuyModal }) => {
   const username = product.added_by_user_id?.username || "Inconnu";
   const id = "profile@" + product.added_by_user_id?.id;
 
-  const priceFormatted = new Intl.NumberFormat("fr-CD", {
-    style: "currency",
-    currency: "CDF",
-  }).format(product.price);
-
+  const priceFormatted = formatCurrency(
+    product.price,
+    product.currency || "CDF"
+  );
   const isMyproduct =
     getUser() && getUser().username === product.added_by_user_id.username;
 

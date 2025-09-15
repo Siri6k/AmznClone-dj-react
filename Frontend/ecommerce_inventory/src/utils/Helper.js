@@ -306,6 +306,20 @@ export const orderOptions = [
   { label: "Les plus partagés", value: "-share_count" },
 ];
 
+const localeMap = {
+  CDF: "fr-CD",
+  USD: "en-US",
+  EUR: "de-DE",
+  GBP: "en-GB",
+  CAD: "en-CA",
+};
+export const formatCurrency = (amount, currency = "CDF") => {
+  const locale = localeMap[currency] || "fr-CD";
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: currency,
+  }).format(amount);
+};
 export const formatCDF = (amount) =>
   new Intl.NumberFormat("fr-CD", {
     style: "currency",

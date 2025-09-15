@@ -11,7 +11,7 @@ import {
   Skeleton,
 } from "@mui/material";
 import { AddCircleOutline, WhatsApp } from "@mui/icons-material";
-import { normalizedPhoneNumber } from "../../utils/Helper";
+import { formatCurrency, normalizedPhoneNumber } from "../../utils/Helper";
 
 const ProductBuyModal = ({ product, setShowBuyModal }) => {
   const [loaded, setLoaded] = useState(false);
@@ -23,6 +23,11 @@ const ProductBuyModal = ({ product, setShowBuyModal }) => {
   phoneNumber = normalizedPhoneNumber(phoneNumber);
   phoneNumber = phoneNumber.replace(/\D/g, ""); // nettoie le numéro
 
+  const priceFormatted = formatCurrency(
+    product.price,
+    product.currency || "CDF"
+  );
+
   //Whatsapp Handling
   const baseUrl = "https://niplan-market.onrender.com"; // ← ton vrai domaine ici
   const productUrl = `${baseUrl}/product/${product.id}`;
@@ -30,10 +35,7 @@ const ProductBuyModal = ({ product, setShowBuyModal }) => {
     `*👋 Bonjour !*\n\n` +
     `Je suis intéressé par le produit suivant :\n\n` +
     `*${product.name}*\n\n` +
-    `💰 _Prix_ : \`${new Intl.NumberFormat("fr-CD", {
-      style: "currency",
-      currency: "CDF",
-    }).format(product.price ?? 0)}\`\n` +
+    `💰 _Prix_ : \`${priceFormatted}\`\n` +
     `📦 _Disponibilité_ : ✅ En stock\n\n` +
     `📸 Aperçu : ${
       product?.image?.[0] || "https://via.placeholder.com/300"
@@ -67,10 +69,7 @@ const ProductBuyModal = ({ product, setShowBuyModal }) => {
         />
         <Typography variant="h6">{product.name}</Typography>
         <Typography variant="body1" color="primary">
-          {new Intl.NumberFormat("fr-CD", {
-            style: "currency",
-            currency: "CDF",
-          }).format(product.price)}
+          {priceFormatted}
         </Typography>
         <Typography variant="body2">{product.description}</Typography>
       </Stack>

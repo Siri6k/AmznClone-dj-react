@@ -42,6 +42,7 @@ import { useParams } from "react-router-dom";
 import TimeAgo from "../../components/TimeAgo";
 import {
   formatCount,
+  formatCurrency,
   formatDateSimple,
   getAnonId,
   getUser,
@@ -62,6 +63,10 @@ const ProductDetail = ({ data, callApi }) => {
   const [viewCount, setViewCount] = useState(product.view_count || 0);
   const [likeCount, setLikeCount] = useState(product.like_count || 0);
   const [shareCount, setShareCount] = useState(product.share_count || 0);
+  const priceFormatted = formatCurrency(
+    product.price,
+    product.currency || "CDF"
+  );
 
   const baseUrl = "https://niplan-market.onrender.com"; // ← ton vrai domaine ici
   const productUrl = `${baseUrl}/product/${product.id}`;
@@ -94,10 +99,7 @@ const ProductDetail = ({ data, callApi }) => {
     `*👋 Bonjour !*\n\n` +
     `Je suis intéressé par le produit suivant :\n\n` +
     `*${product.name}*\n\n` +
-    `💰 _Prix_ : \`${new Intl.NumberFormat("fr-CD", {
-      style: "currency",
-      currency: "CDF",
-    }).format(product.price ?? 0)}\`\n` +
+    `💰 _Prix_ : \`${priceFormatted}\`\n` +
     `📦 _Disponibilité_ : ✅ En stock\n\n` +
     `📸 Aperçu : ${
       product?.image?.[0] || "https://via.placeholder.com/300"
@@ -146,10 +148,7 @@ const ProductDetail = ({ data, callApi }) => {
         `*👋 Bonjour !*\n\n` +
         `📦 Nouveau produit disponible !\n\n` +
         `✨ *${product.name}*\n\n` +
-        `💰 Prix : ${new Intl.NumberFormat("fr-CD", {
-          style: "currency",
-          currency: "CDF",
-        }).format(product.price)}\n\n` +
+        `💰 Prix : ${priceFormatted}\n\n` +
         `📸 Aperçu : ${
           product?.image?.[0] || "https://via.placeholder.com/300"
         }\n\n` +
@@ -295,10 +294,7 @@ const ProductDetail = ({ data, callApi }) => {
           </Box>
 
           <Typography variant="h5" color="primary" gutterBottom>
-            {new Intl.NumberFormat("fr-CD", {
-              style: "currency",
-              currency: "CDF",
-            }).format(product.price)}
+            {priceFormatted}
           </Typography>
 
           {/*<Chip
