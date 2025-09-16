@@ -151,10 +151,10 @@ const ProfilePageForm = () => {
       });
       setCurrentStep(0);
       methods.reset();
-      setTab(0);
+      setTab(1);
       refreshToken();
       navigate(`/dashboard`);
-      window.location.reload();
+      //window.location.reload();
       toast.success("Profile Updated Successfully");
     } catch (err) {
       console.log(err);

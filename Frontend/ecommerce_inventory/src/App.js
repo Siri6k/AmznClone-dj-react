@@ -16,6 +16,7 @@ import Layout from "./layout/layout";
 import { fetchSidebar } from "./redux/reducer/sidebardata";
 import { isAuthenticated } from "./utils/Helper";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import HelpCenter from "./pages/guide/HelpCenter";
 
 // Lazy pages (réduire bundle initial)
 const Auth = lazy(() => import("./pages/Auth"));
@@ -91,6 +92,14 @@ function App() {
           element: (
             <Suspense>
               <HomePage />
+            </Suspense>
+          ),
+        },
+        {
+          path: "guide",
+          element: (
+            <Suspense>
+              <HelpCenter />
             </Suspense>
           ),
         },

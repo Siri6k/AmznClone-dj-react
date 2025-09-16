@@ -352,3 +352,12 @@ export const imageDummyUrls = [
   "https://picsum.photos/300/300?random=9",
   "https://picsum.photos/300/300?random=10",
 ];
+
+export const imageHelpUrls = [
+  "https://res.cloudinary.com/dihwey5iz/image/upload/v1758027291/uploads/fgjikybz9kwlhnkfzvre.png",
+  "https://res.cloudinary.com/dihwey5iz/image/upload/v1758027292/uploads/dyxjqzc9i9ivkb3iolyc.png",
+  "https://res.cloudinary.com/dihwey5iz/image/upload/v1758027293/uploads/o1hg6xcbzurliidsflke.png",
+  "https://res.cloudinary.com/dihwey5iz/image/upload/v1758027294/uploads/hnfq9liey6nidpwcfx5x.png",
+  "https://res.cloudinary.com/dihwey5iz/image/upload/v1758027295/uploads/zsluetjuuzqaxzupcdv8.png",
+  "https://res.cloudinary.com/dihwey5iz/image/upload/v1758027296/uploads/tf2xixjthl9xl4h4rypm.png",
+];

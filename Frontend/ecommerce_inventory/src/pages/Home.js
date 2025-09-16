@@ -52,11 +52,12 @@ import {
   SystemUpdate,
   AddCardRounded,
   AddCircleOutline,
+  AddCircleOutlined,
 } from "@mui/icons-material";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import useApi from "../hooks/APIHandler";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getUser } from "../utils/Helper";
 import Title from "../components/Title";
 import ProductCard from "./product/ProductCard";
@@ -247,10 +248,48 @@ const Home = () => {
         <Divider sx={{ mb: 2, mt: 2 }} />
 
         <Grid container spacing={4}>
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {products.length > 0 &&
+            products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
         </Grid>
+        {products.length === 0 && (
+          <Grid
+            container
+            spacing={4}
+            sx={{ mt: 4, mb: 4, justifyContent: "center" }}
+          >
+            <Grid item xs={12} md={6} textAlign="center">
+              <Typography variant="h6" gutterBottom>
+                Vous n’avez pas encore de produit en ligne
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                Créez votre premier article pour commencer à vendre et être
+                visible par nos milliers d’acheteurs.
+              </Typography>
+
+              <Button
+                variant="contained"
+                size="large"
+                startIcon={<AddCircleOutlined />}
+                onClick={() => navigate("/form/product")} // ou votre route de création
+              >
+                Ajouter un produit
+              </Button>
+
+              <Box mt={2}>
+                <Link
+                  component="button"
+                  variant="body2"
+                  underline="hover"
+                  onClick={() => window.open("/guide", "_blank")}
+                >
+                  Besoin d’aide pour créer un produit ?
+                </Link>
+              </Box>
+            </Grid>
+          </Grid>
+        )}
 
         {loading && (
           <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
