@@ -28,7 +28,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import TimeAgo from "../../components/TimeAgo";
-import { formatCount, formatCurrency, getUser } from "../../utils/Helper";
+import { cleanUsername, formatCount, formatCurrency, getUser } from "../../utils/Helper";
 
 import { useTheme, useMediaQuery } from "@mui/material";
 
@@ -169,7 +169,7 @@ const ProductCard = ({ product, setSelectedProduct, setShowBuyModal }) => {
               variant="body2"
               onClick={() => navigate(`/profile/${id}`)}
             >
-              <PersonOutline fontSize="small" /> {username}
+              <PersonOutline fontSize="small" /> {cleanUsername(username)}
             </Typography>
           </Stack>
         </CardContent>

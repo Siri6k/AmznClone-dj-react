@@ -361,3 +361,12 @@ export const imageHelpUrls = [
   "https://res.cloudinary.com/dihwey5iz/image/upload/v1758027295/uploads/zsluetjuuzqaxzupcdv8.png",
   "https://res.cloudinary.com/dihwey5iz/image/upload/v1758027296/uploads/tf2xixjthl9xl4h4rypm.png",
 ];
+
+export const cleanUsername = (str = "") => {
+  const cleaned = str
+    .replace(/[^a-zA-Z0-9]/g, " ")
+    .split(" ")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join("");
+  return cleaned.slice(0, 7); // max 7 characters
+};

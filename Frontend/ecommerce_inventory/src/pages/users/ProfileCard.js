@@ -25,6 +25,7 @@ import {
 } from "@mui/icons-material";
 import { formatDistanceToNow } from "date-fns";
 import { normalizedPhoneNumber } from "../../utils/Helper";
+import { useNavigate } from "react-router-dom";
 
 const ProfileCard = ({ profile }) => {
   const [loaded, setLoaded] = useState(false);
@@ -46,13 +47,14 @@ const ProfileCard = ({ profile }) => {
     ? normalizedPhoneNumber(profile.phone_number)
     : "N/A";
 
+  const navigate = useNavigate();
+
   return (
     <Card
       sx={{
         maxWidth: 600,
         margin: "auto",
         borderRadius: 3,
-        mt: 2,
       }}
     >
       {!loaded && <CardMedia className="shimmer" />}
@@ -68,7 +70,13 @@ const ProfileCard = ({ profile }) => {
       {/* Thumbnail Grid */}
 
       <CardContent>
-        <Typography variant="h6" gutterBottom>
+        <Typography
+          variant="h6"
+          gutterBottom
+          onClick={() => {
+            navigate(`/shop/${profile.username}`);
+          }}
+        >
           #{profile.id} {profile.username}
         </Typography>
         {profile.first_name && profile.last_name && (

@@ -53,12 +53,14 @@ import {
   AddCardRounded,
   AddCircleOutline,
   AddCircleOutlined,
+  HandshakeOutlined,
+  ShareOutlined,
 } from "@mui/icons-material";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import useApi from "../hooks/APIHandler";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { getUser } from "../utils/Helper";
+import { cleanUsername, getUser } from "../utils/Helper";
 import Title from "../components/Title";
 import ProductCard from "./product/ProductCard";
 import { get } from "react-hook-form";
@@ -158,6 +160,29 @@ const Home = () => {
 
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
+  const baseUrl = "https://niplan-market.onrender.com"; // ← ton vrai domaine ici
+
+  const handleShare = async ({ username }) => {
+    const shareData = {
+      title: cleanUsername(username) + " shop - New Product",
+      text:
+        `*👋 Bonjour !*\n\n` +
+        `✨ *Bienvenu(e) chez ${cleanUsername(username)} Boutique*\n\n` +
+        `📦 Nouveaux produits disponibles !\n\n` +
+        `👉 Visitez notre boutique ici : `,
+      url: `${baseUrl}/shop/${username}`,
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch((err) => {
+        console.error("Share failed:", err);
+      });
+    } else {
+      // Fallback si Web Share API n’est pas supportée
+      navigator.clipboard.writeText(shareData.url);
+      alert("Lien copié dans le presse-papier !");
+    }
+  };
   return (
     <>
       <Title
@@ -218,7 +243,19 @@ const Home = () => {
 
         <Divider sx={{ mb: 2, mt: 2 }} />
         {getUser()?.phone_number ? (
-          <Typography variant="body2">Manage My Shop - Products</Typography>
+          <Box display={"flex"} justifyContent="space-between" mb={2}>
+            <Typography variant="body2">Manage My Shop - Products</Typography>
+            <Box className="share">
+              {products.length > 0 && (
+                <ShareOutlined
+                  fontSize="small"
+                  sx={{ mr: 1 }}
+                  color="success"
+                  onClick={() => handleShare({ username: getUser()?.username })}
+                />
+              )}
+            </Box>
+          </Box>
         ) : (
           <Box
             sx={{

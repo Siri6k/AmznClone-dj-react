@@ -43,6 +43,7 @@ const ManagePurchaseOrder = lazy(() =>
 const ProfilePageForm = lazy(() => import("./pages/users/ProfilePageForm"));
 const ChartExamples = lazy(() => import("./tools/ChartExample"));
 const Error404Page = lazy(() => import("./pages/Error404Page"));
+const ShopPage = lazy(() => import("./pages/product/ShopPage"));
 
 // loader sécurisé (bloque avant render)
 const protectedLoader = () => (isAuthenticated() ? null : redirect("/auth"));
@@ -124,6 +125,14 @@ function App() {
           element: (
             <Suspense>
               <ProductPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: "shop/:username",
+          element: (
+            <Suspense>
+              <ShopPage />
             </Suspense>
           ),
         },

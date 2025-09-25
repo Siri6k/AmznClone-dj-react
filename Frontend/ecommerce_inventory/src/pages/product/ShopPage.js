@@ -31,7 +31,7 @@ import {
   Autocomplete,
   Chip,
 } from "@mui/material";
-import "../layout/style.scss";
+import "../../layout/style.scss";
 
 import {
   Settings as SettingsIcon,
@@ -41,32 +41,33 @@ import {
   ExpandLessRounded,
   ExpandMoreRounded,
   SaveAltRounded,
+  HandshakeOutlined,
 } from "@mui/icons-material";
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import useApi from "../hooks/APIHandler";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import PromoCarousel from "../components/PromoCarrousel";
+import React, { useEffect, useState, useCallback, useMemo, use } from "react";
+import useApi from "../../hooks/APIHandler";
+import { useNavigate, useParams } from "react-router-dom";
+import PromoCarousel from "../../components/PromoCarrousel";
 import {
   cleanUsername,
   formatText,
   getUser,
+  imageDummyUrls,
   isAuthenticated,
   orderOptions,
-} from "../utils/Helper";
-import ProductCard from "./product/ProductCard";
-import Title from "../components/Title";
-import ProductBuyModal from "./product/ProductBuyModal";
+} from "../../utils/Helper";
+import ProductCard from "./ProductCard";
+import Title from "../../components/Title";
+import ProductBuyModal from "./ProductBuyModal";
 import { FormProvider, get, useForm } from "react-hook-form";
-import TrendingSection from "../components/TrendingSection";
-import TrendingSearchBar from "../components/TrendingSearchBar";
+import TrendingSearchBar from "../../components/TrendingSearchBar";
 
-const HomePage = ({ user_id }) => {
+const ShopPage = () => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [numPages, setNumPages] = useState(null);
   const { error, loading, callApi } = useApi();
+  let { username } = useParams();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -118,7 +119,7 @@ const HomePage = ({ user_id }) => {
     setHasMore(true);
     setNumPages(null);
     setProducts([]);
-    getAllProduct();
+    getShopProducts();
   }, [debounceSearch, ordering]);
 
   const onSubmitFilter = async (data) => {
@@ -128,7 +129,7 @@ const HomePage = ({ user_id }) => {
     setAFilterFields(filterData);
   };
 
-  const getAllProduct = useCallback(async () => {
+  const getShopProducts = useCallback(async () => {
     if (!hasMore || loading) return;
     if (numPages && page > numPages) return;
 
@@ -140,7 +141,7 @@ const HomePage = ({ user_id }) => {
           : "-" + ordering[0].field;
     }
     const result = await callApi({
-      url: `products/all/`,
+      url: `products/shop/${username}/`,
       method: "GET",
       params: {
         page: page,
@@ -168,8 +169,8 @@ const HomePage = ({ user_id }) => {
     ) {
       return;
     }
-    getAllProduct();
-  }, [getAllProduct]);
+    getShopProducts();
+  }, [getShopProducts]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -186,11 +187,20 @@ const HomePage = ({ user_id }) => {
     setAFilterFields({});
   };
 
-  const pageTitle = isAuthenticated() ? "My Shop" : "Niplan";
+  const pageTitle = cleanUsername(username) + " shop";
+  const randomIndex = Math.floor(Math.random() * imageDummyUrls.length);
+  const profilePic =
+    (products.length > 0 &&
+      Array.isArray(products[0]?.added_by_user_id?.profile_pic) &&
+      products[0]?.added_by_user_id?.profile_pic?.length > 1 &&
+      products[0]?.added_by_user_id?.profile_pic[
+        products[0]?.added_by_user_id?.profile_pic?.length - 1
+      ]) ||
+    imageDummyUrls[randomIndex];
 
   return (
     <>
-      <Title pageTitle={pageTitle} />
+      <Title title={pageTitle} pageTitle={pageTitle} />
       <Box component={"div"} sx={{ width: "100%" }}>
         {/* Navbar */}
         <Box
@@ -201,69 +211,63 @@ const HomePage = ({ user_id }) => {
             flexDirection: "column",
           }}
         >
-          {!isAuthenticated() && <PromoCarousel />}
-          {isAuthenticated() && (
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Button
-                variant="contained"
-                size="small"
-                onClick={() => navigate("/dashboard")}
-                startIcon={<Home />}
-              >
-                my shop
-              </Button>
-              {isMobile
-                ? getUser() &&
-                  !getUser()?.phone_number && (
-                    <Button
-                      variant="contained"
-                      color="error"
-                      size="small"
-                      onClick={() => navigate("/myprofile")}
-                      startIcon={<SystemUpdate />}
-                    >
-                      Profile
-                    </Button>
-                  )
-                : getUser() &&
-                  !getUser()?.phone_number && (
-                    <Button
-                      variant="contained"
-                      color="error"
-                      size="small"
-                      onClick={() => navigate("/myprofile")}
-                      startIcon={<SystemUpdate />}
-                    >
-                      Profile
-                    </Button>
-                  )}
-              {getUser() && getUser()?.phone_number && (
-                <Button
-                  variant="contained"
-                  color="success"
-                  size="small"
-                  onClick={() => navigate("/form/product")}
-                  startIcon={<AddCircleOutline />}
-                >
-                  Product
-                </Button>
-              )}
+          <Box
+            sx={{
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              width: "100%",
+              "& .track": {
+                display: "inline-flex",
+                animation: "scroll 10s linear infinite",
+              },
+              "@keyframes scroll": {
+                "0%": { transform: "translateX(0%)" },
+                "100%": { transform: "translateX(-50%)" },
+              },
+            }}
+          >
+            <Box className="track" sx={{}}>
+              <HandshakeOutlined sx={{ mx: 1 }} color="success" />
+              <Typography variant="h5" component="span">
+                Welcome to {cleanUsername(username)}'s Shop
+              </Typography>
+              {/* doublon pour boucle fluide */}
+              <HandshakeOutlined sx={{ mx: 1 }} color="success" />
+              <Typography variant="h5" component="span">
+                Welcome to {cleanUsername(username)}'s Shop
+              </Typography>
             </Box>
-          )}
+          </Box>
 
           {/* Main Content */}
           <Container
             className="main-content"
             maxWidth="xl"
-            sx={{ flex: 1, padding: "20px" }}
+            sx={{
+              flex: 1,
+              padding: "20px",
+            }}
           >
-            <TrendingSearchBar
-              searchQuery={search}
-              setSearchQuery={setSearch}
-            />
+            <Box
+              sx={{
+                p: 2,
+                mb: 2,
+                borderRadius: 3,
+                backgroundImage: `url(${profilePic})`, // Remplacez par le chemin de votre image
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                backgroundColor: "rgba(255,255,255,.36)", // 36 % white tint
+                backgroundBlendMode: "lighten",
+              }}
+            >
+              <TrendingSearchBar
+                searchQuery={search}
+                setSearchQuery={setSearch}
+              />
+            </Box>
             <Divider sx={{ mb: 2, mt: 2 }} />
 
-            <Grid container spacing={4}>
+            <Grid container spacing={4} mt={1}>
               {products.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -308,4 +312,4 @@ const HomePage = ({ user_id }) => {
   );
 };
 
-export default HomePage;
+export default ShopPage;

@@ -41,6 +41,7 @@ import { get } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import TimeAgo from "../../components/TimeAgo";
 import {
+  cleanUsername,
   formatCount,
   formatCurrency,
   formatDateSimple,
@@ -346,7 +347,8 @@ const ProductDetail = ({ data, callApi }) => {
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="body2">
-                  <strong>Seller:</strong> {product.added_by_user_id.username}
+                  <strong>Seller:</strong>{" "}
+                  {cleanUsername(product.added_by_user_id.username)}
                 </Typography>
               </Grid>
               <Grid item xs={6}>

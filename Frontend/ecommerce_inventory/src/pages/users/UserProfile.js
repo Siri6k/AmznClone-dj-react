@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Box, Tabs, Tab, LinearProgress } from "@mui/material";
+import {
+  Box,
+  Tabs,
+  Tab,
+  LinearProgress,
+  Stack,
+  Tooltip,
+  Chip,
+} from "@mui/material";
 import useApi from "../../hooks/APIHandler";
 import ProfileCard from "./ProfileCard";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import Title from "../../components/Title";
+import { Shop } from "@mui/icons-material";
+import { cleanUsername } from "../../utils/Helper";
 
 const UserProfile = () => {
   const { error, loading, callApi } = useApi();
@@ -50,6 +60,31 @@ const UserProfile = () => {
       <Box component="div" sx={{ width: "100%" }}>
         <Box sx={{ maxWidth: "600px", margin: "auto" }}>
           {loading && <LinearProgress />}
+          {userData && (
+            <Stack
+              direction="row"
+              spacing={2}
+              justifyContent="flex-end"
+              sx={{ mb: 1 }}
+            >
+              {/* Views */}
+              <Tooltip title="city">
+                <Chip
+                  icon={<Shop fontSize="small" />}
+                  label={
+                    cleanUsername(userData?.username) + "'s Shop" ||
+                    "Unknown User's Shop"
+                  }
+                  variant="outlined"
+                  color="success"
+                  sx={{ px: 1, fontWeight: 500, fontSize: "0.8rem" }}
+                  onClick={() =>
+                    (window.location.href = `/shop/${userData?.username}`)
+                  }
+                />
+              </Tooltip>
+            </Stack>
+          )}
           {userData && <ProfileCard profile={userData} />}
           {!loading && !userData && <div>No profile data available</div>}
         </Box>
