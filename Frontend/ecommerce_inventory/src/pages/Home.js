@@ -27,20 +27,7 @@ import {
   Breadcrumbs,
 } from "@mui/material";
 import "../layout/style.scss";
-import {
-  orangeDarkTheme,
-  orangeLightTheme,
-  basicTheme,
-  darkTheme,
-  lightTheme,
-  customTheme,
-  blueLightTheme,
-  blueDarkTheme,
-  greenLightTheme,
-  greenDarkTheme,
-  redLightTheme,
-  redDarkTheme,
-} from "../layout/themes";
+
 import {
   Save,
   ShoppingCart,

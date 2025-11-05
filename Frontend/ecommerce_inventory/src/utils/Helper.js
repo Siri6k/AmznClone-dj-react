@@ -370,3 +370,23 @@ export const cleanUsername = (str = "") => {
     .join("");
   return cleaned.slice(0, 7); // max 7 characters
 };
+
+// utils/Helper.js
+export function formatFieldLabel(fieldName) {
+  if (!fieldName) return "";
+
+  const exceptions = {
+    category_id: "Category",
+    like_count: "Like Count",
+    view_count: "View Count",
+    created_at: "Date de création",
+    updated_at: "Dernière mise à jour",
+    brand: "Marque",
+    user_id: "Utilisateur",
+  };
+
+  if (exceptions[fieldName]) return exceptions[fieldName];
+
+  // par défaut : convertir snake_case → Capitalized Words
+  return fieldName.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+}

@@ -41,6 +41,7 @@ import {
   ExpandLessRounded,
   ExpandMoreRounded,
   SaveAltRounded,
+  FilterList,
 } from "@mui/icons-material";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import useApi from "../hooks/APIHandler";
@@ -60,6 +61,9 @@ import ProductBuyModal from "./product/ProductBuyModal";
 import { FormProvider, get, useForm } from "react-hook-form";
 import TrendingSection from "../components/TrendingSection";
 import TrendingSearchBar from "../components/TrendingSearchBar";
+import AdvancedFilterPanel from "../components/AdvancedFilterPanel";
+import AdvancedFilterPanelInline from "../components/AdvancedFilterInline";
+import { set } from "date-fns";
 
 const HomePage = ({ user_id }) => {
   const [products, setProducts] = useState([]);
@@ -90,8 +94,9 @@ const HomePage = ({ user_id }) => {
     },
   ]);
   const [filterFields, setFilterFields] = useState([]);
-  const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
+  const [category_id, setCategoryId] = useState([]);
   const [aFilterFields, setAFilterFields] = useState(null);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const [showBuyModal, setShowBuyModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -107,7 +112,7 @@ const HomePage = ({ user_id }) => {
     // Fetch data after 1 second
     const timer = setTimeout(() => {
       setDebounceSearch(searchQuery);
-    }, 1000);
+    }, 2000);
     return () => {
       clearTimeout(timer);
     };
@@ -127,7 +132,24 @@ const HomePage = ({ user_id }) => {
     );
     setAFilterFields(filterData);
   };
-
+  const getCategoryList = async () => {
+    const result = await callApi({
+      url: `products/categories/all/`,
+      method: "GET",
+    });
+    if (result) {
+      setCategoryId(result.data.data);
+      setAFilterFields((prev) => ([ ...prev, {
+        key: "category_id",
+        label: "Catégorie",
+        type: "select",
+        options: result.data.data.map((category) => {
+          return { key: category.id, value: category.name };
+        }),
+      }));
+      console.log("category_id", filterFields);
+    }
+  };
   const getAllProduct = useCallback(async () => {
     if (!hasMore || loading) return;
     if (numPages && page > numPages) return;
@@ -150,12 +172,17 @@ const HomePage = ({ user_id }) => {
         ...aFilterFields,
       },
     });
+
     if (result) {
       const fetchData = result.data.data.data || [];
       setProducts((prev) => [...prev, ...fetchData]);
       setPage((prev) => prev + 1);
       setNumPages(result.data.data.totalPages);
-      setFilterFields(result.data.data.filterFields);
+      setFilterFields([
+        ...result.data.data.filterFields,
+        { key: "price_min", label: "Prix minimum", type: "number" },
+        { key: "price_max", label: "Prix maximum", type: "number" },
+      ]);
     }
   }, [page, hasMore, loading, callApi]);
 
@@ -257,9 +284,50 @@ const HomePage = ({ user_id }) => {
             maxWidth="xl"
             sx={{ flex: 1, padding: "20px" }}
           >
-            <TrendingSearchBar
-              searchQuery={search}
-              setSearchQuery={setSearch}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mb: 2,
+                flexWrap: "wrap",
+              }}
+            >
+              <TrendingSearchBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
+              <Button
+                startIcon={<FilterList />}
+                variant="outlined"
+                onClick={() => {
+                  setFilterOpen(true);
+                  getCategoryList();
+                }}
+                fullWidth
+                sx={{
+                  mt: 1,
+                  maxWidth: isMobile ? "100%" : "200px",
+                  mt: isMobile ? 2 : 0,
+                }}
+              >
+                {filterOpen ? "Masquer les filtres" : "Filtres avancés"}
+              </Button>
+            </Box>
+
+            <AdvancedFilterPanelInline
+              open={filterOpen}
+              filterFields={filterFields}
+              onApply={(filters) => {
+                setAFilterFields(filters);
+                setPage(1);
+                setProducts([]);
+                getAllProduct();
+              }}
+              onReset={() => {
+                resetFilter();
+                setFilterOpen(false);
+              }}
+              loading={loading}
             />
             <Divider sx={{ mb: 2, mt: 2 }} />
 
@@ -278,6 +346,11 @@ const HomePage = ({ user_id }) => {
               <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
                 <CircularProgress />
               </Box>
+            )}
+            {!loading && products.length === 0 && (
+              <Typography variant="body2" align="center" sx={{ mt: 4 }}>
+                Aucun produit trouvé
+              </Typography>
             )}
 
             {!hasMore && (
